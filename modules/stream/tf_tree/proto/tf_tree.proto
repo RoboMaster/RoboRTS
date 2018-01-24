@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+message Rotation {
+  optional float pitch = 1;
+  optional float yaw = 2;
+  optional float roll = 3;
+}
+
+message Translation {
+  optional float x = 1;
+  optional float y = 2;
+  optional float z = 3;
+}
+
+message Transformation {
+  optional string sensor = 1;
+  optional string base = 2;
+  optional Rotation rotation = 3;
+  optional Translation translation = 4;
+}
+
+message CoordinateTrans{ 
+  optional string name = 1; 
+  repeated Transformation transformation = 2;
+}

@@ -1,0 +1,7 @@
+syntax = "proto2";
+package rrts.planning.local_planner;
+
+message LocalAlgorithms {
+    repeated string name = 1;
+    optional string selected_algorithm = 2;
+}

@@ -1,0 +1,66 @@
+syntax = "proto2";
+
+enum LaserModel{
+    LASER_MODEL_BEAM = 0;
+    LASER_MODEL_LIKELIHOOD_FIELD = 1;
+    LASER_MODEL_LIKELIHOOD_FIELD_PROB = 2;
+}
+
+enum OdomModel{
+    ODOM_MODEL_DIFF = 0;
+    ODOM_MODEL_OMNI = 1;
+}
+
+message AmclParam {
+    required bool use_map_topic = 1[default = false];
+    required bool first_map_only = 2[default = false];
+    required int32 gui_publish_rate = 3[default = 10];
+
+    optional double laser_min_range = 4[default = 0.15];
+    optional double laser_max_range = 5[default = 8.0];
+    optional int32 laser_max_beams = 6[default = 30];
+
+    required int32 min_particles = 7[default = 500];
+    required int32 max_particles = 8[default = 5000];
+
+    required double kld_err = 9[default = 0.05];
+    required double kld_z = 10[default = 0.99];
+
+    required LaserModel laser_model = 11[default = LASER_MODEL_LIKELIHOOD_FIELD_PROB];
+    required double z_hit        = 12             [default = 0.5 ];
+    required double z_rand       = 13              [default = 0.5 ];
+    required double sigma_hit    = 14              [default = 0.2 ];
+    required double lambda_short = 15              [default = 0.1 ];
+    required double laser_likelihood_max_dist  = 16[default = 2.0 ];
+    required bool   do_beamskip                = 17[default = true];
+    required double beam_skip_distance         = 18[default = 0.5 ];
+    required double beam_skip_threshold        = 19[default = 0.3 ];
+    required double beam_skip_error_threshold  = 20[default = 0.9 ];
+
+    required OdomModel odom_model   = 21[default = ODOM_MODEL_OMNI];
+    required double odom_alpha1     = 22[default = 0.005];
+    required double odom_alpha2     = 23[default = 0.005];
+    required double odom_alpha3     = 24[default = 0.01];
+    required double odom_alpha4     = 25[default = 0.005];
+    required double odom_alpha5     = 26[default = 0.003];
+
+    required double update_min_d = 27 [default = 0.2];
+    required double update_min_a = 28 [default = 0.5];
+
+    required int32 resample_interval = 32 [default = 1];
+    required double transform_tolerance = 33[default = 0.1];
+    required double recovery_alpha_slow = 34 [default = 0.001];
+    required double recovery_alpha_fast = 35 [default = 0.1];
+
+    required double initial_pose_x = 36[default=93.3249018949];
+    required double initial_pose_y = 37[default=112.965052875];
+    required double initial_pose_a = 38[default=0];
+    required double initial_cov_xx = 39[default=0.1];
+    required double initial_cov_yy = 40[default=0.1];
+    required double initial_cov_aa = 41[default=0.1];
+
+    required bool use_global_localization = 42[default=true];
+
+
+}
+

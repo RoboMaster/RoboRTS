@@ -1,0 +1,9 @@
+#goal definition
+int32 parameter
+---
+#result definition RUNNING = 0, SUCCESS = 1, FAILURE = 2
+int32  error_code
+---
+#feedback
+int32  error_code
+string error_msg

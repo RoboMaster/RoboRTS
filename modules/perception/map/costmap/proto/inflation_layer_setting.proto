@@ -1,0 +1,11 @@
+syntax = "proto2";
+package rrts.perception.map;
+
+message ParaInflationLayer {
+    required double inflation_radius = 1;
+    required double cost_scaling_factor = 2;
+    required bool is_debug = 3;
+    required bool is_raw_rosmessage = 4;
+}
+
+

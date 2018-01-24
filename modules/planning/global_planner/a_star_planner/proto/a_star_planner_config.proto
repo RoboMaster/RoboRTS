@@ -1,0 +1,7 @@
+syntax = "proto2";
+package rrts.planning.global_planner;
+
+message AStarPlannerConfig {
+    optional uint32 inaccessible_cost = 1 [default = 240];
+    optional float heuristic_factor = 2 [default = 1.0];
+}

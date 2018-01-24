@@ -1,0 +1,12 @@
+message LocalizationConfig {
+
+    required string odom_frame_id = 1 [default = "odom"];
+    required string base_frame_id = 2 [default =        "base_link"      ];
+    required string global_frame_id = 3 [default =      "map"            ];
+
+    required string laser_topic_name = 4 [default =     "base_laser_scan"];
+    required string map_topic_name = 5 [default =       "map"            ];
+    required string init_pose_topic_name = 6 [default = "initialpose"    ];
+
+    required double transform_tolerance = 7 [default = 0.1];
+}

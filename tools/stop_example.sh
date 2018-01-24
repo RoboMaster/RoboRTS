@@ -1,0 +1,1 @@
+rosnode kill -a

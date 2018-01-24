@@ -1,0 +1,16 @@
+syntax = "proto2";
+package rrts.decision;
+
+message Point {
+    optional float x = 1;
+    optional float y = 2;
+    optional float z = 3;
+
+    optional float roll  = 4;
+    optional float pitch = 5;
+    optional float yaw   = 6;
+}
+
+message PatrolPoints{
+    repeated Point point = 1;
+}

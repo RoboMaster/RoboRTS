@@ -1,0 +1,45 @@
+name: "rrts"
+transformation {
+  sensor: "lidar"
+  base: "base_foot_print"
+  rotation{
+    pitch: 0.0
+    yaw  : 0.0
+    roll : 0.0
+  }
+  translation{
+    x: 0.2
+    y: 0.0
+    z: 0.3
+  }
+}
+
+transformation {
+  sensor: "camera1"
+  base: "base_foot_print"
+  rotation{
+    pitch: 0.0
+    yaw  : 0.0
+    roll : 0.0
+  }
+  translation{
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+}
+
+transformation {
+  sensor: "camera2"
+  base: "base_foot_print"
+  rotation{
+    pitch: 0.0
+    yaw  : 0.0
+    roll : 0.0
+  }
+  translation{
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+}
