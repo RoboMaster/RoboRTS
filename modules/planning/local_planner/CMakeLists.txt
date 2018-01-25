@@ -32,7 +32,7 @@ target_link_libraries(${PROJECT_NAME}_node
   common::log
   common::io
   common::rrts
-  costmap
+  perception::map::costmap
   planning::timed_elastic_band
   ${catkin_LIBRARIES}
   ${GLOG_LIBRARY}

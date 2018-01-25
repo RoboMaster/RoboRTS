@@ -23,4 +23,5 @@ add_library(rrts SHARED rrts.cpp)
 add_library(common::rrts ALIAS  rrts)
 target_include_directories(rrts PUBLIC ${catkin_INCLUDE_DIRS})
 
+# This project indicates the design structure of our platform, only for testing purpose and no practical significance.
 #add_subdirectory(example)

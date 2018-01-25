@@ -17,6 +17,7 @@
 #ifndef COMMON_EXAMPLE_BASE_H
 #define COMMON_EXAMPLE_BASE_H
 #include <iostream>
+
 #include "common/error_code.h"
 #include "common/log.h"
 

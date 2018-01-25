@@ -17,6 +17,15 @@
 #ifndef COMMON_MAIN_TEST_H
 #define COMMON_MAIN_TEST_H
 
+#include <thread>
+#include <mutex>
+
+#include "boost/thread.hpp"
+#include "geometry_msgs/PoseStamped.h"
+#include "actionlib/server/simple_action_server.h"
+
+
+#include "messages/exampleAction.h"
 #include "common/rrts.h"
 #include "common/log.h"
 #include "common/error_code.h"
@@ -26,13 +35,6 @@
 #include "common/algorithm_factory.h"
 #include "common/node_state.h"
 
-#include "messages/exampleAction.h"
-#include "actionlib/server/simple_action_server.h"
-
-#include "boost/thread.hpp"
-#include "geometry_msgs/PoseStamped.h"
-#include <thread>
-#include <mutex>
 namespace rrts{
 namespace common {
 

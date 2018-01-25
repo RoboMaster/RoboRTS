@@ -13,13 +13,11 @@ add_executable(${PROJECT_NAME}_node
 target_link_libraries(${PROJECT_NAME}_node
   PRIVATE
     planning::global_planner::a_star_planner
-    costmap
-
+    perception::map::costmap
     common::main_interface
     common::log
     common::io
     common::rrts
-
     ${catkin_LIBRARIES}
     ${Boost_LIBRARIES}
     ${GLOG_LIBRARY}

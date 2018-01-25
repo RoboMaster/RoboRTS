@@ -28,7 +28,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE
   common::log
   common::io
-  costmap
+  perception::map::costmap
   ${catkin_LIBRARIES}
   ${GLOG_LIBRARY}
   ${EXTERNAL_LIBS}

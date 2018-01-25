@@ -20,8 +20,12 @@
 namespace rrts{
 namespace common {
 
-MainTest::MainTest(std::string name):RRTS::RRTS(name),as_(nh_, "test_action", boost::bind(&MainTest::ActionCB,this,_1), false),
-                                     running_(false), initialized_(false),node_state_(NodeState::IDLE),return_state_(ErrorCode::OK) {
+MainTest::MainTest(std::string name):RRTS::RRTS(name),
+                                     as_(nh_, "test_action", boost::bind(&MainTest::ActionCB,this,_1), false),
+                                     running_(false),
+                                     initialized_(false),
+                                     node_state_(NodeState::IDLE),
+                                     return_state_(ErrorCode::OK) {
   // Param settings (protobuf files, including selected_algorithm)
   cycle_duration_= std::chrono::microseconds((int)(1e6 / 1));
   // ROS settings
@@ -59,57 +63,50 @@ void MainTest::ActionCB(const messages::exampleGoal::ConstPtr &command){
     StartThread();
   }
 
-  while (ros::ok())
-  {
-      std::cout<<"0"<<std::endl;
-      if (as_.isPreemptRequested())
-      {
-        LOG_INFO<<"Action Preempted";
+  while (ros::ok()) {
+    std::cout<<"0"<<std::endl;
+    if (as_.isPreemptRequested())
+    {
+      LOG_INFO<<"Action Preempted";
 
-        as_.setPreempted();
-        SetNodeState(NodeState::IDLE);
-        StopThread();
-//        break;
-      }
+      as_.setPreempted();
+      SetNodeState(NodeState::IDLE);
+      StopThread();
+    }
 
-      if(GetNodeState() == NodeState::RUNNING){
+    if(GetNodeState() == NodeState::RUNNING){
 
-        feedback.error_code = GetReturnState().error_code();
-        feedback.error_msg = GetReturnState().error_msg();
-        as_.publishFeedback(feedback);
+      feedback.error_code = GetReturnState().error_code();
+      feedback.error_msg = GetReturnState().error_msg();
+      as_.publishFeedback(feedback);
 
-      }
+    }
 
-      else if(GetNodeState() == NodeState::FAILURE) {
+    else if(GetNodeState() == NodeState::FAILURE) {
 
-        feedback.error_code = GetReturnState().error_code();
-        feedback.error_msg = GetReturnState().error_msg();
-        result.error_code = feedback.error_code;
+      feedback.error_code = GetReturnState().error_code();
+      feedback.error_msg = GetReturnState().error_msg();
+      result.error_code = feedback.error_code;
 
-        as_.publishFeedback(feedback);
-        as_.setAborted(result, feedback.error_msg);
+      as_.publishFeedback(feedback);
+      as_.setAborted(result, feedback.error_msg);
 
-        SetNodeState(NodeState::IDLE);
-        LOG_INFO<<"Action Failed!";
-        break;
-      }
-      else if(GetNodeState() == NodeState::SUCCESS){
-        feedback.error_code = GetReturnState().error_code();
-        feedback.error_msg = GetReturnState().error_msg();
-        result.error_code = feedback.error_code;
+      SetNodeState(NodeState::IDLE);
+      LOG_INFO<<"Action Failed!";
+      break;
+    }
+    else if(GetNodeState() == NodeState::SUCCESS){
+      feedback.error_code = GetReturnState().error_code();
+      feedback.error_msg = GetReturnState().error_msg();
+      result.error_code = feedback.error_code;
 
-        as_.publishFeedback(feedback);
-        as_.setSucceeded(result);
+      as_.publishFeedback(feedback);
+      as_.setSucceeded(result);
 
-        SetNodeState(NodeState::IDLE);
-        LOG_INFO<<"Action Succeeded!";
-        break;
-      }
-//      else if(GetNodeState() == NodeState::IDLE){
-        //...think about it! not possible!
-//        LOG_INFO<<"miao miao miao?";
-//      }
-
+      SetNodeState(NodeState::IDLE);
+      LOG_INFO<<"Action Succeeded!";
+      break;
+    }
   }
 
   LOG_INFO<<__FUNCTION__<<" Terminate!";
@@ -172,17 +169,12 @@ void MainTest::FunctionThread(){
       SetNodeState(NodeState::SUCCESS);
       running_ = false;
     } else{
-        std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
-		std::chrono::microseconds execution_duration =
-								std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-//		LOG_INFO<< static_cast<double>(execution_duration.count())* std::chrono::microseconds::period::num / std::chrono::microseconds::period::den;
-		std::chrono::microseconds sleep_time = cycle_duration_ - execution_duration;
-        LOG_INFO<< static_cast<double>(sleep_time.count())* std::chrono::microseconds::period::num / std::chrono::microseconds::period::den;
-        std::this_thread::sleep_for(sleep_time);
+      std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
+      std::chrono::microseconds execution_duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+      std::chrono::microseconds sleep_time = cycle_duration_ - execution_duration;
+      LOG_INFO<< static_cast<double>(sleep_time.count())* std::chrono::microseconds::period::num / std::chrono::microseconds::period::den;
+      std::this_thread::sleep_for(sleep_time);
     }
-
-
-
   }
 
   LOG_INFO<<__FUNCTION__<<" Terminate!";

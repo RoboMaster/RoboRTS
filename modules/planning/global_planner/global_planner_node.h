@@ -1,6 +1,3 @@
-
-
-
 /****************************************************************************
  *  Copyright (C) 2018 RoboMaster.
  *
@@ -26,7 +23,6 @@
 #include <mutex>
 #include <thread>
 
-
 #include <tf/transform_listener.h>
 #include "actionlib/server/simple_action_server.h"
 #include "nav_msgs/Path.h"
@@ -50,7 +46,7 @@ namespace planning {
 namespace global_planner {
 
 /**
- * @brief Global planner module which get the goal, plan the global path and publish.
+ * @brief Node class for global planner module.
  */
 class GlobalPlannerNode : public rrts::common::RRTS {
  public:
@@ -58,15 +54,15 @@ class GlobalPlannerNode : public rrts::common::RRTS {
   typedef std::shared_ptr<tf::TransformListener> TfPtr;
   typedef std::unique_ptr<GlobalPlannerBase> GlobalPlannerPtr;
   typedef actionlib::SimpleActionServer<messages::GlobalPlannerAction> GlobalPlannerServer;
-/**
- * @brief Constructor including all initialization and configuration
- * @param name Node name which is defined as "global_planner_node" originally
- */
+ /**
+  * @brief Constructor including all initialization and configuration
+  * @param name Node name which is defined as "global_planner_node" as default
+  */
   GlobalPlannerNode(std::string name);
 
-/**
- * @brief Destructor which stop all running thread .
- */
+ /**
+  * @brief Destructor which stops all running thread .
+  */
   ~GlobalPlannerNode();
 
  private:
@@ -143,9 +139,9 @@ class GlobalPlannerNode : public rrts::common::RRTS {
    */
   rrts::common::NodeState GetNodeState();
   /**
- * @brief Set the state for planning module
- * @param error_info Error Info for global planning
- */
+   * @brief Set the state for planning module
+   * @param error_info Error Info for global planning
+   */
   void SetErrorInfo(rrts::common::ErrorInfo error_info);
   /**
    * @brief Get the error info for planning module
@@ -176,7 +172,7 @@ class GlobalPlannerNode : public rrts::common::RRTS {
    * 2. Make plan using the selected algorithm \n
    * 3. If success, check the completion if the current pose is close to the goal. If completed, no need for planning and jump out the loop!\n
    * 4. If not success, check if it reaches the max retries. if so, no need planning and jump out the cycle!\n
-   * 5. If planning still needed, wait for a duration which the global planning frequency decides and go to next cycle!
+   * 5. If planning still needed, go to next cycle and wait for a duration which the global planning frequency decides.
    */
   void PlanThread();
   /**

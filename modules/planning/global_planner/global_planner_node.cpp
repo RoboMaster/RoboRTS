@@ -254,7 +254,6 @@ void GlobalPlannerNode::PlanThread() {
 
     SetErrorInfo(error_info);
 
-    //Compute time to sleep
     std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
     std::chrono::microseconds execution_duration =
         std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
@@ -269,7 +268,7 @@ void GlobalPlannerNode::PlanThread() {
       SetErrorInfo(ErrorInfo(ErrorCode::GP_TIME_OUT_ERROR, "Planning once time out."));
     }
   }
-  // Planner cycle jump out
+
   LOG_INFO << "Plan thread terminated!";
 }
 

@@ -17,53 +17,46 @@
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
-//#include "common/log.h"#include "common/log.h"
 
 #include "messages/exampleAction.h"
 
+#include "common/log.h"
 
 int main(int argc, char **argv) {
 
   ros::init(argc, argv, "test_client");
   actionlib::SimpleActionClient<messages::exampleAction> ac("test_action", true);
   messages::exampleResult node_result;
-  std::cout<<"Waiting for action server to start."<<std::endl;
-  // wait for the action server to start
-  ac.waitForServer();  // will wait for infinite time
+  LOG_INFO<<"Waiting for action server to start.";
+  ac.waitForServer();
 
   messages::exampleGoal goal;
 
   int command = 0;
-  bool send_action = false;
 
   while (command != 3) {
-    std::cout<<"Send a command: 1:start the action | 2:stop the action | 3:exit the program"<<std::endl;
+    std::cout<<"Send a command: "<<std::endl;
+    std::cout<<"1: send the action"<<std::endl;
+    std::cout<<"2: cancel the action"<<std::endl;
+    std::cout<<"3: exit the program"<<std::endl;
     std::cin >> command;
 
     switch (command) {
       case 1:
-        if (!send_action) {
-          std::cout<<"I am running the request"<<std::endl;
-          ac.sendGoal(goal);
-          send_action = true;
-          node_result = *(ac.getResult());
-          std::cout<<"Action finished, status: "<< node_result.error_code<<std::endl;
-        } else {
-          std::cout<<"I am re-running the request"<<std::endl;
-//          ac.cancelGoal();
-          ac.sendGoal(goal);
-          std::cout<<"Action finished, status: "<< node_result.error_code<<std::endl;
-        }
+        LOG_INFO<<"Send the action!";
+        ac.sendGoal(goal);
+        send_action = true;
+        node_result = *(ac.getResult());
+        LOG_INFO<<"Action finished, status: "<< node_result.error_code;
         break;
       case 2:
-        std::cout<<"I am cancelling the request"<<std::endl;
+        LOG_INFO<<"Cancel the action!";
         ac.cancelGoal();
         send_action = false;
         break;
       default:
         break;
     }
-
   }
   return 0;
 }

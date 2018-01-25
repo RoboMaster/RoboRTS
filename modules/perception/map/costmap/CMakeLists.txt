@@ -6,8 +6,6 @@ rrts_protobuf_generate_cpp(${CMAKE_CURRENT_SOURCE_DIR}/proto
         CostmapProtoSrcs CostmapProtoHeaders
         ${ProtoFiles})
 
-add_library(costmap_config SHARED ${CostmapProtoSrcs} ${CostmapProtoHeaders})
-
 add_library(costmap SHARED
         costmap_math.cpp
         layer.cpp
@@ -21,9 +19,10 @@ add_library(costmap SHARED
         static_layer.cpp
         obstacle_layer.cpp
         inflation_layer.cpp
-#        ${CostmapProtoSrcs}
-#        ${CostmapProtoHeaders}
+        ${CostmapProtoSrcs}
+        ${CostmapProtoHeaders}
 )
+add_library(perception::map::costmap ALIAS costmap)
 target_include_directories(costmap
         PUBLIC
         ${catkin_INCLUDE_DIRS}
@@ -40,7 +39,6 @@ target_link_libraries(costmap
         ${EIGEN3_LIBRARIES}
         ${GLOG_LIBRARY}
         common::io
-        costmap_config
         )
 
 add_executable(test_costmap test_costmap.cpp)

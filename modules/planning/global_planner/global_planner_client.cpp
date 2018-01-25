@@ -15,10 +15,11 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
+#include <thread>
+
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
 
-#include <thread>
 #include "messages/GlobalPlannerAction.h"
 #include "common/error_code.h"
 

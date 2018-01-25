@@ -11,7 +11,7 @@ add_library(${PROJECT_NAME}
   )
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
-  costmap
+  perception::map::costmap
   common::log
 )
 add_library(planning::global_planner::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
