@@ -1,4 +1,6 @@
 # RoboRTS
+[![Build Status](https://travis-ci.org/RoboMaster/RoboRTS.svg?branch=master)](https://travis-ci.org/RoboMaster/RoboRTS)
+
 RoboRTS is an open source software stack for Real-Time Strategy research on mobile robots, developed by RoboMaster. The Real-Time Strategy research that we focus on is multi-agent deep reinforcement learning based decision making.
 
 The motivation for this project is [RoboMaster AI Challenge](https://icra2018.org/dji-robomaster-ai-challenge/). In this robot challenge, multiple robots should fight with each other on a game field automatically. It would be very convenient to have a unified framework for them to integrate hardware components and implement algorithms.
