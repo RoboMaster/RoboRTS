@@ -1,7 +1,7 @@
 camera: {
-  mode: VIDEO
+  mode: CAMERA
   camera_id: 0
-  video_path: "/rmai/data/dl_armor_detection/dataset/armor_0402.avi"
+  video_path: ""
 
   camera_matrix {
     data: 839.923052

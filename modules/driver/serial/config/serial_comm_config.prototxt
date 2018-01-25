@@ -1,2 +1,0 @@
-serial_port: "/dev/ttyUSB0"
-serial_boudrate: 921600
