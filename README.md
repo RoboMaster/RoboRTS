@@ -38,7 +38,7 @@ Please follow [the installing and configuring ROS environment tutorial](http://w
 **Thirdparty Library**
 
 ```shell
-sudo apt-get install ros-kinetic-opencv3 ros-kinetic-cv-bridge ros-kinetic-image-transport ros-kinetic-stage-ros ros-kinetic-map-server ros-kinetic-laser-geometry ros-kinetic-interactive-markers ros-kinetic-rviz ros-kinetic-pcl-* ros-kinetic-libg2o protobuf-compiler libprotobuf-dev libsuitesparse-dev libgoogle-glog-dev
+sudo apt-get install ros-kinetic-opencv3 ros-kinetic-cv-bridge ros-kinetic-image-transport ros-kinetic-stage-ros ros-kinetic-map-server ros-kinetic-laser-geometry ros-kinetic-interactive-markers ros-kinetic-rviz ros-kinetic-tf ros-kinetic-pcl-* ros-kinetic-libg2o protobuf-compiler libprotobuf-dev libsuitesparse-dev libgoogle-glog-dev
 ```
 
 ### Build and Install
@@ -49,6 +49,7 @@ cd RoboRTS/
 mkdir build
 cd build
 cmake ..
+make messages_generate_messages
 make
 ```
 
