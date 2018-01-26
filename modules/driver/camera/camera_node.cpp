@@ -63,7 +63,6 @@ void CameraNode::Update(const unsigned int &index) {
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
     publishers_[index].publish(msg);
   }
-  std::cout << "2edfrewf" << std::endl;
 }
 /**
  * @brief Stop to read image.
