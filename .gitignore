@@ -1,2 +1,5 @@
 .idea/
 build/
+
+*.pb.cc
+*.pb.h
