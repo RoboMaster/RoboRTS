@@ -80,6 +80,33 @@ inline double AverageAngles(const std::vector<double>& angles) {
   }
 }
 
+inline double GetOrientation (Eigen::Vector2d vec) {
+  return atan2(vec.coeffRef(1), vec.coeffRef(0));
+}
+
+inline void EulerToQuaternion(const double& roll, const double& pitch, const double& yaw) {
+  double half_roll  = roll * 0.5;
+  double half_pitch = pitch * 0.5;
+  double half_yaw   = yaw * 0.5;
+
+  double cos_roll = cosf(roll);
+  double sin_roll = sinf(roll);
+
+  double cos_pitch = cosf(pitch);
+  double sin_pitch = sinf(pitch);
+
+  double cos_yaw = cosf(yaw);
+  double sin_yaw = sinf(yaw);
+
+  auto w_q0 = cos_roll * cos_pitch * cos_yaw + sin_roll * sin_pitch * sin_yaw;
+  auto x_q1 = sin_roll * cos_pitch * cos_yaw - cos_roll * sin_pitch * sin_yaw;
+  auto y_q2 = cos_roll * sin_pitch * cos_yaw + sin_roll * cos_pitch * sin_yaw;
+  auto z_q3 = cos_roll * cos_pitch * sin_yaw - sin_roll * sin_pitch * cos_yaw;
+
+
+
+}
+
 } // namespace local_planner
 } // namespace planning
 } // namespace rrts

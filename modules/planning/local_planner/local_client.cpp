@@ -62,7 +62,6 @@ void action_client () {
   while (ros::ok()) {
     if (new_goal_flag) {
       goal.route = plan_info;
-      ac.cancelGoal();
       ac.sendGoal(goal);
       new_goal_flag = false;
     }

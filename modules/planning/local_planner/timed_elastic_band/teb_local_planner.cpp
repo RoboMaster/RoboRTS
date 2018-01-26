@@ -60,6 +60,7 @@ namespace planning {
 namespace local_planner {
 
 TebLocalPlanner::TebLocalPlanner () {
+
 }
 
 TebLocalPlanner::~TebLocalPlanner () {
@@ -84,9 +85,23 @@ rrts::common::ErrorInfo TebLocalPlanner::ComputeVelocityCommands(geometry_msgs::
   UpdateRobotPose();
   UpdateRobotVel();
   UpdateGlobalToPlanTranform();
+
+  auto time_now = std::chrono::system_clock::now();
+  oscillation_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(time_now - oscillation_).count() / 1000.0f;
+
+  if (oscillation_time_ > 1.0) {
+    if ((robot_pose_.GetPosition() - last_robot_pose_.GetPosition()).norm() < 0.1) {
+      local_cost_.lock()->ClearCostMap();
+    } else {
+      oscillation_time_ = 0;
+      oscillation_ = std::chrono::system_clock::now();
+      last_robot_pose_ = robot_pose_;
+    }
+  }
+
   if (IsGoalReached()) {
     rrts::common::ErrorInfo algorithm_ok(rrts::common::OK, "reached the goal");
-    LOG_INFO << algorithm_ok.error_msg();
+    LOG_INFO << "reached the goal";
     return algorithm_ok;
   }
 
@@ -167,17 +182,6 @@ rrts::common::ErrorInfo TebLocalPlanner::ComputeVelocityCommands(geometry_msgs::
 
   last_cmd_ = cmd_vel;
 
-  if ((std::pow(cmd_vel.linear.x ,2) + std::pow(cmd_vel.linear.y, 2)) < 0.05) {
-    auto time_now = std::chrono::system_clock::now();
-    oscillation_time_ = std::chrono::duration_cast<std::chrono::milliseconds>(time_now - oscillation_).count() / 1000.0f;
-  } else {
-    oscillation_time_ = 0;
-    oscillation_ = std::chrono::system_clock::now();
-  }
-  if (oscillation_time_ > 1.5) {
-    local_cost_.lock()->ClearCostMap();
-  }
-
   optimal_->Visualize();
 
   LOG_INFO << "compute velocity succeed";
@@ -185,6 +189,9 @@ rrts::common::ErrorInfo TebLocalPlanner::ComputeVelocityCommands(geometry_msgs::
 }
 
 bool TebLocalPlanner::IsGoalReached () {
+
+  geometry_msgs::PoseStamped a;
+
 
   tf::Stamped<tf::Pose> global_goal;
   tf::poseStampedMsgToTF(global_plan_.poses.back(), global_goal);
@@ -194,7 +201,7 @@ bool TebLocalPlanner::IsGoalReached () {
   auto distance = (goal.first - robot_pose_.GetPosition()).norm();
   double delta_orient = g2o::normalize_theta( goal.second - robot_pose_.GetTheta());
   if (distance < xy_goal_tolerance_
-      && abs(delta_orient) < yaw_goal_tolerance_) {
+      && fabs(delta_orient) < yaw_goal_tolerance_) {
     LOG_INFO << "goal reached";
     return true;
   } else {
@@ -580,6 +587,20 @@ bool TebLocalPlanner::CutAndTransformGlobalPlan(int *current_goal_idx) {
     transformed_plan_.poses.clear();
   }
 
+}
+
+bool TebLocalPlanner::SetPlanOrientation() {
+  if (global_plan_.poses.size() < 2) {
+    LOG_WARNING << "can not compute the orientation because the global plan size is: " << global_plan_.poses.size();
+    return false;
+  } else {
+    auto goal = DataConverter::LocalConvertGData(global_plan_.poses.back().pose);
+    auto line_vector = (robot_pose_.GetPosition() - goal.first);
+    auto  orientation = GetOrientation(line_vector);
+    for (int i = 0; i < global_plan_.poses.size(); ++i) {
+      auto pose = DataConverter::LocalConvertGData(global_plan_.poses[i].pose);
+    }
+  }
 }
 
 } // namespace local_planner

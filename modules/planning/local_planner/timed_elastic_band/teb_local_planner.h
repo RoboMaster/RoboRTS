@@ -85,6 +85,7 @@ class TebLocalPlanner : public LocalPlannerBase {
   rrts::common::ErrorInfo Initialize (std::shared_ptr<rrts::perception::map::CostmapInterface> local_cost,
                    std::shared_ptr<tf::TransformListener> tf, LocalVisualizationPtr visual) override;
   bool SetPlan(const nav_msgs::Path& plan, const geometry_msgs::PoseStamped& goal) override ;
+  bool SetPlanOrientation();
   void RegisterErrorCallBack(ErrorInfoCallback error_callback) override;
 
   bool PruneGlobalPlan();
