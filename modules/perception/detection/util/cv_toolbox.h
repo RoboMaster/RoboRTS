@@ -64,7 +64,6 @@ class CVToolbox {
       std::string topic_name = "camera_" + std::to_string(i);
       subs_[i] = it.subscribe(topic_name, 20, boost::bind(&CVToolbox::ReceiveImg, this, _1, i));
     }
-//    subs_[0] = it.subscribe("camera_0", 20, boost::bind(&CVToolbox::ReceiveImg, this, _1));
   }
 
   void ReceiveImg(const sensor_msgs::ImageConstPtr &msg, unsigned int camera_id) {

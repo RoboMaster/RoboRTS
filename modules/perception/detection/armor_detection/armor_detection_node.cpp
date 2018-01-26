@@ -41,7 +41,6 @@ ArmorDetectionNode::ArmorDetectionNode(std::string name):
 }
 
 ErrorInfo ArmorDetectionNode::Init() {
-  image_transport::ImageTransport it(nh_);
   enemy_info_pub_ = nh_.advertise<messages::EnemyPos>("enemy_pos", 100);
 
   ArmorDetectionAlgorithms armor_detection_algorithms;
@@ -120,7 +119,6 @@ void ArmorDetectionNode::ActionCB(const messages::ArmorDetectionGoal::ConstPtr &
 void ArmorDetectionNode::ExecuteLoop() {
   std::vector<float> translation;
   std::vector<float> rotation;
-  std::cout << node_state_ <<std::endl;
 
   while(running_) {
     if (node_state_ == NodeState::RUNNING) {

@@ -23,7 +23,7 @@
 #include "common/log.h"
 
 int main(int argc, char **argv) {
-  ros::init(argc, argv, "test_client");
+  ros::init(argc, argv, "armor_detection_node_test_client");
 
   // create the action client
   actionlib::SimpleActionClient<messages::ArmorDetectionAction> ac("armor_detection_node_action", true);
