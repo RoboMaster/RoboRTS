@@ -32,14 +32,14 @@
 #include "common/io.h"
 #include "common/log.h"
 #include "modules/driver/serial/infantry_info.h"
-#include "modules/driver/serial/proto/serial_comm_config.pb.h"
+#include "modules/driver/serial/proto/serial_com_config.pb.h"
 
 namespace rrts {
 namespace driver {
 namespace serial {
 
-static const uint16_t CRC_INIT = 0xffff;
-static constexpr uint16_t wCRC_Table[256] = {
+static const uint16_t kCrc = 0xffff;
+static constexpr uint16_t kCrcTable[256] = {
     0x0000, 0x1189, 0x2312, 0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf,
     0x8c48, 0x9dc1, 0xaf5a, 0xbed3, 0xca6c, 0xdbe5, 0xe97e, 0xf8f7,
     0x1081, 0x0108, 0x3393, 0x221a, 0x56a5, 0x472c, 0x75b7, 0x643e,
@@ -74,8 +74,8 @@ static constexpr uint16_t wCRC_Table[256] = {
     0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78
 };
 
-static const unsigned char CRC8_INIT = 0xff;
-static constexpr unsigned char CRC8_TAB[256] = {
+static const unsigned char kCrc8 = 0xff;
+static constexpr unsigned char kCrcOctTable[256] = {
     0x00, 0x5e, 0xbc, 0xe2, 0x61, 0x3f, 0xdd, 0x83, 0xc2, 0x9c, 0x7e, 0x20, 0xa3, 0xfd, 0x1f, 0x41,
     0x9d, 0xc3, 0x21, 0x7f, 0xfc, 0xa2, 0x40, 0x1e, 0x5f, 0x01, 0xe3, 0xbd, 0x3e, 0x60, 0x82, 0xdc,
     0x23, 0x7d, 0x9f, 0xc1, 0x42, 0x1c, 0xfe, 0xa0, 0xe1, 0xbf, 0x5d, 0x03, 0x80, 0xde, 0x3c, 0x62,
@@ -100,37 +100,37 @@ static constexpr unsigned char CRC8_TAB[256] = {
 class SerialComm : public rrts::common::RRTS {
 
  public:
-  SerialComm(std::string name);
+  SerialComm(std::string module_name);
 
   /**
    * @brief Fetch the CRC data (1 Byte) from message
    */
-  unsigned char Get_crc8_check_sum(unsigned char *pchMessage, unsigned int dwLength, unsigned char ucCRC8);
+  unsigned char GetCrcOctCheckSum(unsigned char *message, unsigned int length, unsigned char crc);
 
   /**
    * @brief Fetch the CRC data (2 Bytes) from message
    */
-  uint16_t Get_crc16_check_sum(uint8_t *pchMessage, uint32_t dwLength, uint16_t wCRC);
+  uint16_t GetCreHexCheckSum(uint8_t *message, uint32_t length, uint16_t crc);
 
   /**
    * @brief Verify the CRC (1 Byte)
    */
-  uint16_t Verify_crc8_check_sum(uint8_t *pchMessage, uint16_t dwLength);
+  uint16_t VerifyCrcOctCheckSum(uint8_t *message, uint16_t length);
 
   /**
    * @brief Verify the CRC (2 Bytes)
    */
-  uint32_t Verify_crc16_check_sum(uint8_t *pchMessage, uint32_t dwLength);
+  uint32_t VerifyCrcHexCheckSum(uint8_t *message, uint32_t length);
 
   /**
    * @brief Append CRC (1 Byte) to message
    */
-  void Append_crc8_check_sum(uint8_t *pchMessage, uint16_t dwLength);
+  void AppendCrcOctCheckSum(uint8_t *message, uint16_t length);
 
   /**
    * @brief Append CRC (2 Bytes) to message
    */
-  void Append_crc16_check_sum(uint8_t *pchMessage, uint32_t dwLength);
+  void AppendCrcHexCheckSum(uint8_t *message, uint32_t length);
 
  protected:
   /**
@@ -148,7 +148,7 @@ class SerialComm : public rrts::common::RRTS {
    * @brief Serial port initialize fully
    */
   void SerialInitialization(std::string port, int boudrate,
-                            int flow_control, int databits, int stopbits, int parity);
+                            int flow_control, int data_bits, int stop_bits, int parity);
 
   int fd_;
   struct termios termios_options_;

@@ -1,0 +1,112 @@
+/home/kirk/Downloads/clion-2017.2.3/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/kirk/RoboRTS
+-- Using CATKIN_DEVEL_PREFIX: /home/kirk/RoboRTS/cmake-build-debug/devel
+-- Using CMAKE_PREFIX_PATH: /home/kirk/rm_ros/devel;/opt/ros/kinetic
+-- This workspace overlays: /home/kirk/rm_ros/devel;/opt/ros/kinetic
+-- Using PYTHON_EXECUTABLE: /usr/bin/python
+-- Using Debian Python package layout
+-- Using empy: /usr/bin/empy
+-- Using CATKIN_ENABLE_TESTING: ON
+-- Call enable_testing()
+-- Using CATKIN_TEST_RESULTS_DIR: /home/kirk/RoboRTS/cmake-build-debug/test_results
+-- Found gtest: gtests will be built
+-- Using Python nosetests: /usr/bin/nosetests-2.7
+-- catkin 0.7.8
+-- Using these message generators: gencpp;geneus;genlisp;gennodejs;genpy
+-- Boost version: 1.58.0
+-- Found the following Boost libraries:
+--   system
+--   thread
+--   chrono
+--   date_time
+--   atomic
+-- Searching for g2o ...
+-- Found g2o headers in: /opt/ros/kinetic/include/g2o
+-- Found libg2o: /opt/ros/kinetic/lib/libg2o_csparse_extension.so;/opt/ros/kinetic/lib/libg2o_core.so;/opt/ros/kinetic/lib/libg2o_stuff.so;/opt/ros/kinetic/lib/libg2o_types_slam2d.so;/opt/ros/kinetic/lib/libg2o_types_slam3d.so;/opt/ros/kinetic/lib/libg2o_solver_cholmod.so;/opt/ros/kinetic/lib/libg2o_solver_pcg.so;/opt/ros/kinetic/lib/libg2o_solver_csparse.so;/opt/ros/kinetic/lib/libg2o_incremental.so
+-- Found SuiteSparse
+-- Checking for module 'eigen3'
+--   Found eigen3, version 3.2.92
+-- Boost version: 1.58.0
+-- Found the following Boost libraries:
+--   system
+--   filesystem
+--   thread
+--   date_time
+--   iostreams
+--   serialization
+--   chrono
+--   atomic
+--   regex
+-- Checking for module 'flann'
+--   Found flann, version 1.8.4
+-- Checking for module 'flann'
+--   Found flann, version 1.8.4
+-- Checking for module 'libopenni'
+--   Found libopenni, version 1.5.4.0
+-- Checking for module 'libopenni2'
+--   No package 'libopenni2' found
+-- Could NOT find OpenNI2 (missing:  OPENNI2_LIBRARY OPENNI2_INCLUDE_DIRS) 
+** WARNING ** io features related to openni2 will be disabled
+** WARNING ** io features related to pcap will be disabled
+** WARNING ** io features related to png will be disabled
+-- The imported target "vtkRenderingPythonTkWidgets" references the file
+   "/usr/lib/x86_64-linux-gnu/libvtkRenderingPythonTkWidgets.so"
+but this file does not exist.  Possible reasons include:
+* The file was deleted, renamed, or moved to another location.
+* An install or uninstall procedure did not complete successfully.
+* The installation package was faulty and contained
+   "/usr/lib/cmake/vtk-6.2/VTKTargets.cmake"
+but not all the files it references.
+
+-- The imported target "vtk" references the file
+   "/usr/bin/vtk"
+but this file does not exist.  Possible reasons include:
+* The file was deleted, renamed, or moved to another location.
+* An install or uninstall procedure did not complete successfully.
+* The installation package was faulty and contained
+   "/usr/lib/cmake/vtk-6.2/VTKTargets.cmake"
+but not all the files it references.
+
+-- Checking for module 'libopenni'
+--   Found libopenni, version 1.5.4.0
+-- Checking for module 'libopenni2'
+--   No package 'libopenni2' found
+-- Could NOT find OpenNI2 (missing:  OPENNI2_LIBRARY OPENNI2_INCLUDE_DIRS) 
+** WARNING ** visualization features related to openni2 will be disabled
+-- Checking for module 'libopenni'
+--   Found libopenni, version 1.5.4.0
+-- looking for PCL_COMMON
+-- looking for PCL_KDTREE
+-- looking for PCL_OCTREE
+-- looking for PCL_SEARCH
+-- looking for PCL_IO
+-- looking for PCL_SAMPLE_CONSENSUS
+-- looking for PCL_FILTERS
+-- looking for PCL_GEOMETRY
+-- looking for PCL_FEATURES
+-- looking for PCL_SEGMENTATION
+-- looking for PCL_SURFACE
+-- looking for PCL_REGISTRATION
+-- looking for PCL_RECOGNITION
+-- looking for PCL_KEYPOINTS
+-- looking for PCL_VISUALIZATION
+-- looking for PCL_PEOPLE
+-- looking for PCL_OUTOFCORE
+-- looking for PCL_TRACKING
+-- looking for PCL_APPS
+-- Could NOT find PCL_APPS (missing:  PCL_APPS_LIBRARY) 
+-- looking for PCL_MODELER
+-- looking for PCL_IN_HAND_SCANNER
+-- looking for PCL_POINT_CLOUD_EDITOR
+-- Found glog    (include: /usr/local/include, library: /usr/local/lib/libglog.so)
+-- Found PROTOBUF Compiler: /usr/local/bin/protoc
+protobuf /usr/local/lib/libprotobuf.so;-lpthread found
+-- Generating .msg files for action messages/example /home/kirk/RoboRTS/modules/stream/messages/action/example.action
+-- Generating .msg files for action messages/LocalPlanner /home/kirk/RoboRTS/modules/stream/messages/action/LocalPlanner.action
+-- Generating .msg files for action messages/GlobalPlanner /home/kirk/RoboRTS/modules/stream/messages/action/GlobalPlanner.action
+-- Generating .msg files for action messages/ArmorDetection /home/kirk/RoboRTS/modules/stream/messages/action/ArmorDetection.action
+-- Generating .msg files for action messages/Localization /home/kirk/RoboRTS/modules/stream/messages/action/Localization.action
+-- messages: 37 messages, 0 services
+-- /opt/ros/kinetic/include/opt/ros/kinetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp/opt/ros/kinetic/include/opencv-3.3.1/opt/ros/kinetic/include/opencv-3.3.1/opencv/usr/include/usr/include/eigen3/usr/include/pcl-1.7/usr/include/ni/usr/include/vtk-6.2/usr/include/freetype2/usr/include/x86_64-linux-gnu/freetype2/usr/include/x86_64-linux-gnu/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent/include/usr/lib/openmpi/include/usr/lib/openmpi/include/openmpi/usr/include/python2.7/usr/include/jsoncpp/usr/include/hdf5/openmpi/usr/include/libxml2/usr/include/tcl/home/kirk/RoboRTS/cmake-build-debug/devel/include
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/kirk/RoboRTS/cmake-build-debug

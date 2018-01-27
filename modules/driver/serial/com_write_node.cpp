@@ -25,7 +25,7 @@ int main(int argc,char* argv[]){
 
   google::InitGoogleLogging("serial_read_node");
   google::SetStderrLogging(google::INFO);
-  rrts::driver::serial::SerialCommWrite serialCommWrite("Com send");
+  rrts::driver::serial::SerialCommWrite serialCommWrite("Send");
   serialCommWrite.Init();
   ros::Rate loop_rate(50);
   ros::MultiThreadedSpinner spinner(5);
@@ -34,6 +34,5 @@ int main(int argc,char* argv[]){
 	spinner.spin();
 	loop_rate.sleep();
   }
-//  serialCommWrite.Stop();
   return 0;
 }

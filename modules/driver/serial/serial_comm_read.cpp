@@ -31,6 +31,7 @@ SerialCommRead::SerialCommRead(std::string name) : SerialComm(name),
                                                    index_(0),
                                                    byte_(0),
                                                    data_length_(0) {
+  odom_pub_ = nh_.advertise<nav_msgs::Odometry>("odom", 1);
 }
 
 std::string SerialCommRead::ModuleName() const {
@@ -43,10 +44,10 @@ void SerialCommRead::Init() {
 }
 
 void SerialCommRead::Run() {
-  receive_loop_ = new std::thread(boost::bind(&SerialCommRead::ComLoop, this));
+  receive_loop_ = new std::thread(boost::bind(&SerialCommRead::CommunicateLoop, this));
 }
 
-void SerialCommRead::ComLoop() {
+void SerialCommRead::CommunicateLoop() {
   while (!stop_loop_) {
     read_buff_index_ = 0;
     read_len_ = ReceiveDate(fd_, UART_BUFF_SIZE);
@@ -86,7 +87,7 @@ void SerialCommRead::ComLoop() {
           break;
         case STEP_HEADER_CRC8: {
           protocol_packet_[index_++] = byte_;
-          if ((index_ == HEADER_LEN) && Verify_crc8_check_sum(protocol_packet_, HEADER_LEN)) {
+          if ((index_ == HEADER_LEN) && VerifyCrcOctCheckSum(protocol_packet_, HEADER_LEN)) {
             unpack_step_e_ = STEP_DATA_CRC16;
           } else {
             unpack_step_e_ = STEP_HEADER_SOF;
@@ -103,7 +104,7 @@ void SerialCommRead::ComLoop() {
           if (index_ == (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
             unpack_step_e_ = STEP_HEADER_SOF;
             index_ = 0;
-            if (Verify_crc16_check_sum(protocol_packet_, HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
+            if (VerifyCrcHexCheckSum(protocol_packet_, HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
               data_handle();
             } else {
               LOG_WARNING<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>>CRC16 INVALID<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
@@ -123,7 +124,7 @@ void SerialCommRead::ComLoop() {
 }
 void SerialCommRead::data_handle() {
   std::lock_guard<std::mutex> guard(read_mutex_);
-  auto *p_header = (frame_header_t *) protocol_packet_;
+  auto *p_header = (FrameHeader *) protocol_packet_;
   uint16_t data_length = p_header->data_length;
   uint16_t cmd_id = *(uint16_t *) (protocol_packet_ + HEADER_LEN);
   uint8_t *data_addr = protocol_packet_ + HEADER_LEN + CMD_LEN;
@@ -155,7 +156,7 @@ void SerialCommRead::data_handle() {
       odom.pose.pose.position.y = y;
       odom.pose.pose.position.z = 0.0;
       geometry_msgs::Quaternion q = tf::createQuaternionMsgFromYaw(
-          chassis_information_.gyro_angle * 0.5 + chassis_information_.ecd_calc_angle * 0.5);
+          chassis_information_.gyro_angle * 0.5 + chassis_information_.ecd_angle * 0.5);
       odom.pose.pose.orientation = q;
       odom.twist.twist.linear.x = (double) chassis_information_.x_speed / 1000;
       odom.twist.twist.linear.y = (double) chassis_information_.y_speed / 1000;
@@ -214,22 +215,22 @@ void SerialCommRead::Stop() {
 }
 
 int SerialCommRead::ReceiveDate(int fd, int data_len) {
-  int len_received, fs_sel;
+  int received_length, selected;
   fd_set fs_read;
   struct timeval time;
   FD_ZERO(&fs_read);
   FD_SET(fd, &fs_read);
   time.tv_sec = 10;
   time.tv_usec = 0;
-  fs_sel = select(fd + 1, &fs_read, NULL, NULL, &time);
-  if (fs_sel > 0) {
-    len_received = read(fd, rx_buf_, data_len);
-  } else if (fs_sel == 0) {
+  selected = select(fd + 1, &fs_read, NULL, NULL, &time);
+  if (selected > 0) {
+    received_length = read(fd, rx_buf_, data_len);
+  } else if (selected == 0) {
     LOG_WARNING_EVERY(10000) << "Uart Timeout";
   } else {
     LOG_ERROR << "Select function error";
   }
-  return len_received;
+  return received_length;
 }
 
 } // namespace serial

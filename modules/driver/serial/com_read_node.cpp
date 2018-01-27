@@ -20,25 +20,19 @@
 
 int main(int argc,char* argv[]){
 
-  ros::init(argc, argv, "serial_read_node");
-  ros::NodeHandle nh;
-  ros::Publisher chatter_pub = nh.advertise<std_msgs::String>("bottom_info", 1000);
-  ros::Rate loop_rate(10);
-
-  google::InitGoogleLogging("serial_read_node");
+  google::InitGoogleLogging("SerialRead");
   google::SetStderrLogging(google::INFO);
 
-  rrts::driver::serial::SerialCommRead serialCommRead("COM");
+  ros::init(argc, argv, "serial_read_node");
+  ros::NodeHandle nh;
+  ros::Rate loop_rate(10);
+
+  rrts::driver::serial::SerialCommRead serialCommRead("Receive");
   serialCommRead.Init();
   serialCommRead.Run();
-  while(1) {
+  while(ros::ok()) {
     usleep(1000000);
     printf("Main Loop");
   }
-//  while(ros::ok()){
-//	ros::spinOnce();
-//	loop_rate.sleep();
-//  }
-//  serialCommRead.Stop();
   return 0;
 }

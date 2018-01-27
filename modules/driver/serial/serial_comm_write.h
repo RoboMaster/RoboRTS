@@ -69,21 +69,21 @@ class SerialCommWrite : public SerialComm {
   ros::Subscriber global_err_level_subscriber_;
   ros::Subscriber infantry_structure_subscriber_;
   ros::Subscriber cali_command_subscriber_;
-  void gimbal_ctrl_cb_(const messages::EnemyPosConstPtr &msg);
-  void chassis_ctrl_cb_(const geometry_msgs::Twist::ConstPtr &vel);
-  void shoot_cb_();
+  void GimbalControlCallback(const messages::EnemyPosConstPtr &msg);
+  void ChassisControlCallback(const geometry_msgs::Twist::ConstPtr &vel);
+  void ShootControlCallback();
   //TODO(krik zhang): make callbacks to receive the shoot control topic, infantry_structure, cali_command, etc.
   uint8_t tx_buf_[UART_BUFF_SIZE];
-  gimbal_ctrl_t gimbal_control_data_;
-  chassis_ctrl_t chassis_control_data_;
-  shoot_ctrl_t shoot_contorl_data_;
-  global_err_level_t global_error_data_;
-  infantry_structure_t infantry_structure_data_;
-  cali_cmd_t cali_command_data_;
+  GimbalControl gimbal_control_data_;
+  ChassisControl chassis_control_data_;
+  ShootControl shoot_contorl_data_;
+  GlobalErrorLevel global_error_data_;
+  InfantryStructure infantry_structure_data_;
+  CalibrateCommand cali_command_data_;
 };
 
 }// namespace serial
 }// namespace driver
 }// namespace rrts
 
-#endif //AUTO_PILOT_SERIAL_COMM_SERIAL_COMM_WRITE_H
+#endif //MODULES_DRIVER_SERIAL_SERIAL_COMM_WRITE_H

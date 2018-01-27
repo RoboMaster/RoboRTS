@@ -26,7 +26,7 @@ SerialComm::SerialComm(std::string name) : rrts::common::RRTS::RRTS(name) {}
 void SerialComm::Initialization() {
   SerialPortConfig serial_port_config_;
   CHECK(rrts::common::ReadProtoFromTextFile(
-      "modules/serial_comm/proto/serial_comm_config.prototxt",
+      "modules/driver/serial/config/serial_comm_config.prototxt",
       &serial_port_config_)) << "Error to load serial port config file";
   CHECK(serial_port_config_.has_serial_port())
   << "Serial port name not defined!";
@@ -43,8 +43,8 @@ void SerialComm::SerialInitialization(std::string port, int boudrate) {
 void SerialComm::SerialInitialization(std::string port,
                                       int boudrate,
                                       int flow_control,
-                                      int databits,
-                                      int stopbits,
+                                      int data_bits,
+                                      int stop_bits,
                                       int parity) {
   fd_ = open(port.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
   PCHECK(fd_ != -1) << "Serial port open failed!";
@@ -67,7 +67,7 @@ void SerialComm::SerialInitialization(std::string port,
       break;
   }
   termios_options_.c_cflag &= ~CSIZE;
-  switch (databits) {
+  switch (data_bits) {
     case 5    : termios_options_.c_cflag |= CS5;
       break;
     case 6    : termios_options_.c_cflag |= CS6;
@@ -104,7 +104,7 @@ void SerialComm::SerialInitialization(std::string port,
     default: LOG_FATAL << "Unsupported parity";
       return;
   }
-  switch (stopbits) {
+  switch (stop_bits) {
     case 1: termios_options_.c_cflag &= ~CSTOPB;
       break;
     case 2: termios_options_.c_cflag |= CSTOPB;
@@ -136,67 +136,67 @@ void SerialComm::ConfigBoudrate(int boudrate) {
   LOG_ERROR << "Boudrate set error.";
 }
 
-unsigned char SerialComm::Get_crc8_check_sum(unsigned char *pchMessage, unsigned int dwLength, unsigned char ucCRC8) {
-  unsigned char ucIndex;
-  while (dwLength--) {
-    ucIndex = ucCRC8 ^ (*pchMessage++);
-    ucCRC8 = CRC8_TAB[ucIndex];
+unsigned char SerialComm::GetCrcOctCheckSum(unsigned char *message, unsigned int length, unsigned char crc) {
+  unsigned char index;
+  while (length--) {
+    index = crc ^ (*message++);
+    crc = kCrcOctTable[index];
   }
-  return (ucCRC8);
+  return (crc);
 }
 
-uint16_t SerialComm::Verify_crc8_check_sum(uint8_t *pchMessage, uint16_t dwLength) {
-  unsigned char ucExpected = 0;
-  if ((pchMessage == 0) || (dwLength <= 2)) {
+uint16_t SerialComm::VerifyCrcOctCheckSum(uint8_t *message, uint16_t length) {
+  unsigned char expected = 0;
+  if ((message == 0) || (length <= 2)) {
     LOG_WARNING << "Verify CRC8 Return 0";
     return 0;
   }
-  ucExpected = Get_crc8_check_sum(pchMessage, dwLength - 1, CRC8_INIT);
-  return (ucExpected == pchMessage[dwLength - 1]);
+  expected = GetCrcOctCheckSum(message, length - 1, kCrc8);
+  return (expected == message[length - 1]);
 }
 
-void SerialComm::Append_crc8_check_sum(uint8_t *pchMessage, uint16_t dwLength) {
-  unsigned char ucCRC = 0;
-  if ((pchMessage == 0) || (dwLength <= 2)) {
+void SerialComm::AppendCrcOctCheckSum(uint8_t *message, uint16_t length) {
+  unsigned char crc = 0;
+  if ((message == 0) || (length <= 2)) {
     LOG_WARNING << "Append CRC8 NULL";
     return;
   };
-  ucCRC = Get_crc8_check_sum(pchMessage, dwLength - 1, CRC8_INIT);
-  pchMessage[dwLength - 1] = ucCRC;
+  crc = GetCrcOctCheckSum(message, length - 1, kCrc8);
+  message[length - 1] = crc;
 }
 
-uint16_t SerialComm::Get_crc16_check_sum(uint8_t *pchMessage, uint32_t dwLength, uint16_t wCRC) {
-  uint8_t chData;
-  if (pchMessage == NULL) {
+uint16_t SerialComm::GetCreHexCheckSum(uint8_t *message, uint32_t length, uint16_t crc) {
+  uint8_t data;
+  if (message == NULL) {
     return 0xFFFF;
   }
-  while (dwLength--) {
-    chData = *pchMessage++;
-    (wCRC) = ((uint16_t) (wCRC) >> 8) ^ wCRC_Table[((uint16_t) (wCRC) ^ (uint16_t) (chData)) & 0x00ff];
+  while (length--) {
+    data = *message++;
+    (crc) = ((uint16_t) (crc) >> 8) ^ kCrcTable[((uint16_t) (crc) ^ (uint16_t) (data)) & 0x00ff];
   }
-  return wCRC;
+  return crc;
 }
 
-uint32_t SerialComm::Verify_crc16_check_sum(uint8_t *pchMessage, uint32_t dwLength) {
-  uint16_t wExpected = 0;
+uint32_t SerialComm::VerifyCrcHexCheckSum(uint8_t *message, uint32_t length) {
+  uint16_t expected = 0;
 
-  if ((pchMessage == NULL) || (dwLength <= 2)) {
+  if ((message == NULL) || (length <= 2)) {
     LOG_WARNING << "Verify CRC16 bad";
     return 0;
   }
-  wExpected = Get_crc16_check_sum(pchMessage, dwLength - 2, CRC_INIT);
-  return ((wExpected & 0xff) == pchMessage[dwLength - 2] && ((wExpected >> 8) & 0xff) == pchMessage[dwLength - 1]);
+  expected = GetCreHexCheckSum(message, length - 2, kCrc);
+  return ((expected & 0xff) == message[length - 2] && ((expected >> 8) & 0xff) == message[length - 1]);
 }
 
-void SerialComm::Append_crc16_check_sum(uint8_t *pchMessage, uint32_t dwLength) {
-  uint16_t wCRC = 0;
-  if ((pchMessage == NULL) || (dwLength <= 2)) {
+void SerialComm::AppendCrcHexCheckSum(uint8_t *message, uint32_t length) {
+  uint16_t crc = 0;
+  if ((message == NULL) || (length <= 2)) {
     LOG_WARNING << "Append CRC 16 NULL";
     return;
   }
-  wCRC = Get_crc16_check_sum(pchMessage, dwLength - 2, CRC_INIT);
-  pchMessage[dwLength - 2] = (uint8_t) (wCRC & 0x00ff);
-  pchMessage[dwLength - 1] = (uint8_t) ((wCRC >> 8) & 0x00ff);
+  crc = GetCreHexCheckSum(message, length - 2, kCrc);
+  message[length - 2] = (uint8_t) (crc & 0x00ff);
+  message[length - 1] = (uint8_t) ((crc >> 8) & 0x00ff);
 }
 
 } //namespace serial

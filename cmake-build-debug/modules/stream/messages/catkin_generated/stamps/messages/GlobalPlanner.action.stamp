@@ -1,0 +1,11 @@
+#goal definition
+int32 command
+geometry_msgs/PoseStamped goal
+---
+#result definition RUNNING = 0, SUCCESS = 1, FAILURE = 2
+int32  error_code
+---
+#feedback
+nav_msgs/Path path
+int32  error_code
+string error_msg

@@ -56,9 +56,9 @@ class SerialCommRead : public SerialComm {
   void Stop();
 
   //TODO(krik zhang): make accesses to the received data.
-  void GetGameInfo(game_robot_state_t & game_info) {
+  void GetGameInfo(GameInfo & game_info) {
     read_mutex_.lock();
-    memcpy(&game_info, &game_information_, sizeof(game_robot_state_t));
+    memcpy(&game_info, &game_information_, sizeof(GameInfo));
     read_mutex_.unlock();
   }
 
@@ -71,39 +71,39 @@ class SerialCommRead : public SerialComm {
    * @param data_len Maximum data length
    * @return The real length of received data.
    */
-  int ReceiveDate(int fd, int data_len);
+  int ReceiveDate(int fd, int data_length);
+  void CommunicateLoop();
+  void data_handle();
 
   ros::NodeHandle nh_;
-  ros::Publisher odom_pub_ = nh_.advertise<nav_msgs::Odometry>("odom", 1);
+  ros::Publisher odom_pub_;
   tf::TransformBroadcaster tf_broadcaster_;
-  unpack_step_e unpack_step_e_;
+  UnpackStep unpack_step_e_;
   uint8_t rx_buf_[UART_BUFF_SIZE];
   uint8_t byte_, protocol_packet_[PROTOCAL_FRAME_MAX_SIZE];
   uint16_t data_length_;
   int32_t read_len_, read_buff_index_, index_;
   bool stop_loop_, time_to_process_;
-  void ComLoop();
 
-  void data_handle();
   std::thread *receive_loop_;
   std::mutex read_mutex_;
   uint16_t computer_cmd_id_;
-  frame_header_t computer_frame_header_;
-  game_robot_state_t game_information_;
-  robot_hurt_data_t robot_hurt_data_;
-  real_shoot_data_t real_shoot_data_;
-  rfid_detect_t rfid_data_;
-  game_result_t game_result_data_;
-  chassis_info_t chassis_information_;
-  gimbal_info_t gimbal_information_;
-  shoot_info_t shoot_task_data_;
-  infantry_err_t global_error_data_;
-  get_buff_t get_buff_data_;
-  server_to_user_t student_download_data_;
-  config_response_t config_response_data_;
-  cali_response_t cali_response_data_;
-  rc_info_t rc_info_data_;
-  version_info_t version_info_data_;
+  FrameHeader computer_frame_header_;
+  GameInfo game_information_;
+  HurtData robot_hurt_data_;
+  ShootData real_shoot_data_;
+  RfidData rfid_data_;
+  GameResult game_result_data_;
+  ChassisInfo chassis_information_;
+  GimbalInfo gimbal_information_;
+  ShootInfo shoot_task_data_;
+  InfantryError global_error_data_;
+  GameBuff get_buff_data_;
+  ServerToUser student_download_data_;
+  ConfigMessage config_response_data_;
+  CalibrateResponse cali_response_data_;
+  RcInfo rc_info_data_;
+  VersionInfo version_info_data_;
 };
 } //namespace serial
 } //namespace driver
