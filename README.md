@@ -1,4 +1,7 @@
 # RoboRTS
+[![Build Status](https://travis-ci.org/RoboMaster/RoboRTS.svg?branch=master)](https://travis-ci.org/RoboMaster/RoboRTS)
+[![Gitter](https://badges.gitter.im/RoboMaster/RoboRTS.svg)](https://gitter.im/RoboMaster/RoboRTS?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 RoboRTS is an open source software stack for Real-Time Strategy research on mobile robots, developed by RoboMaster. The Real-Time Strategy research that we focus on is multi-agent deep reinforcement learning based decision making.
 
 The motivation for this project is [RoboMaster AI Challenge](https://icra2018.org/dji-robomaster-ai-challenge/). In this robot challenge, multiple robots should fight with each other on a game field automatically. It would be very convenient to have a unified framework for them to integrate hardware components and implement algorithms.
@@ -38,7 +41,7 @@ Please follow [the installing and configuring ROS environment tutorial](http://w
 **Thirdparty Library**
 
 ```shell
-sudo apt-get install ros-kinetic-opencv3 ros-kinetic-cv-bridge ros-kinetic-image-transport ros-kinetic-stage-ros ros-kinetic-map-server ros-kinetic-laser-geometry ros-kinetic-interactive-markers ros-kinetic-rviz ros-kinetic-tf ros-kinetic-pcl-* ros-kinetic-libg2o protobuf-compiler libprotobuf-dev libsuitesparse-dev libgoogle-glog-dev
+sudo apt-get install ros-kinetic-opencv3 ros-kinetic-cv-bridge ros-kinetic-image-transport ros-kinetic-stage-ros ros-kinetic-map-server ros-kinetic-laser-geometry ros-kinetic-interactive-markers ros-kinetic-tf ros-kinetic-pcl-* ros-kinetic-libg2o protobuf-compiler libprotobuf-dev libsuitesparse-dev libgoogle-glog-dev ros-kinetic-rviz
 ```
 
 ### Build and Install

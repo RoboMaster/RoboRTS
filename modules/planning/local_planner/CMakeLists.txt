@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.0)
 project(local_planner)
 
 add_subdirectory(timed_elastic_band)

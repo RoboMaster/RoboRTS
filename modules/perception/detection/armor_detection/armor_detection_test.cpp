@@ -15,11 +15,12 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
+#include <ros/ros.h>
 #include "boost/thread.hpp"
 
-#include "auto_pilot/detection/armor_detection/armor_detection_base.h"
-#include "auto_pilot/detection/armor_detection/proto/armor_detection.pb.h"
-#include "auto_pilot/detection/armor_detection/armor_detection_algorithms.h"
+#include "modules/perception/detection/armor_detection/armor_detection_base.h"
+#include "modules/perception/detection/armor_detection/proto/armor_detection.pb.h"
+#include "modules/perception/detection/armor_detection/armor_detection_algorithms.h"
 
 #include "common/algorithm_factory.h"
 #include "common/io.h"
@@ -27,9 +28,10 @@
 
 using namespace rrts::perception::detection;
 
-int main() {
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "test");
   ArmorDetectionAlgorithms armor_detection_algorithms;
-  bool read_state = rrts::common::ReadProtoFromTextFile("auto_pilot/detection/armor_detection/config/armor_detection.prototxt",
+  bool read_state = rrts::common::ReadProtoFromTextFile("modules/perception/detection/armor_detection/config/armor_detection.prototxt",
                                                         &armor_detection_algorithms);
   if (!read_state) {
     LOG_ERROR << "Cannot open .prototxt file!";

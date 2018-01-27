@@ -75,7 +75,6 @@ ErrorInfo ConstraintSet::DetectArmor(std::vector<float> &translation, std::vecto
       show_armors_after_filter_ = src_img_.clone();
       cv::waitKey(1);
     }
-    std::cout << "haha" << std::endl;
 
     DetectLights(src_img_, lights);
     FilterLights(lights);
