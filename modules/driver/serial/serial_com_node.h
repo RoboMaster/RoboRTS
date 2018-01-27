@@ -128,16 +128,9 @@ class SerialComNode : public rrts::common::RRTS {
   void AppendCrcHexCheckSum(uint8_t *message, uint32_t length);
 
   /**
-   * @brief Serial port initialize with port name and boudrate.
-   * @param port Serial port name.
-   * @param boudrate Serial communication's boudrate.
+   * @brief Serial port initialize.
    */
-  bool SerialInitialization(std::string port);
-
-  /**
-   * @brief Serial port initialize fully.
-   */
-  bool SerialInitialization(std::string port, int flow_control, int data_bits, int stop_bits, int parity);
+  bool SerialInitialization(std::string port, int baudrate, int flow_control, int data_bits, int stop_bits, int parity);
 
   /**
    * @brief Set the  boudrate of the serial port
@@ -168,17 +161,18 @@ class SerialComNode : public rrts::common::RRTS {
   void ChassisControlCallback(const geometry_msgs::Twist::ConstPtr &vel);
   ros::Publisher odom_pub_;
   tf::TransformBroadcaster tf_broadcaster_;
+  //TODO(krik): add the error code and node state
   rrts::common::ErrorCode error_code_;
   rrts::common::NodeState node_state_;
   rrts::common::ErrorInfo error_info_;
   UnpackStep unpack_step_e_;
-  uint8_t rx_buf_[UART_BUFF_SIZE], tx_buf_[UART_BUFF_SIZE];
-  uint8_t byte_, protocol_packet_[PROTOCAL_FRAME_MAX_SIZE];
-  uint16_t data_length_;
+  uint8_t byte_, rx_buf_[UART_BUFF_SIZE], tx_buf_[UART_BUFF_SIZE],
+      protocol_packet_[PROTOCAL_FRAME_MAX_SIZE];
+  uint16_t data_length_, computer_cmd_id_;
   int32_t read_len_, read_buff_index_, index_;
   GimbalControl gimbal_control_data_;
   ChassisControl chassis_control_data_;
-  uint16_t computer_cmd_id_;
+
   FrameHeader computer_frame_header_;
   GameInfo game_information_;
   HurtData robot_hurt_data_;

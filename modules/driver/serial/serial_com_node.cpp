@@ -1,13 +1,13 @@
 #include <cmake-build-debug/devel/include/messages/EnemyPos.h>
 #include "modules/driver/serial/serial_com_node.h"
-#include "infantry_info.h"
+
 namespace rrts {
 namespace driver {
 namespace serial {
 SerialComNode::SerialComNode(std::string module_name)
     : rrts::common::RRTS::RRTS(module_name), fd_(0), is_open_(false), stop_receive_(true) {
   SerialPortConfig serial_port_config;
-  CHECK(rrts::common::ReadProtoFromTextFile("modules/driver/serial/config/serial_comm_config.prototxt",
+  CHECK(rrts::common::ReadProtoFromTextFile("modules/driver/serial/config/serial_com_config.prototxt",
                                             &serial_port_config))
   << "Error loading proto file for serial.";
   CHECK(serial_port_config.has_serial_port()) << "Not set port.";
@@ -17,17 +17,15 @@ SerialComNode::SerialComNode(std::string module_name)
   CHECK(Initialization()) << "Initialization error.";
   is_open_ = true;
   stop_receive_ = false;
+  printf("Seral node is here!");
 }
 
 bool SerialComNode::Initialization() {
-  return SerialInitialization(port_);
-}
-
-bool SerialComNode::SerialInitialization(std::string port) {
-  return SerialInitialization(port, 0, 8, 1, 'N');
+  return SerialInitialization(port_, baudrate_, 0, 8, 1, 'N');
 }
 
 bool SerialComNode::SerialInitialization(std::string port,
+                                         int baudrate,
                                          int flow_control,
                                          int data_bits,
                                          int stop_bits,
@@ -36,7 +34,7 @@ bool SerialComNode::SerialInitialization(std::string port,
   CHECK(fd_ != -1) << "Serial port open failed!";
   CHECK(fcntl(fd_, F_SETFL, 0) >= 0) << "Fcntl failed!";
   CHECK(tcgetattr(fd_, &termios_options_) == 0) << "Get serial attributes error!";
-  ConfigBaudrate(baudrate_);
+  ConfigBaudrate(baudrate);
   termios_options_.c_cflag |= CLOCAL;
   termios_options_.c_cflag |= CREAD;
   switch (flow_control) {
@@ -121,80 +119,86 @@ void SerialComNode::Run() {
   receive_loop_thread_ = new std::thread(boost::bind(&SerialComNode::ReceiveLoop, this));
   sub_cmd_gim_ = nh_.subscribe("enemy_pos", 1, &SerialComNode::GimbalControlCallback, this);
   sub_cmd_vel_ = nh_.subscribe("cmd_vel", 1, &SerialComNode::ChassisControlCallback, this);
+  ros::spin();
 }
 
 void SerialComNode::ReceiveLoop() {
-  while (!stop_receive_ && is_open_) {
-    read_buff_index_ = 0;
-    read_len_ = ReceiveData(fd_, UART_BUFF_SIZE);
-    while (read_len_--) {
-      byte_ = rx_buf_[read_buff_index_++];
-      switch (unpack_step_e_) {
-        case STEP_HEADER_SOF: {
-          if (byte_ == UP_REG_ID) {
-            protocol_packet_[index_++] = byte_;
-            unpack_step_e_ = STEP_LENGTH_LOW;
-          } else {
-            index_ = 0;
-          }
-        }
-          break;
-        case STEP_LENGTH_LOW: {
-          data_length_ = byte_;
-          protocol_packet_[index_++] = byte_;
-          unpack_step_e_ = STEP_LENGTH_HIGH;
-        }
-          break;
-        case STEP_LENGTH_HIGH: {
-          data_length_ |= (byte_ << 8);
-          protocol_packet_[index_++] = byte_;
-          if (data_length_ < (PROTOCAL_FRAME_MAX_SIZE - HEADER_LEN - CMD_LEN - CRC_LEN)) {
-            unpack_step_e_ = STEP_FRAME_SEQ;
-          } else {
-            unpack_step_e_ = STEP_HEADER_SOF;
-            index_ = 0;
-          }
-        }
-          break;
-        case STEP_FRAME_SEQ: {
-          protocol_packet_[index_++] = byte_;
-          unpack_step_e_ = STEP_HEADER_CRC8;
-        }
-          break;
-        case STEP_HEADER_CRC8: {
-          protocol_packet_[index_++] = byte_;
-          if ((index_ == HEADER_LEN) && VerifyCrcOctCheckSum(protocol_packet_, HEADER_LEN)) {
-            unpack_step_e_ = STEP_DATA_CRC16;
-          } else {
-            unpack_step_e_ = STEP_HEADER_SOF;
-            index_ = 0;
-          }
-        }
-          break;
-        case STEP_DATA_CRC16: {
-          if (index_ < (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
-            protocol_packet_[index_++] = byte_;
-          } else if (index_ > (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
-            LOG_WARNING << "Index Beyond";
-          }
-          if (index_ == (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
-            unpack_step_e_ = STEP_HEADER_SOF;
-            index_ = 0;
-            if (VerifyCrcHexCheckSum(protocol_packet_, HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
-              DataHandle();
+  while (is_open_) {
+    if (!stop_receive_) {
+      read_buff_index_ = 0;
+      read_len_ = ReceiveData(fd_, UART_BUFF_SIZE);
+      while (read_len_--) {
+        byte_ = rx_buf_[read_buff_index_++];
+        switch (unpack_step_e_) {
+          case STEP_HEADER_SOF: {
+            if (byte_ == UP_REG_ID) {
+              protocol_packet_[index_++] = byte_;
+              unpack_step_e_ = STEP_LENGTH_LOW;
             } else {
-              LOG_WARNING << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>CRC16 INVALID<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
+              index_ = 0;
             }
           }
+            break;
+          case STEP_LENGTH_LOW: {
+            data_length_ = byte_;
+            protocol_packet_[index_++] = byte_;
+            unpack_step_e_ = STEP_LENGTH_HIGH;
+          }
+            break;
+          case STEP_LENGTH_HIGH: {
+            data_length_ |= (byte_ << 8);
+            protocol_packet_[index_++] = byte_;
+            if (data_length_ < (PROTOCAL_FRAME_MAX_SIZE - HEADER_LEN - CMD_LEN - CRC_LEN)) {
+              unpack_step_e_ = STEP_FRAME_SEQ;
+            } else {
+              unpack_step_e_ = STEP_HEADER_SOF;
+              index_ = 0;
+            }
+          }
+            break;
+          case STEP_FRAME_SEQ: {
+            protocol_packet_[index_++] = byte_;
+            unpack_step_e_ = STEP_HEADER_CRC8;
+          }
+            break;
+          case STEP_HEADER_CRC8: {
+            protocol_packet_[index_++] = byte_;
+            if ((index_ == HEADER_LEN) && VerifyCrcOctCheckSum(protocol_packet_, HEADER_LEN)) {
+              unpack_step_e_ = STEP_DATA_CRC16;
+            } else {
+              unpack_step_e_ = STEP_HEADER_SOF;
+              index_ = 0;
+            }
+          }
+            break;
+          case STEP_DATA_CRC16: {
+            if (index_ < (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
+              protocol_packet_[index_++] = byte_;
+            } else if (index_ > (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
+              LOG_WARNING << "Index Beyond";
+            }
+            if (index_ == (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
+              unpack_step_e_ = STEP_HEADER_SOF;
+              index_ = 0;
+              if (VerifyCrcHexCheckSum(protocol_packet_, HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
+                DataHandle();
+              } else {
+                LOG_WARNING << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>CRC16 INVALID<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
+              }
+            }
+          }
+            break;
+          default: {
+            LOG_WARNING << "Unpack not well";
+            unpack_step_e_ = STEP_HEADER_SOF;
+            index_ = 0;
+          }
+            break;
         }
-          break;
-        default: {
-          LOG_WARNING << "Unpack not well";
-          unpack_step_e_ = STEP_HEADER_SOF;
-          index_ = 0;
-        }
-          break;
       }
+    }
+    else {
+      continue;
     }
   }
 }
@@ -211,8 +215,10 @@ int SerialComNode::ReceiveData(int fd, int data_length) {
   if (selected > 0) {
     received_length = read(fd, rx_buf_, data_length);
   } else if (selected == 0) {
+    received_length = 0;
     LOG_WARNING_EVERY(10000) << "Uart Timeout";
   } else {
+    received_length = 0;
     LOG_ERROR << "Select function error";
   }
   return received_length;
@@ -305,6 +311,7 @@ void SerialComNode::DataHandle() {
 }
 
 void SerialComNode::GimbalControlCallback(const messages::EnemyPosConstPtr &msg) {
+  std::unique_lock<std::mutex> lock(mutex_send_);
   gimbal_control_data_.ctrl_mode = GIMBAL_POSITION_MODE;
   gimbal_control_data_.pit_ref = msg->enemy_pitch;
   gimbal_control_data_.yaw_ref = msg->enemy_yaw;
@@ -319,6 +326,7 @@ void SerialComNode::GimbalControlCallback(const messages::EnemyPosConstPtr &msg)
 }
 
 void SerialComNode::ChassisControlCallback(const geometry_msgs::Twist::ConstPtr &vel) {
+  std::unique_lock<std::mutex> lock(mutex_send_);
   chassis_control_data_.ctrl_mode = AUTO_FOLLOW_GIMBAL;
   chassis_control_data_.x_speed = vel->linear.x * 1000.0;
   chassis_control_data_.y_speed = vel->linear.y * 1000.0;
