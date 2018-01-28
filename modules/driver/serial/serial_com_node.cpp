@@ -1,4 +1,4 @@
-#include <cmake-build-debug/devel/include/messages/EnemyPos.h>
+#include <messages/EnemyPos.h>
 #include "modules/driver/serial/serial_com_node.h"
 
 namespace rrts {
