@@ -34,8 +34,6 @@
 
 #include "common/algorithm_factory.h"
 #include "common/error_code.h"
-#include "common/io.h"
-#include "common/log.h"
 
 namespace rrts {
 namespace perception {

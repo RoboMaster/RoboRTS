@@ -40,14 +40,23 @@
 #define DLOG_WARNING DLOG(WARNING)
 
 #define LOG_WARNING_FIRST_N(times) LOG_FIRST_N(WARNING, times)
+
+#define NOTICE(text) {               \
+  static bool flag = true;           \
+  if(flag) {                         \
+    std::cout << text << std::endl;  \
+    flag = false;                    \
+  }                                  \
+}                                    \
+
 namespace rrts{
-namespace common{
+namespace common {
 
 class GLogWrapper {
  public:
   GLogWrapper(char* program) {
     google::InitGoogleLogging(program);
-    FLAGS_stderrthreshold=google::ERROR;
+    FLAGS_stderrthreshold=google::WARNING;
     FLAGS_colorlogtostderr=true;
     FLAGS_v = 3;
     google::InstallFailureSignalHandler();
@@ -58,7 +67,7 @@ class GLogWrapper {
     google::ShutdownGoogleLogging();
   }
 };
-}
-}
+} //namespace common
+} //namespace rrts
 
 #endif  // RRTS_COMMON_LOG_H_

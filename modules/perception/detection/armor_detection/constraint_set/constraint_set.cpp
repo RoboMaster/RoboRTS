@@ -18,8 +18,8 @@
 #include "modules/perception/detection/armor_detection/constraint_set/constraint_set.h"
 
 #include "common/timer.h"
-#include "common/error_code.h"
-#include "common/error_code.h"
+#include "common/io.h"
+#include "common/log.h"
 
 namespace rrts{
 namespace perception {
@@ -67,6 +67,7 @@ ErrorInfo ConstraintSet::DetectArmor(std::vector<float> &translation, std::vecto
 
   cv_toolbox_.NextImage(src_img_, camera_id_);
   if (!src_img_.empty()) {
+    NOTICE("Begin to detect armor!")
     cv::cvtColor(src_img_, gray_img_, CV_BGR2GRAY);
     if (enable_debug_) {
       show_lights_before_filter_ = src_img_.clone();
@@ -100,8 +101,9 @@ ErrorInfo ConstraintSet::DetectArmor(std::vector<float> &translation, std::vecto
     }
     lights.clear();
     armors.clear();
-  } else
-    std::cout << "Waiting for run camera driver..." << std::endl;
+  } else {
+    NOTICE("Waiting for run camera driver...")
+  }
   if (enable_debug_)
     TIMER_END(DetectArmor)
   return error_info_;

@@ -173,13 +173,12 @@ void ArmorDetectionNode::StopThread() {
   node_state_ = NodeState::IDLE;
   running_ = false;
   if (armor_detection_thread_.joinable()) {
-    LOG_INFO << __FUNCTION__ << " Called!";
     armor_detection_thread_.join();
   }
 }
 
 ArmorDetectionNode::~ArmorDetectionNode() {
-  running_ = false;
+  StopThread();
 }
 } //namespace detection
 } //namespace perception
