@@ -78,7 +78,7 @@ class CVToolbox {
    * @brief Get next new image.
    * @param src_img Output image
    */
-  void NextImage(cv::Mat &src_img, unsigned int camera_id) {
+  void NextImage(cv::Mat &src_img, int camera_id) {
     lock_.lock();
     image_buffer_.at(camera_id).at(read_index_.at(camera_id)).copyTo(src_img);
     lock_.unlock();

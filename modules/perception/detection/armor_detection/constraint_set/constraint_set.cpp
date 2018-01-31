@@ -60,7 +60,7 @@ void ConstraintSet::LoadParam() {
   armor_max_stddev_ = constraint_set_config_.threshold().armor_max_stddev();
 }
 
-ErrorInfo ConstraintSet::DetectArmor(std::vector<float> &translation, std::vector<float> &rotation) {
+ErrorInfo ConstraintSet::DetectArmor(std::vector<double> &translation, std::vector<double> &rotation) {
   TIMER_START(DetectArmor)
   std::vector<cv::RotatedRect> lights;
   std::vector<ArmorInfo> armors;
@@ -93,8 +93,8 @@ ErrorInfo ConstraintSet::DetectArmor(std::vector<float> &translation, std::vecto
                    rvec,
                    tvec);
       for (unsigned int i = 0; i < 3; i++) {
-        float trans_tmp = tvec.at<float>(i);
-        float rot_tmp = rvec.at<float>(i);
+        double trans_tmp = tvec.at<double>(i);
+        double rot_tmp = rvec.at<double>(i);
         translation.push_back(trans_tmp);
         rotation.push_back(rot_tmp);
       }
@@ -149,11 +149,6 @@ void ConstraintSet::DetectLights(const cv::Mat &src, std::vector<cv::RotatedRect
         }
       }
     }
-  }
-  if (enable_debug_) {
-    cv::imshow("binary_color_img", binary_color_img);
-    cv::imshow("binary_light_img", binary_light_img);
-    cv::imshow("lights_before_filter", show_lights_before_filter_);
   }
 }
 
@@ -326,10 +321,10 @@ void ConstraintSet::CalArmorInfo(std::vector<cv::Point2f> &armor_points,
 
 void ConstraintSet::SolveArmorCoordinate(const float width,
                                          const float height) {
-  armor_points_.emplace_back(cv::Point3f(0.0, 0.0, 0.0));
-  armor_points_.emplace_back(cv::Point3f(width, 0.0, 0.0));
+  armor_points_.emplace_back(cv::Point3f(0.0,   0.0,    0.0));
+  armor_points_.emplace_back(cv::Point3f(width, 0.0,    0.0));
   armor_points_.emplace_back(cv::Point3f(width, height, 0.0));
-  armor_points_.emplace_back(cv::Point3f(0.0, height, 0.0));
+  armor_points_.emplace_back(cv::Point3f(0.0,   height, 0.0));
 }
 
 ConstraintSet::~ConstraintSet() {

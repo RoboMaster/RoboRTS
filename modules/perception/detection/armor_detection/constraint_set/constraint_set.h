@@ -80,7 +80,7 @@ class ConstraintSet : public ArmorDetectionBase {
    * @param translation Translation information of the armor relative to the camera.
    * @param rotation Rotation information of the armor relative to the camera.
    */
-  ErrorInfo DetectArmor(std::vector<float> &translation, std::vector<float> &rotation) override;
+  ErrorInfo DetectArmor(std::vector<double> &translation, std::vector<double> &rotation) override;
   /**
    * @brief Detecting lights on the armors.
    * @param src Input image
@@ -130,7 +130,7 @@ class ConstraintSet : public ArmorDetectionBase {
   ErrorInfo error_info_;
 
   rrts::driver::camera::CameraParam cameras_;
-  unsigned int camera_id_;
+  int camera_id_;
   cv::VideoCapture cap_;
   CVToolbox cv_toolbox_;
 

@@ -117,8 +117,8 @@ void ArmorDetectionNode::ActionCB(const messages::ArmorDetectionGoal::ConstPtr &
 }
 
 void ArmorDetectionNode::ExecuteLoop() {
-  std::vector<float> translation;
-  std::vector<float> rotation;
+  std::vector<double> translation;
+  std::vector<double> rotation;
 
   while(running_) {
     if (node_state_ == NodeState::RUNNING) {
