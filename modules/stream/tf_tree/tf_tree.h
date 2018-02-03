@@ -35,13 +35,28 @@ namespace rrts {
 namespace stream {
 namespace tf_tree {
 
+class tf_node {
+ public:
+  tf_node(tf::Transform transform, std::string base, std::string sensor){
+    transform_ = transform;
+    base_      = base;
+    sensor_    = sensor;
+  }
+  ~tf_node(){}
+ public:
+  tf::Transform transform_;
+  std::string base_;
+  std::string sensor_;
+};
+
 class TFTree: public rrts::common::RRTS {
 public:
   explicit TFTree(std::string name);
   void Execute();
   template<typename T>
   void AddLeaf(const T *coordinate_trans);
-  void PubStaticTF(unsigned int tf_num, const std::vector<tf::StampedTransform> &stamped_transforms);
+
+  void PubStaticTF(unsigned int tf_num);
   ~TFTree() final;
  private:
   bool running_;
@@ -51,7 +66,8 @@ public:
 
   //ros
   tf::TransformBroadcaster tf_broadcaster_;
-  std::vector<tf::StampedTransform> stamped_transforms_;
+  tf::Transform transform_;
+  std::vector<tf_node> tf_nodes_;
 };
 
 } //namespace tf_tree
