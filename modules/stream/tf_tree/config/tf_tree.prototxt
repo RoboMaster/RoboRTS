@@ -1,7 +1,7 @@
 name: "rrts"
 transformation {
-  sensor: "lidar"
-  base: "base_foot_print"
+  sensor: "laser"
+  base: "base_link"
   rotation{
     pitch: 0.0
     yaw  : 0.0
@@ -16,7 +16,7 @@ transformation {
 
 transformation {
   sensor: "camera1"
-  base: "base_foot_print"
+  base: "base_link"
   rotation{
     pitch: 0.0
     yaw  : 0.0
