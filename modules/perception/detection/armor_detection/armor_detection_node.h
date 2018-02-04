@@ -95,8 +95,8 @@ class ArmorDetectionNode : public rrts::common::RRTS {
   std::condition_variable condition_var_;
 
   //enemy information
-  std::vector<float> translation_;
-  std::vector<float> rotation_;
+  std::vector<double> translation_;
+  std::vector<double> rotation_;
   bool detected_enemy_;
   unsigned long demensions_;
 

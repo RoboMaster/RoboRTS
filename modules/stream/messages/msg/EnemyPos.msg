@@ -1,3 +1,3 @@
-float32 enemy_dist
-float32 enemy_yaw
-float32 enemy_pitch
+float64 enemy_dist
+float64 enemy_yaw
+float64 enemy_pitch

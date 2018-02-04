@@ -36,35 +36,37 @@ TFTree::TFTree(std::string name): rrts::common::RRTS::RRTS(name) {
 void TFTree::Execute() {
   AddLeaf<CoordinateTrans>(coordinate_trans_);
   running_ = true;
-  tf_tree_thread_ = new std::thread(&TFTree::PubStaticTF, this, tf_num_, stamped_transforms_);
+  tf_tree_thread_ = new std::thread(&TFTree::PubStaticTF, this, tf_num_);
 }
 
 template<typename T>
 void TFTree::AddLeaf(const T *coordinate_trans) {
   for (unsigned int i = 0; i < tf_num_; i++) {
-    tf::Quaternion rotation =
-        tf::createQuaternionFromRPY(coordinate_trans->transformation(i).rotation().yaw(),
-                                    coordinate_trans->transformation(i).rotation().pitch(),
-                                    coordinate_trans->transformation(i).rotation().roll());
+    tf::Quaternion rotation(coordinate_trans->transformation(i).rotation().yaw(),
+                            coordinate_trans->transformation(i).rotation().pitch(),
+                            coordinate_trans->transformation(i).rotation().roll());
 
     tf::Vector3 transformation(coordinate_trans->transformation(i).translation().x(),
                                coordinate_trans->transformation(i).translation().y(),
                                coordinate_trans->transformation(i).translation().z());
 
     tf::Transform transform(rotation, transformation);
-    tf::StampedTransform stamped_transform(transform,
-                                           ros::Time::now(),
-                                           coordinate_trans->transformation(i).base(),
-                                           coordinate_trans->transformation(i).sensor());
-    stamped_transforms_.push_back(stamped_transform);
+    tf_node node(transform,
+                 coordinate_trans->transformation(i).base(),
+                 coordinate_trans->transformation(i).sensor());
+    tf_nodes_.push_back(node);
   }
 }
 
-void TFTree::PubStaticTF(unsigned int tf_num, const std::vector<tf::StampedTransform> &stamped_transforms) {
+void TFTree::PubStaticTF(unsigned int tf_num) {
   ros::Rate rate(20);
   while (running_) {
     for (unsigned int i = 0; i < tf_num; i++) {
-      tf_broadcaster_.sendTransform(stamped_transforms[i]);
+      tf::StampedTransform stamped_transform(tf_nodes_[i].transform_,
+                                             ros::Time::now(),
+                                             tf_nodes_[i].base_,
+                                             tf_nodes_[i].sensor_);
+      tf_broadcaster_.sendTransform(stamped_transform);
       rate.sleep();
     }
   }

@@ -36,7 +36,7 @@ void CameraParam::LoadCameraParam() {
   CHECK(read_state) << "Cannot open " << file_name;
 
   //camera number and ids
-  auto camera_num = camera_info.camera().size();
+  int camera_num = camera_info.camera().size();
   cameras_param_.resize(camera_num);
   for (unsigned int index = 0; index < camera_num; index++) {
     //camera id
@@ -50,20 +50,19 @@ void CameraParam::LoadCameraParam() {
 
     //camera matrix
     int camera_m_size = camera_info.camera(index).camera_matrix().data().size();
-    float camera_m[camera_m_size];
+    double camera_m[camera_m_size];
     std::copy(camera_info.camera(index).camera_matrix().data().begin(),
               camera_info.camera(index).camera_matrix().data().end(),
               camera_m);
-    cameras_param_[index].camera_matrix = cv::Mat(3, 3, CV_64F, camera_m);
+    cameras_param_[index].camera_matrix = cv::Mat(3, 3, CV_64F, camera_m).clone();
 
     //camera distortion
     int rows = camera_info.camera(index).camera_distortion().data_size();
-    float camera_dis[rows];
+    double camera_dis[rows];
     std::copy(camera_info.camera(index).camera_distortion().data().begin(),
               camera_info.camera(index).camera_distortion().data().end(),
               camera_dis);
-    cameras_param_[index].camera_distortion = cv::Mat(rows, 1, CV_64F, camera_dis);
-
+    cameras_param_[index].camera_distortion = cv::Mat(rows, 1, CV_64F, camera_dis).clone();
   }
 }
 void CameraParam::GetCameraParam(std::vector<CameraInfo> &cameras_param) {

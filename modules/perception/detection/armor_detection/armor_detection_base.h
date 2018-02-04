@@ -31,7 +31,7 @@ class ArmorDetectionBase {
  public:
   ArmorDetectionBase();
   virtual void LoadParam();
-  virtual ErrorInfo DetectArmor(std::vector<float> &translation, std::vector<float> &rotation) = 0;
+  virtual ErrorInfo DetectArmor(std::vector<double> &translation, std::vector<double> &rotation) = 0;
   virtual ~ArmorDetectionBase() = default;
 };
 } //namespace detection

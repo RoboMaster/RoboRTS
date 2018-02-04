@@ -1,11 +1,3 @@
-﻿------
-
-[TOC]
-
-------
-
-
-
 ## Protocol Specifications
 
 ### Protocol Data
@@ -98,16 +90,16 @@ typedef enum
 } gimbal_mode_e;
 ```
 
-| Gimbal Mode                     | Function                        |
-| ------------------------ | --------------------------- |
+| Gimbal Mode              | Function                                 |
+| ------------------------ | ---------------------------------------- |
 | GIMBAL_RELAX             | Gimbal powers off                        |
-| GIMBAL_INIT              | Gimbal is being restored from the power off status                   |
-| GIMBAL_NO_ARTI_INPUT     | No manual control data input mode available                 |
-| GIMBAL_FOLLOW_ZGYRO      | The mode in which the gimbal follows the chassis                    |
+| GIMBAL_INIT              | Gimbal is being restored from the power off status |
+| GIMBAL_NO_ARTI_INPUT     | No manual control data input mode available |
+| GIMBAL_FOLLOW_ZGYRO      | The mode in which the gimbal follows the chassis |
 | **GIMBAL_TRACK_ARMOR**   | Gimbal tracks armor                      |
 | **GIMBAL_PATROL_MODE**   | Patrol mode, the gimbal yaws periodically, pitch uncontrolled |
 | **GIMBAL_SHOOT_BUFF**    | Shooting buff mode                       |
-| **GIMBAL_POSITION_MODE** | Gimbal position mode, angle between two axes controlled on an upper layer           |
+| **GIMBAL_POSITION_MODE** | Gimbal position mode, angle between two axes controlled on an upper layer |
 
 ### Chassis
 
@@ -124,15 +116,15 @@ typedef enum
 } chassis_mode_e;
 ```
 
-| Chassis mode                     | Function                 |
-| ------------------------ | -------------------- |
-| CHASSIS_RELAX            | Chassis powers off                 |
-| CHASSIS_STOP             | Chassis stops/brakes              |
-| MANUAL_SEPARATE_GIMBAL   | The chassis is separated from the gimbal in manual mode           |
-| MANUAL_FOLLOW_GIMBAL     | The chassis follows the gimbal in manual mode           |
+| Chassis mode             | Function                                 |
+| ------------------------ | ---------------------------------------- |
+| CHASSIS_RELAX            | Chassis powers off                       |
+| CHASSIS_STOP             | Chassis stops/brakes                     |
+| MANUAL_SEPARATE_GIMBAL   | The chassis is separated from the gimbal in manual mode |
+| MANUAL_FOLLOW_GIMBAL     | The chassis follows the gimbal in manual mode |
 | **DODGE_MODE**           | Chassis dodge mode, the chassis rotates around a fixed point while panning is uncontrolled |
 | **AUTO_SEPARATE_GIMBAL** | The chassis is separated from the gimbal, and rotation and panning are controlled on an upper layer |
-| **AUTO_FOLLOW_GIMBAL**   | Automatically follow the gimbal; panning is controlled on an upper layer       |
+| **AUTO_FOLLOW_GIMBAL**   | Automatically follow the gimbal; panning is controlled on an upper layer |
 
 ### Launching Mechanism
 
@@ -147,13 +139,13 @@ typedef enum
 } shoot_mode_e;
 ```
 
-| Launching Mechanism Mode             | Function                 |
-| ------------------ | -------------------- |
-| SHOT_DISABLE       | Launching mechanism power off               |
-| REMOTE_CTRL_SHOT   | A remote control is used to control a launching mechanism            |
-| KEYBOARD_CTRL_SHOT | A keyboard is used to control a launching mechanism             |
-| SEMIAUTO_CTRL_SHOT | Single shot or automatic firing is controlled on an upper layer            |
-| **AUTO_CTRL_SHOT** | Friction wheel rune, speed, single shot and automatic firing are fully controlled on an upper layer |
+| Launching Mechanism Mode | Function                                 |
+| ------------------------ | ---------------------------------------- |
+| SHOT_DISABLE             | Launching mechanism power off            |
+| REMOTE_CTRL_SHOT         | A remote control is used to control a launching mechanism |
+| KEYBOARD_CTRL_SHOT       | A keyboard is used to control a launching mechanism |
+| SEMIAUTO_CTRL_SHOT       | Single shot or automatic firing is controlled on an upper layer |
+| **AUTO_CTRL_SHOT**       | Friction wheel rune, speed, single shot and automatic firing are fully controlled on an upper layer |
 
 
 
@@ -177,12 +169,12 @@ typedef __packed struct
 ```
 
 
-| Frame Header        | Number of Bytes | Detailed Description                               |
-| :---------- | :--- | :--------------------------------- |
-| sof         | 1    | Domain ID of data, domain for main control module and Referee System: 0xA5; upper layer domain for main control module and PC: 0xA0 |
-| data_length | 2    | Data length per frame                       |
-| seq         | 1    | Packet sequence number, retained in the 0xA0 domain                      |
-| crc8        | 1    | CRC check result of frame header                         |
+| Frame Header | Number of Bytes | Detailed Description                     |
+| :----------- | :-------------- | :--------------------------------------- |
+| sof          | 1               | Domain ID of data, domain for main control module and Referee System: 0xA5; upper layer domain for main control module and PC: 0xA0 |
+| data_length  | 2               | Data length per frame                    |
+| seq          | 1               | Packet sequence number, retained in the 0xA0 domain |
+| crc8         | 1               | CRC check result of frame header         |
 
 *Note:*
 
@@ -194,9 +186,9 @@ The data in the 0xA0 domain is the communication data from an upper layer PC and
 
 ### 2. Command Code
 
-| Command Code   | Number of Bytes |
-| :---- | :--- |
-| cmdid | 2    |
+| Command Code | Number of Bytes |
+| :----------- | :-------------- |
+| cmdid        | 2               |
 
 A command code corresponds to a frame of data containing specific information. The following shows command codes corresponding to all existing data.
 
@@ -237,34 +229,34 @@ typedef enum
 
 Data transmission direction and specific features of command codes are as follows:
 
-| Command Code    | Transmission Direction    | Functional Description             | Frequency             |
-| :----- | :------ | :--------------- | :------------- |
-| 0x0001 | Main control module > PC | Robot status in competition         | Referee System 10 Hz       |
-| 0x0002 | Main control module > PC | Real-time damage data           | Transmitted when hit        |
-| 0x0003 | Main control module > PC | Real-time launching data           | Referee system           |
-| 0x0005 | Main control module > PC | Field interaction data           | Transmitted when an IC card is detected     |
-| 0x0006 | Main control module > PC | Competition result data           | Transmitted when competition ends        |
-| 0x0007 | Main control module > PC | Obtain buff data       | Referee System           |
-|        |         |                  |                |
-| 0x0010 | Main control module > PC | Robot chassis-related information        | Fixed 50Hz         |
-| 0x0011 | Main control module > PC | Robot gimbal-related information        | Fixed 50Hz         |
-| 0x0012 | Main control module > PC | Robot launching task information        | Fixed 50Hz         |
-| 0x0013 | Main control module > PC | Robot chassis fault information        | Fixed 50Hz         |
-| 0x0014 | Main control module > PC | Robot structure configuration status feedback      | Fixed 50Hz         |
-| 0x0015 | Main control module > PC | Robot gimbal calibration feedback        | Transmitted once when valid calibration information is received |
-| 0x0016 | Main control module > PC | Parsed remote control information        | Fixed 50Hz         |
-| 0x0017 | Main control module > PC | Underlying software version information         | Fixed 1Hz          |
-|        |         |                  |                |
-| 0x00A0 | PC > main control module | Gimbal control information           | Fixed 50Hz         |
-| 0x00A1 | PC > main control module | Chassis control information           | Fixed 50Hz         |
-| 0x00A2 | PC > main control module | Launching mechanism control information         | Fixed 50Hz         |
-| 0x00A3 | PC > main control module | Warning level when a PC encounters a runtime error      | Transmitted if an error occurs         |
-| 0x00A4 | PC > main control module | Robot structure configuration information        | Generally during a period of time before power on     |
-| 0x00A5 | PC > main control module | Gimbal calibration information         | Transmitted when Gimbal calibration is required      |
-|        |         |                  |                |
-| 0x0100 | PC > main control module | Data that must be forwarded by a PC to be displayed on a client side | Fixed frequency (Hz)         |
-| 0x0101 | PC > main control module | Data that must be forwarded by a PC to a client side   | Fixed frequency (Hz)         |
-| 0x0102 | Main control module > PC | Data from a client to a PC      | Forwarded when there is data         |
+| Command Code | Transmission Direction   | Functional Description                   | Frequency                                |
+| :----------- | :----------------------- | :--------------------------------------- | :--------------------------------------- |
+| 0x0001       | Main control module > PC | Robot status in competition              | Referee System 10 Hz                     |
+| 0x0002       | Main control module > PC | Real-time damage data                    | Transmitted when hit                     |
+| 0x0003       | Main control module > PC | Real-time launching data                 | Referee system                           |
+| 0x0005       | Main control module > PC | Field interaction data                   | Transmitted when an IC card is detected  |
+| 0x0006       | Main control module > PC | Competition result data                  | Transmitted when competition ends        |
+| 0x0007       | Main control module > PC | Obtain buff data                         | Referee System                           |
+|              |                          |                                          |                                          |
+| 0x0010       | Main control module > PC | Robot chassis-related information        | Fixed 50Hz                               |
+| 0x0011       | Main control module > PC | Robot gimbal-related information         | Fixed 50Hz                               |
+| 0x0012       | Main control module > PC | Robot launching task information         | Fixed 50Hz                               |
+| 0x0013       | Main control module > PC | Robot chassis fault information          | Fixed 50Hz                               |
+| 0x0014       | Main control module > PC | Robot structure configuration status feedback | Fixed 50Hz                               |
+| 0x0015       | Main control module > PC | Robot gimbal calibration feedback        | Transmitted once when valid calibration information is received |
+| 0x0016       | Main control module > PC | Parsed remote control information        | Fixed 50Hz                               |
+| 0x0017       | Main control module > PC | Underlying software version information  | Fixed 1Hz                                |
+|              |                          |                                          |                                          |
+| 0x00A0       | PC > main control module | Gimbal control information               | Fixed 50Hz                               |
+| 0x00A1       | PC > main control module | Chassis control information              | Fixed 50Hz                               |
+| 0x00A2       | PC > main control module | Launching mechanism control information  | Fixed 50Hz                               |
+| 0x00A3       | PC > main control module | Warning level when a PC encounters a runtime error | Transmitted if an error occurs           |
+| 0x00A4       | PC > main control module | Robot structure configuration information | Generally during a period of time before power on |
+| 0x00A5       | PC > main control module | Gimbal calibration information           | Transmitted when Gimbal calibration is required |
+|              |                          |                                          |                                          |
+| 0x0100       | PC > main control module | Data that must be forwarded by a PC to be displayed on a client side | Fixed frequency (Hz)                     |
+| 0x0101       | PC > main control module | Data that must be forwarded by a PC to a client side | Fixed frequency (Hz)                     |
+| 0x0102       | Main control module > PC | Data from a client to a PC               | Forwarded when there is data             |
 
 *Notes:*
 
@@ -272,9 +264,9 @@ Command code 0x0100/0x0101 is the data transmitted by a PC to the main control m
 
 ### 3. Data
 The data structure corresponding to a command code ID. Data length is the size of this structure.
-| Data   | Number of Bytes        |
-| :--- | :---------- |
-| data | data_length |
+| Data | Number of Bytes |
+| :--- | :-------------- |
+| data | data_length     |
 
 #### Class 1
 
@@ -301,20 +293,20 @@ typedef __packed struct
 } game_robot_state_t;
 ```
 
-| Data                | Description            |
-| :---------------- | ------------- |
+| Data              | Description                              |
+| :---------------- | ---------------------------------------- |
 | stage_remain_time | Remaining time in the current round (seconds) |
-| game_process      | Current stage        |
-|                   | 0: pre-competition stage      |
-|                   | 1: preparation stage       |
-|                   | 2: initialization stage       |
-|                   | 3: 5-second countdown     |
-|                   | 4: in combat        |
-|                   | 5: calculating competition results      |
-| reserved          | Bits reserved           |
-| remain_hp         | Robot's current HP       |
-| max_hp            | Robot's maximum HP        |
-| position          | Position/angle information       |
+| game_process      | Current stage                            |
+|                   | 0: pre-competition stage                 |
+|                   | 1: preparation stage                     |
+|                   | 2: initialization stage                  |
+|                   | 3: 5-second countdown                    |
+|                   | 4: in combat                             |
+|                   | 5: calculating competition results       |
+| reserved          | Bits reserved                            |
+| remain_hp         | Robot's current HP                       |
+| max_hp            | Robot's maximum HP                       |
+| position          | Position/angle information               |
 
 *Note:*
 
@@ -331,15 +323,15 @@ typedef __packed struct
 } position_t;
 ```
 
-| Data         | Description           |
-| ---------- | ------------ |
+| Data       | Description                              |
+| ---------- | ---------------------------------------- |
 | valid_flag | Position/angle information effective zone bit |
-|            | 0: Invalid        |
-|            | 1: Valid        |
-| x          | X value of location     |
-| y          | Y value of location     |
-| z          | Z value of location     |
-| yaw        | Barrel direction angle value      |
+|            | 0: Invalid                               |
+|            | 1: Valid                                 |
+| x          | X value of location                      |
+| y          | Y value of location                      |
+| z          | Z value of location                      |
+| yaw        | Barrel direction angle value             |
 
 ##### 0x0002 damage data
 
@@ -364,19 +356,19 @@ typedef __packed struct
 } robot_hurt_data_t;
 ```
 
-| Data                      | Description                          |
-| ----------------------- | --------------------------- |
+| Data                                     | Description                              |
+| ---------------------------------------- | ---------------------------------------- |
 | armor_type (ID of the armor receiving an attack) | 0-3 bits: indicate the armor ID if the type of change is armor damage |
-|                         | 0x00: armor #0 (front)            |
-|                         | 0x01: armor #1 (left)            |
-|                         | 0x02: armor #2 (rear)            |
-|                         | 0x03: armor #3 (right)            |
-|                         | Other bits reserved                        |
-| hurt_type (HP deduction type)         | 4-7 bits: type of HP changes             |
-|                         | 0x0: armor damage (attack received)             |
-|                         | 0x1: module offline                   |
-|                         | 0x2: projectile exceeds launching speed limit                   |
-|                         | 0x3: projectile exceeds launching rate limit                   |
+|                                          | 0x00: armor #0 (front)                   |
+|                                          | 0x01: armor #1 (left)                    |
+|                                          | 0x02: armor #2 (rear)                    |
+|                                          | 0x03: armor #3 (right)                   |
+|                                          | Other bits reserved                      |
+| hurt_type (HP deduction type)            | 4-7 bits: type of HP changes             |
+|                                          | 0x0: armor damage (attack received)      |
+|                                          | 0x1: module offline                      |
+|                                          | 0x2: projectile exceeds launching speed limit |
+|                                          | 0x3: projectile exceeds launching rate limit |
 
 ##### 0x0003 real-time launching
 
@@ -392,12 +384,12 @@ typedef __packed struct
 } real_shoot_data_t;
 ```
 
-| Data           | Description   |
-| ------------ | ---- |
-| reserved     | Reserved   |
-| bullet_freq  | projectile launching rate |
+| Data         | Description                |
+| ------------ | -------------------------- |
+| reserved     | Reserved                   |
+| bullet_freq  | projectile launching rate  |
 | bullet_speed | projectile launching speed |
-| reserved     | Reserved   |
+| reserved     | Reserved                   |
 
 ##### 0x0005 field interaction
 
@@ -411,11 +403,11 @@ typedef __packed struct
 } rfid_detect_t;
 ```
 
-| Data        | Description             |
-| --------- | -------------- |
-| card_type | Card type            |
-|           | 0: Attack buff card       |
-|           | 1: Defense buff card       |
+| Data      | Description                              |
+| --------- | ---------------------------------------- |
+| card_type | Card type                                |
+|           | 0: Attack buff card                      |
+|           | 1: Defense buff card                     |
 | card_idx  | Card index number; used to distinguish different sections |
 
 ##### 0x0006 competition result
@@ -429,12 +421,12 @@ typedef __packed struct
 } game_result_t;
 ```
 
-| Data     | Description     |
-| ------ | ------ |
-| winner | Competition result   |
-|        | 0: Draw  |
-|        | 1: Red team wins |
-|        | 2: Blue team wins |
+| Data   | Description        |
+| ------ | ------------------ |
+| winner | Competition result |
+|        | 0: Draw            |
+|        | 1: Red team wins   |
+|        | 2: Blue team wins  |
 
 ##### 0x0007 obtained buff
 
@@ -448,12 +440,12 @@ typedef __packed struct
 } get_buff_t;
 ```
 
-| Data            | Description      |
-| ------------- | ------- |
-| buff_type     | Buff type  |
-|               | 0: Attack buff |
+| Data          | Description     |
+| ------------- | --------------- |
+| buff_type     | Buff type       |
+|               | 0: Attack buff  |
 |               | 1: Defense buff |
-| buff_addition | Buff percentage   |
+| buff_addition | Buff percentage |
 
 #### Class 2
 
@@ -476,17 +468,17 @@ typedef __packed struct
 } chassis_info_t;
 ```
 
-| Data             | Description                      |
-| -------------- | ----------------------- |
-| ctrl_mode      | Chassis control mode                 |
-| gyro_palstance | Chassis angular velocity measured by using a single-shaft module (degree/s)  |
-| gyro_angle     | Chassis angle measured by using a single-shaft module (degree)     |
+| Data           | Description                              |
+| -------------- | ---------------------------------------- |
+| ctrl_mode      | Chassis control mode                     |
+| gyro_palstance | Chassis angular velocity measured by using a single-shaft module (degree/s) |
+| gyro_angle     | Chassis angle measured by using a single-shaft module (degree) |
 | ecd_palstance  | Chassis angular velocity calculated by using a chassis encoder (degree/s) |
-| ecd_calc_angle | Chassis angle calculated by using a chassis encoder (degree)    |
-| x_speed        | Chassis x-axis motion speed (mm/s)        |
-| y_speed        | Chassis y-axis motion speed (mm/s)        |
-| x_position     | The coordinate position of the chassis x-axis relative to the origin (mm)    |
-| y_position     | The coordinate position of the chassis y-axis relative to the origin (mm)    |
+| ecd_calc_angle | Chassis angle calculated by using a chassis encoder (degree) |
+| x_speed        | Chassis x-axis motion speed (mm/s)       |
+| y_speed        | Chassis y-axis motion speed (mm/s)       |
+| x_position     | The coordinate position of the chassis x-axis relative to the origin (mm) |
+| y_position     | The coordinate position of the chassis y-axis relative to the origin (mm) |
 
 *Note:*
 
@@ -509,15 +501,15 @@ typedef __packed struct
 } gimbal_info_t;
 ```
 
-| Data                 | Description                        |
-| ------------------ | ------------------------- |
-| ctrl_mode          | Gimbal control mode                   |
+| Data               | Description                              |
+| ------------------ | ---------------------------------------- |
+| ctrl_mode          | Gimbal control mode                      |
 | pit_relative_angle | The angle of the pitch axis relative to the midpoint of the gimbal (degree) |
-| yaw_relative_angle | The angle of the yaw axis relative to the midpoint of the gimbal (degree)   |
-| pit_absolute_angle | The angle of the pitch axis relative to the ground (degree)   |
-| yaw_absolute_angle | The angle of the yaw axis relative to the ground (degree)     |
-| pit_palstance      | Angular velocity of the pitch axis (degree/s)      |
-| yaw_palstance      | Angular velocity of the yaw axis (degree/s)        |
+| yaw_relative_angle | The angle of the yaw axis relative to the midpoint of the gimbal (degree) |
+| pit_absolute_angle | The angle of the pitch axis relative to the ground (degree) |
+| yaw_absolute_angle | The angle of the yaw axis relative to the ground (degree) |
+| pit_palstance      | Angular velocity of the pitch axis (degree/s) |
+| yaw_palstance      | Angular velocity of the yaw axis (degree/s) |
 
 ##### 0x0012 launching mechanism
 
@@ -532,11 +524,11 @@ typedef __packed struct
 } shoot_info_t;
 ```
 
-| Data             | Description       |
-| -------------- | -------- |
-| remain_bullets | Number of remaining projectiles  |
-| shot_bullets   | Number of shot projectiles |
-| fric_wheel_run | Whether a friction wheel is running  |
+| Data           | Description                         |
+| -------------- | ----------------------------------- |
+| remain_bullets | Number of remaining projectiles     |
+| shot_bullets   | Number of shot projectiles          |
+| fric_wheel_run | Whether a friction wheel is running |
 
 ##### 0x0013 underlying error
 
@@ -550,9 +542,9 @@ typedef __packed struct
 } infantry_err_t;
 ```
 
-| Data                     | Description          |
-| ---------------------- | ----------- |
-| err_sta                | Global status of underlying layer devices    |
+| Data                   | Description                              |
+| ---------------------- | ---------------------------------------- |
+| err_sta                | Global status of underlying layer devices |
 | err[ERROR_LIST_LENGTH] | Operating status of all devices and mechanisms |
 
 *Note:*
@@ -604,8 +596,8 @@ typedef __packed struct
 } config_response_t;
 ```
 
-| Data             | Description          |
-| -------------- | ----------- |
+| Data           | Description                              |
+| -------------- | ---------------------------------------- |
 | chassis_config | Active structure configuration for the chassis |
 | gimbal_config  | Active structure configuration for the gimbal |
 
@@ -637,10 +629,10 @@ typedef __packed struct
 } cali_response_t;
 ```
 
-| Data           | Description                      |
-| ------------ | ----------------------- |
-| type         | Configuration succeeds or not (1: Yes 0: No)     |
-| yaw_offset   | Encoder value in the midpoint of the yaw axis (0 ~ 8191)   |
+| Data         | Description                              |
+| ------------ | ---------------------------------------- |
+| type         | Configuration succeeds or not (1: Yes 0: No) |
+| yaw_offset   | Encoder value in the midpoint of the yaw axis (0 ~ 8191) |
 | pitch_offset | Encoder value in the midpoint of the pitch axis (0 ~ 8191) |
 
 ##### 0x0016 remote control information
@@ -695,11 +687,11 @@ typedef __packed struct
 } rc_info_t;
 ```
 
-| Data        | Description                                       |
+| Data      | Description                              |
 | --------- | ---------------------------------------- |
-| ch1 ~ ch4 | Data from 4 rocker channels of the remote control, data range (-660 ~ 660)            |
-| sw1 ~ sw2 | Data of 2 rockers of the remote control (upper: 1, middle: 3, lower: 2)                   |
-| mouse     | Mouse data, mouse x and y movement speeds, left and right key values                     |
+| ch1 ~ ch4 | Data from 4 rocker channels of the remote control, data range (-660 ~ 660) |
+| sw1 ~ sw2 | Data of 2 rockers of the remote control (upper: 1, middle: 3, lower: 2) |
+| mouse     | Mouse data, mouse x and y movement speeds, left and right key values |
 | key_code  | Keyboard key value; for available keys, bit in the union kb corresponds to key_code |
 
 ##### 0x0017 underlying layer version
@@ -713,8 +705,8 @@ typedef __packed struct
 } version_info_t;
 ```
 
-| Data     | Description    |
-| ------ | ----- |
+| Data   | Description            |
+| ------ | ---------------------- |
 | num[4] | Storage version number |
 
 #### Class 3
@@ -733,12 +725,12 @@ typedef __packed struct
 } chassis_ctrl_t;
 ```
 
-| Data        | Description                  |
-| --------- | ------------------- |
-| ctrl_mode | To control the operating mode of the chassis           |
+| Data      | Description                              |
+| --------- | ---------------------------------------- |
+| ctrl_mode | To control the operating mode of the chassis |
 | x_speed   | To control the chassis x-axis motion speed (mm/s) |
 | y_speed   | To control the chassis y-axis motion speed (mm/s) |
-| w_info    | To control the rotation of the chassis             |
+| w_info    | To control the rotation of the chassis   |
 
 *Note:*
 
@@ -769,11 +761,11 @@ typedef __packed struct
 } gimbal_ctrl_t;
 ```
 
-| Data           | Description                        |
-| ------------ | ------------------------- |
-| ctrl_mode    | To control the operating mode of the gimbal                 |
-| pit_ref      | The target angle of the pitch axis relative to the midpoint         |
-| yaw_ref      | The target angle of the yaw axis relative to the midpoint           |
+| Data         | Description                              |
+| ------------ | ---------------------------------------- |
+| ctrl_mode    | To control the operating mode of the gimbal |
+| pit_ref      | The target angle of the pitch axis relative to the midpoint |
+| yaw_ref      | The target angle of the yaw axis relative to the midpoint |
 | visual_valid | A significance bit of visual information used to check whether the gimbal control data at that moment is trustworthy |
 
 ##### 0x00A2 launching mechanism control
@@ -790,11 +782,11 @@ typedef __packed struct
 } shoot_ctrl_t;
 ```
 
-| Data             | Description                 |
-| -------------- | ------------------ |
-| shoot_cmd      | Single shot command               |
-| c_shoot_cmd    | Automatic firing command               |
-| fric_wheel_run | Turn on/off a friction wheel, 0: off, 1: on      |
+| Data           | Description                              |
+| -------------- | ---------------------------------------- |
+| shoot_cmd      | Single shot command                      |
+| c_shoot_cmd    | Automatic firing command                 |
+| fric_wheel_run | Turn on/off a friction wheel, 0: off, 1: on |
 | fric_wheel_spd | Speed of a friction wheel, ranging from 0 to 100 |
 
 ##### 0x00A3 global error
@@ -808,8 +800,8 @@ typedef __packed struct
 } global_err_level_t;
 ```
 
-| Data        | Description                      |
-| --------- | ----------------------- |
+| Data      | Description                              |
+| --------- | ---------------------------------------- |
 | err_level | Refer mainly to data in the err_level_e type |
 
 *Note:*
@@ -852,13 +844,13 @@ typedef __packed struct
 } infantry_structure_t;
 ```
 
-| Data              | Description                     |
-| --------------- | ---------------------- |
-| chassis_config  | Chassis structure configuration status               |
-| wheel_perimeter | Wheel perimeter of the chassis (mm)            |
-| wheel_track     | Wheel track of the chassis (mm)              |
-| wheel_base      | Wheel base of the chassis (mm)              |
-| gimbal_config   | Gimbal structure configuration status               |
+| Data            | Description                              |
+| --------------- | ---------------------------------------- |
+| chassis_config  | Chassis structure configuration status   |
+| wheel_perimeter | Wheel perimeter of the chassis (mm)      |
+| wheel_track     | Wheel track of the chassis (mm)          |
+| wheel_base      | Wheel base of the chassis (mm)           |
+| gimbal_config   | Gimbal structure configuration status    |
 | gimbal_x_offset | The distance from the position where the gimbal is installed to the x axis on the center of the chassis (mm) |
 | gimbal_y_offset | The distance from the position where the gimbal is installed to the y axis on the center of the chassis (mm) |
 
@@ -878,13 +870,13 @@ typedef __packed struct
 } cali_cmd_t;
 ```
 
-| Data   | Description             |
-| ---- | -------------- |
-| type | Calibration type           |
+| Data | Description                              |
+| ---- | ---------------------------------------- |
+| type | Calibration type                         |
 |      | 0x01: start calibrating the midpoint of the gimbal |
 |      | 0x02: stop calibrating the midpoint of the gimbal |
-|      | 0x03: start calibrating the camera   |
-|      | 0x04: stop calibrating the camera   |
+|      | 0x03: start calibrating the camera       |
+|      | 0x04: stop calibrating the camera        |
 
 #### Class 4
 
@@ -901,8 +893,8 @@ typedef __packed struct
 } client_show_data_t;
 ```
 
-| Data    | Description     |
-| ----- | ------ |
+| Data  | Description       |
+| ----- | ----------------- |
 | data1 | Customized data 1 |
 | data2 | Customized data 2 |
 | data3 | Customized data 3 |
@@ -918,8 +910,8 @@ typedef __packed struct
 } user_to_server_t;
 ```
 
-| Data       | Description          |
-| -------- | ----------- |
+| Data     | Description               |
+| -------- | ------------------------- |
 | data[64] | Customized data, up to 64 |
 
 ##### 0x0102 forward to decision-making PC
@@ -933,16 +925,16 @@ typedef __packed struct
 } server_to_user_t;
 ```
 
-| Data       | Description          |
-| -------- | ----------- |
+| Data     | Description               |
+| -------- | ------------------------- |
 | data[32] | Customized data, up to 32 |
 
 ### 4. Frame footer data
 
 The CRC16 check result of each frame of data is stored in this location.
-| Frame footer  | Number of Bytes |
-| :---- | :--- |
-| CRC16 | 2    |
+| Frame footer | Number of Bytes |
+| :----------- | :-------------- |
+| CRC16        | 2               |
 
 
 

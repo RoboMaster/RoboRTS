@@ -101,9 +101,6 @@ class AlgorithmFactory
                                                         Args... args) {
     AlgorithmHash& algorithm_hash = GetAlgorithmHash();
 
-    for(auto iter: algorithm_hash) {
-      std::cout << iter.first;
-    }
     auto factory_iter = algorithm_hash.find(algorithm_name);
     if(factory_iter == algorithm_hash.end()){
       std::cout << "Can't creat algorithm " << algorithm_name <<
