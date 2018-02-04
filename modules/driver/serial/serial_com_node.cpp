@@ -1,3 +1,4 @@
+#include <math.h>
 #include <messages/EnemyPos.h>
 #include "modules/driver/serial/serial_com_node.h"
 
@@ -89,10 +90,13 @@ bool SerialComNode::SerialInitialization(std::string port,
     default: LOG_FATAL << "Unsupported stop bits";
       return false;
   }
+  termios_options_.c_iflag |= IGNBRK;
+  termios_options_.c_oflag = 0;
+  termios_options_.c_lflag = 0;
   termios_options_.c_oflag &= ~OPOST;
   termios_options_.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
   termios_options_.c_cc[VTIME] = 1;
-  termios_options_.c_cc[VMIN] = 1;
+  termios_options_.c_cc[VMIN] = 60;
   tcflush(fd_, TCIFLUSH);
   CHECK_EQ(tcsetattr(fd_, TCSANOW, &termios_options_), 0)
     << "Set serial attributes error!";
@@ -257,13 +261,11 @@ void SerialComNode::DataHandle() {
       odom.pose.pose.position.x = x;
       odom.pose.pose.position.y = y;
       odom.pose.pose.position.z = 0.0;
-      geometry_msgs::Quaternion q = tf::createQuaternionMsgFromYaw(
-          chassis_information_.gyro_angle * 0.5 + chassis_information_.ecd_angle * 0.5);
+      geometry_msgs::Quaternion q = tf::createQuaternionMsgFromYaw(chassis_information_.gyro_angle / 180.0 * M_PI);
       odom.pose.pose.orientation = q;
       odom.twist.twist.linear.x = (double) chassis_information_.x_speed / 1000;
       odom.twist.twist.linear.y = (double) chassis_information_.y_speed / 1000;
-      odom.twist.twist.angular.z =
-          (double) (chassis_information_.gyro_palstance + chassis_information_.ecd_palstance) / 2;
+      odom.twist.twist.angular.z = (double) (chassis_information_.gyro_palstance / 180.0 * M_PI );
       odom_pub_.publish(odom);
       geometry_msgs::TransformStamped odom_tf;
       odom_tf.header.frame_id = "odom";

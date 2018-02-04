@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC   -O3 -DNDEBUG   -shared -Wl,-soname,librrts.so -o librrts.so CMakeFiles/rrts.dir/rrts.cpp.o 
