@@ -13,10 +13,10 @@ function ProcessDetection() {
 }
 
 gnome-terminal --window -e 'bash -c "roslaunch ${ROBORTS_PATH}/tools/stage/simulator_test.launch;exec bash"' \
-ProcessDetection simulator.launch
+ProcessDetection simulator_test.launch
 rst=$?
 while [ "$rst" = "0" ]; do
-    ProcessDetection simulator.launch
+    ProcessDetection simulator_test.launch
     rst=$?
     sleep 1
 done
