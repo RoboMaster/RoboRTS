@@ -32,7 +32,8 @@ namespace serial {
 #define CRC_LEN      2
 #define PROTOCAL_FRAME_MAX_SIZE  200
 #define UART_BUFF_SIZE           2000
-
+#define PACK_MAX_SIZE            200
+#define COMPRESS_TIME            1
 /**
   * @brief  command id
   */
