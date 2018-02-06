@@ -3,11 +3,12 @@ package rrts.driver.serial;
 message SerialPortConfig {
     required string serial_port = 1;
     required int32 serial_boudrate = 2;
-    optional int32 flow_control= 3[default = 0];
-    optional int32 databits = 4[default = 8];
-    optional int32 stopbits = 5[default = 1];
-    optional string parity = 6[default = 'N'];
-    optional bool is_debug = 7[default = true];
+    optional int32 flow_control = 3 [default = 0];
+    optional int32 databits = 4 [default = 8];
+    optional int32 stopbits = 5 [default = 1];
+    optional string parity = 6 [default = 'N'];
+    optional bool is_debug = 7 [default = true];
+    optional bool is_simulator = 8 [default = false];
 }
 
 
