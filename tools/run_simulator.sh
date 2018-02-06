@@ -11,12 +11,23 @@ function ProcessDetection() {
         return 0
     fi
 }
-# rm_icra or rm_field
-gnome-terminal --window -e 'bash -c "roslaunch ${ROBORTS_PATH}/tools/stage/rm_field.launch;exec bash"' \
-ProcessDetection rm_field.launch
+
+MAP="rm"
+INPUT_MAP="$1"
+if [ ! -z "$INPUT_MAP" ]
+then
+  if [ -e "${ROBORTS_PATH}/tools/map/"$INPUT_MAP".yaml" ]
+  then 
+    MAP="$INPUT_MAP"
+  fi
+fi  
+echo "Open map ${MAP}"
+
+gnome-terminal --window -e "bash -c \"roslaunch ${ROBORTS_PATH}/tools/simulator/simulator.launch map:=${MAP};exec bash\"" \
+ProcessDetection simulator.launch
 rst=$?
 while [ "$rst" = "0" ]; do
-    ProcessDetection rm_field.launch
+    ProcessDetection simulator.launch
     rst=$?
     sleep 1
 done

@@ -1,7 +1,7 @@
 odom_frame_id        : "odom"
 base_frame_id        : "base_link"
 global_frame_id      : "map"
-laser_topic_name     : "base_scan"
+laser_topic_name     : "scan"
 map_topic_name       : "map"
 init_pose_topic_name : "initialpose"
 transform_tolerance  : 0.1
