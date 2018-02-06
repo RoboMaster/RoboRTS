@@ -27,7 +27,7 @@ SerialComNode::SerialComNode(std::string module_name)
   pack_length_ = 0;
   total_length_ = 0;
   free_length_ = UART_BUFF_SIZE;
-  odom_pub_ = nh_.advertise<nav_msgs::Odometry>("Odom", 30);
+  odom_pub_ = nh_.advertise<nav_msgs::Odometry>("odom", 30);
 }
 
 bool SerialComNode::Initialization() {
@@ -262,7 +262,6 @@ int SerialComNode::ReceiveData(int fd, int data_length) {
     received_length = read(fd, rx_buf_, data_length);
   } else if (selected == 0) {
     received_length = 0;
-    LOG_WARNING << "Uart Timeout";
   } else {
     received_length = 0;
     LOG_ERROR << "Select function error";
