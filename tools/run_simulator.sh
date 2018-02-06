@@ -11,12 +11,12 @@ function ProcessDetection() {
         return 0
     fi
 }
-
-gnome-terminal --window -e 'bash -c "roslaunch ${ROBORTS_PATH}/tools/stage/simulator_test.launch;exec bash"' \
-ProcessDetection simulator_test.launch
+# rm_icra or rm_field
+gnome-terminal --window -e 'bash -c "roslaunch ${ROBORTS_PATH}/tools/stage/rm_field.launch;exec bash"' \
+ProcessDetection rm_field.launch
 rst=$?
 while [ "$rst" = "0" ]; do
-    ProcessDetection simulator_test.launch
+    ProcessDetection rm_field.launch
     rst=$?
     sleep 1
 done

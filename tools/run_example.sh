@@ -12,15 +12,17 @@ function ProcessDetection() {
     fi
 }
 
-gnome-terminal --window -e 'bash -c "roslaunch ${ROBORTS_PATH}/tools/stage/simulator.launch;exec bash"' \
-ProcessDetection simulator.launch
+gnome-terminal --window -e 'bash -c "roslaunch ${ROBORTS_PATH}/tools/stage/simulator_test.launch;exec bash"' \
+ProcessDetection simulator_test.launch
 rst=$?
 while [ "$rst" = "0" ]; do
-    ProcessDetection simulator.launch
+    ProcessDetection simulator_test.launch
     rst=$?
     sleep 1
 done
 
+gnome-terminal --window -e 'bash -c "cd ${ROBORTS_PATH};./build/modules/driver/serial/serial_com_node;exec bash"' \
+gnome-terminal --window -e 'bash -c "cd ${ROBORTS_PATH};./build/modules/stream/tf_tree/tf_tree;exec bash"' \
 gnome-terminal --window -e 'bash -c "cd ${ROBORTS_PATH};./build/modules/perception/localization/localization_node;exec bash"' \
 gnome-terminal --window -e 'bash -c "cd ${ROBORTS_PATH};./build/modules/planning/global_planner/global_planner_node;exec bash"' \
 gnome-terminal --window -e 'bash -c "cd ${ROBORTS_PATH};./build/modules/planning/local_planner/local_planner_node;exec bash"' \

@@ -60,7 +60,7 @@ window
 floorplan
 ( 
   name "RoboMaster Map"
-  bitmap "rm_ai_challenge_5cm.pgm"
+  bitmap "rm_icra_5cm.pgm"
   size [8.1 5.1 1.000]
   pose [4.05  2.55  0 0 ]
 )
