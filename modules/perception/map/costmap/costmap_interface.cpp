@@ -59,19 +59,19 @@ namespace map {
 CostmapInterface::CostmapInterface(std::string map_name,
                                    tf::TransformListener &tf,
                                    std::string config_file) :
-  layered_costmap_(nullptr),
-  name_(map_name),
-  tf_(tf),
-  config_file_(config_file),
-  stop_updates_(false),
-  initialized_(true),
-  stopped_(false),
-  robot_stopped_(false),
-  map_update_thread_(NULL),
-  last_publish_(0),
-  dist_behind_robot_threshold_to_care_obstacles_(0.05),
-  is_debug_(false),
-  map_update_thread_shutdown_(false) {
+    layered_costmap_(nullptr),
+    name_(map_name),
+    tf_(tf),
+    config_file_(config_file),
+    stop_updates_(false),
+    initialized_(true),
+    stopped_(false),
+    robot_stopped_(false),
+    map_update_thread_(NULL),
+    last_publish_(0),
+    dist_behind_robot_threshold_to_care_obstacles_(0.05),
+    is_debug_(false),
+    map_update_thread_shutdown_(false) {
   std::string tf_error;
   ros::NodeHandle private_nh(map_name);
   LoadParameter();
@@ -82,8 +82,6 @@ CostmapInterface::CostmapInterface(std::string map_name,
          ros::Duration(0.01), &tf_error)) {
     ros::spinOnce();
     if (last_error + ros::Duration(5.0) < ros::Time::now()) {
-      LOG_WARNING<< "Timed out waiting for transform from %s to %s to become available before running map, tf error: %s",
-          robot_base_frame_.c_str(), global_frame_.c_str(), tf_error.c_str();
       last_error = ros::Time::now();
     }
     tf_error.clear();
@@ -189,7 +187,6 @@ void CostmapInterface::SetUnpaddedRobotFootprint(const std::vector<geometry_msgs
 void CostmapInterface::DetectMovement(const ros::TimerEvent &event) {
   tf::Stamped<tf::Pose> new_pose;
   if (!GetRobotPose(new_pose)) {
-    LOG_WARNING << "Could not get robot pose, cancelling reconfiguration";
     robot_stopped_ = false;
   } else if (fabs((old_pose_.getOrigin() - new_pose.getOrigin()).length()) < 1e-3 \
  && fabs(old_pose_.getRotation().angle(new_pose.getRotation())) < 1e-3) {
@@ -202,8 +199,8 @@ void CostmapInterface::DetectMovement(const ros::TimerEvent &event) {
 }
 
 void CostmapInterface::MapUpdateLoop(double frequency) {
-  if (frequency == 0.0) {
-    LOG_ERROR_EVERY(10) << "Frequency must be positive in MapUpdateLoop.";
+  if (frequency <= 0.0) {
+    LOG_ERROR << "Frequency must be positive in MapUpdateLoop.";
   }
   ros::NodeHandle nh;
   ros::Rate r(frequency);
@@ -215,7 +212,7 @@ void CostmapInterface::MapUpdateLoop(double frequency) {
     r.sleep();
     if (r.cycleTime() > ros::Duration(1 / frequency)) {
       if (is_debug_) {
-        LOG_WARNING<< "Map update loop missed its desired rate of %.4fHz... the loop actually took %.4f seconds", \
+        LOG_WARNING << "Map update loop missed its desired rate of %.4fHz... the loop actually took %.4f seconds", \
             frequency, r.cycleTime().toSec();
       }
     }
@@ -328,7 +325,7 @@ bool CostmapInterface::GetRobotPose(tf::Stamped<tf::Pose> &global_pose) const {
     tf_.transformPose(global_frame_, robot_pose, global_pose);
   }
   catch (tf::LookupException &ex) {
-    LOG_ERROR << "No Transform available Error looking up robot pose: " << ex.what();
+    LOG_ERROR << "No Transform Error looking up robot pose: " << ex.what();
     return false;
   }
   catch (tf::ConnectivityException &ex) {
@@ -361,7 +358,6 @@ bool CostmapInterface::GetRobotPose(geometry_msgs::PoseStamped &global_pose) con
 void CostmapInterface::GetOrientedFootprint(std::vector<geometry_msgs::Point> &oriented_footprint) const {
   tf::Stamped<tf::Pose> global_pose;
   if (!GetRobotPose(global_pose)) {
-    LOG_WARNING << "Cannot get robot pose";
     return;
   }
   double yaw = tf::getYaw(global_pose.getRotation());
@@ -408,44 +404,39 @@ geometry_msgs::PoseStamped CostmapInterface::Pose2GlobalFrame(const geometry_msg
   poseStampedMsgToTF(pose_msg, tf_pose);
 
   tf_pose.stamp_ = ros::Time();
-
   try {
     tf_.transformPose(global_frame_, tf_pose, global_tf_pose);
   }
   catch (tf::TransformException &ex) {
-    LOG_WARNING << "Failed to transform the goal pose from " << tf_pose.frame_id_.c_str() << " into the "
-                << global_frame_.c_str() << " frame: " << ex.what();
     return pose_msg;
   }
-
   geometry_msgs::PoseStamped global_pose_msg;
   tf::poseStampedTFToMsg(global_tf_pose, global_pose_msg);
   return global_pose_msg;
 }
 
 void CostmapInterface::ClearCostMap() {
-  std::vector<Layer* >* plugins = layered_costmap_ -> GetPlugins();
+  std::vector<Layer *> *plugins = layered_costmap_->GetPlugins();
   tf::Stamped<tf::Pose> pose;
-  if(GetRobotPose(pose) == false){
-        LOG_ERROR<<"Can not get robot pose!";
-        return;
+  if (GetRobotPose(pose) == false) {
+    return;
   }
   double pose_x = pose.getOrigin().x();
   double pose_y = pose.getOrigin().y();
 
-  for (std::vector<rrts::perception::map::Layer* >::iterator plugin_iter = plugins->begin();
-     plugin_iter != plugins->end();
-     ++plugin_iter) {
-    rrts::perception::map::Layer* plugin = *plugin_iter;
-    if(plugin->GetName().find("obstacle")!=std::string::npos){
-      CostmapLayer* costmap_layer_ptr = (CostmapLayer*)plugin;
+  for (std::vector<rrts::perception::map::Layer *>::iterator plugin_iter = plugins->begin();
+       plugin_iter != plugins->end();
+       ++plugin_iter) {
+    rrts::perception::map::Layer *plugin = *plugin_iter;
+    if (plugin->GetName().find("obstacle") != std::string::npos) {
+      CostmapLayer *costmap_layer_ptr = (CostmapLayer *) plugin;
       ClearLayer(costmap_layer_ptr, pose_x, pose_y);
     }
 
   }
 }
 
-void CostmapInterface::ClearLayer(CostmapLayer* costmap_layer_ptr, double pose_x, double pose_y){
+void CostmapInterface::ClearLayer(CostmapLayer *costmap_layer_ptr, double pose_x, double pose_y) {
   boost::unique_lock<Costmap2D::mutex_t> lock(*(costmap_layer_ptr->GetMutex()));
   double reset_distance = 0.1;
   double start_point_x = pose_x - reset_distance / 2;
@@ -457,15 +448,15 @@ void CostmapInterface::ClearLayer(CostmapLayer* costmap_layer_ptr, double pose_x
   costmap_layer_ptr->World2MapNoBoundary(start_point_x, start_point_y, start_x, start_y);
   costmap_layer_ptr->World2MapNoBoundary(end_point_x, end_point_y, end_x, end_y);
 
-  unsigned char* grid = costmap_layer_ptr->GetCharMap();
-  for(int x=0; x<(int)costmap_layer_ptr->GetSizeXCell(); x++){
-    bool xrange = x>start_x && x<end_x;
+  unsigned char *grid = costmap_layer_ptr->GetCharMap();
+  for (int x = 0; x < (int) costmap_layer_ptr->GetSizeXCell(); x++) {
+    bool xrange = x > start_x && x < end_x;
 
-    for(int y=0; y<(int)costmap_layer_ptr->GetSizeYCell(); y++){
-      if(xrange && y>start_y && y<end_y)
+    for (int y = 0; y < (int) costmap_layer_ptr->GetSizeYCell(); y++) {
+      if (xrange && y > start_y && y < end_y)
         continue;
-      int index = costmap_layer_ptr->GetIndex(x,y);
-      if(grid[index]!=NO_INFORMATION){
+      int index = costmap_layer_ptr->GetIndex(x, y);
+      if (grid[index] != NO_INFORMATION) {
         grid[index] = NO_INFORMATION;
       }
     }

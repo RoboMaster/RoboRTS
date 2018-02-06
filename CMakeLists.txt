@@ -36,7 +36,7 @@ find_package(SUITESPARSE REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(PCL 1.7 REQUIRED)
 find_package(Glog REQUIRED)
-find_package(ProtoBuf REQUIRED)
+find_package(ProtoBuf 2.6 REQUIRED)
 
 add_subdirectory(modules/stream/messages)
 list(APPEND catkin_INCLUDE_DIRS ${msg_INCLUDE_DIRS})

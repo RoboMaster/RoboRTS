@@ -90,7 +90,6 @@ void InflationLayer::OnInitialize() {
   common::ReadProtoFromTextFile(layered_costmap_->GetFilePath().c_str(), &para_inflation);
   inflation_radius = para_inflation.inflation_radius();
   cost_scaling_factor = para_inflation.cost_scaling_factor();
-//  LOG_INFO<<"Inflation layer parameter inflation_radius, cost_scaling_factor: "<<inflation_radius<<", "<<cost_scaling_factor;
   need_reinflation_ = false;
   SetInflationParameters(inflation_radius, cost_scaling_factor);
   is_enabled_ = true;
