@@ -1,29 +1,39 @@
-#point {
-#  x: 7
-#  y: 0.7
-#  z: 0
-#
-#  roll:  0
-#  pitch: 0
-#  yaw:   0
-#}
-#
-#point {
-#  x: 1
-#  y: 4.6
-#  z: 0
+point {
+  x: 2.5
+  y: 16
+  z: 0
 
-#  roll:  0
-#  pitch: 0
-#  yaw:   0
-#}
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
 
-#point {
-#  x: 7
-#  y: 4
-#  z: 0
+point {
+  x: 13
+  y: 8.25
+  z: 0
 
-#  roll:  0
-#  pitch: 0
-#  yaw:   0
-#}
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+point {
+  x: 1.8
+  y: 5.0
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+point {
+  x: 11
+  y: 11
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
