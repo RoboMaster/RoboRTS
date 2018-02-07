@@ -166,30 +166,63 @@ class SerialComNode : public rrts::common::RRTS {
    */
   bool ConfigBaudrate(int boudrate);
 
+  /**
+   * @brief The thread function for getting data from embedded platform
+   */
   void ReceiveLoop();
 
+  /**
+   * @brief Basic receive
+   * @param fd The file discription to get data from.
+   * @param data_length The max number of data to receive
+   * @return The actual number of bytes received
+   */
   int ReceiveData(int fd, int data_length);
 
+  /**
+   * @brief Unpacking the package message
+   */
   void DataHandle();
 
+  /**
+   * @brief Pack raw information to message
+   */
   void SendDataHandle(uint16_t cmd_id, uint8_t *topack_data, uint8_t *packed_data, uint16_t len);
 
+  /**
+   * @brief Send packed data
+   */
   int SendData(int data_len);
 
+  /**
+   * @brief Keyboard input to debug
+   */
+  void ListenClick();
+
+  /**
+   * @brief Callback of enemy position message
+   */
+  void GimbalControlCallback(const messages::EnemyPosConstPtr &msg);
+
+  /**
+   * @brief Callback of chassis control(cmd_vel) message
+   */
+  void ChassisControlCallback(const geometry_msgs::Twist::ConstPtr &vel);
+
+  /**
+   * @brief The thread function for sending data.
+   */
+  void SendPack();
+
   int fd_, baudrate_, length_, pack_length_, total_length_, free_length_, key_, valid_key_;
-  struct termios termios_options_;
+  struct termios termios_options_, termios_options_original_;
   std::string port_;
   std::thread *receive_loop_thread_, *send_loop_thread_, *keyboard_in_;
   std::mutex mutex_receive_, mutex_send_, mutex_pack_;
   bool is_open_, stop_receive_, stop_send_, is_sim_, is_debug_;
-
   ros::NodeHandle nh_;
   //TODO(krik): use actionlib and add more subscribers, more publishers.
   ros::Subscriber sub_cmd_vel_, sub_cmd_gim_;
-  void ListenClick();
-  void GimbalControlCallback(const messages::EnemyPosConstPtr &msg);
-  void ChassisControlCallback(const geometry_msgs::Twist::ConstPtr &vel);
-  void SendPack();
   ros::Publisher odom_pub_;
   tf::TransformBroadcaster tf_broadcaster_;
   //TODO(krik): add the error code and node state
