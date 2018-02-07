@@ -9,7 +9,7 @@ namespace rrts {
 namespace driver {
 namespace serial {
 SerialComNode::SerialComNode(std::string module_name)
-    : rrts::common::RRTS::RRTS(module_name), fd_(0), is_open_(false), stop_receive_(true) {
+    : rrts::common::RRTS::RRTS(module_name), fd_(0), is_open_(false), stop_receive_(true), stop_send_(true) {
   SerialPortConfig serial_port_config;
   CHECK(rrts::common::ReadProtoFromTextFile("modules/driver/serial/config/serial_com_config.prototxt",
                                             &serial_port_config))
@@ -43,9 +43,11 @@ bool SerialComNode::SerialInitialization(std::string port,
   fd_ = open(port.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
   CHECK(fd_ != -1) << "Serial port open failed!";
   CHECK(tcgetattr(fd_, &termios_options_) == 0) << "Get serial attributes error!";
+  termios_options_original_ = termios_options_;
   ConfigBaudrate(baudrate);
   termios_options_.c_cflag |= CLOCAL;
   termios_options_.c_cflag |= CREAD;
+  termios_options_.c_cflag &= ~CSIZE;
   switch (flow_control) {
     case 0 :termios_options_.c_cflag &= ~CRTSCTS;
       break;
@@ -56,15 +58,14 @@ bool SerialComNode::SerialInitialization(std::string port,
     default: termios_options_.c_cflag &= ~CRTSCTS;
       break;
   }
-  termios_options_.c_cflag &= ~CSIZE;
   switch (data_bits) {
-    case 5    : termios_options_.c_cflag |= CS5;
+    case 5 :termios_options_.c_cflag |= CS5;
       break;
-    case 6    : termios_options_.c_cflag |= CS6;
+    case 6 :termios_options_.c_cflag |= CS6;
       break;
-    case 7    : termios_options_.c_cflag |= CS7;
+    case 7 :termios_options_.c_cflag |= CS7;
       break;
-    case 8    : termios_options_.c_cflag |= CS8;
+    case 8 :termios_options_.c_cflag |= CS8;
       break;
     default: LOG_FATAL << "Unsupported data size";
       return false;
@@ -139,106 +140,102 @@ void SerialComNode::Run() {
 
 void SerialComNode::ListenClick() {
   static struct termios oldt, newt;
-  while (is_sim_) {
-    usleep(10000);
-    static struct termios oldt, newt;
-    tcgetattr(STDIN_FILENO, &oldt);           // save old settings
+  while (is_sim_ && ros::ok()) {
+    usleep(1000);
+    tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
-    newt.c_lflag &= ~(ICANON);                 // disable buffering
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);  // apply new settings
-    key_ = getchar();  // read character (non-blocking)
+    newt.c_lflag &= ~(ICANON);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    key_ = getchar();
     if (key_ != 10) {
       valid_key_ = key_;
     }
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);  // restore old settings
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
   }
 }
 
 void SerialComNode::ReceiveLoop() {
-  while (is_open_) {
-    if (!stop_receive_) {
-      read_buff_index_ = 0;
-      read_len_ = ReceiveData(fd_, UART_BUFF_SIZE);
-      if (read_len_ > 0)
-        while (read_len_--) {
-          byte_ = rx_buf_[read_buff_index_++];
-          switch (unpack_step_e_) {
-            case STEP_HEADER_SOF: {
-              if (byte_ == UP_REG_ID) {
-                protocol_packet_[index_++] = byte_;
-                unpack_step_e_ = STEP_LENGTH_LOW;
-              } else {
-                index_ = 0;
-              }
-            }
-              break;
-            case STEP_LENGTH_LOW: {
-              data_length_ = byte_;
+  while (is_open_ && !stop_receive_ && ros::ok()) {
+    read_buff_index_ = 0;
+    read_len_ = ReceiveData(fd_, UART_BUFF_SIZE);
+    if (read_len_ > 0) {
+      while (read_len_--) {
+        byte_ = rx_buf_[read_buff_index_++];
+        switch (unpack_step_e_) {
+          case STEP_HEADER_SOF: {
+            if (byte_ == UP_REG_ID) {
               protocol_packet_[index_++] = byte_;
-              unpack_step_e_ = STEP_LENGTH_HIGH;
+              unpack_step_e_ = STEP_LENGTH_LOW;
+            } else {
+              index_ = 0;
             }
-              break;
-            case STEP_LENGTH_HIGH: {
-              data_length_ |= (byte_ << 8);
-              protocol_packet_[index_++] = byte_;
-              if (data_length_ < (PROTOCAL_FRAME_MAX_SIZE - HEADER_LEN - CMD_LEN - CRC_LEN)) {
-                unpack_step_e_ = STEP_FRAME_SEQ;
-              } else {
-                LOG_WARNING << "Data length too big";
-                unpack_step_e_ = STEP_HEADER_SOF;
-                index_ = 0;
-              }
-            }
-              break;
-            case STEP_FRAME_SEQ: {
-              protocol_packet_[index_++] = byte_;
-              unpack_step_e_ = STEP_HEADER_CRC8;
-            }
-              break;
-            case STEP_HEADER_CRC8: {
-              protocol_packet_[index_++] = byte_;
-              bool crc8_result = VerifyCrcOctCheckSum(protocol_packet_, HEADER_LEN);
-              if (!crc8_result) {
-                LOG_WARNING << "****************CRC 8 error>>>>>>>>>>>>>>>>>";
-              }
-              if ((index_ == HEADER_LEN) && crc8_result) {
-                if (index_ < HEADER_LEN) {
-                  LOG_WARNING << "CRC 8 index less.";
-                }
-                unpack_step_e_ = STEP_DATA_CRC16;
-              } else {
-                unpack_step_e_ = STEP_HEADER_SOF;
-                index_ = 0;
-              }
-            }
-              break;
-            case STEP_DATA_CRC16: {
-              if (index_ < (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
-                protocol_packet_[index_++] = byte_;
-              } else if (index_ > (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
-                LOG_WARNING << "Index Beyond";
-              }
-              if (index_ == (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
-                unpack_step_e_ = STEP_HEADER_SOF;
-                index_ = 0;
-                if (VerifyCrcHexCheckSum(protocol_packet_, HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
-                  DataHandle();
-                } else {
-                  LOG_WARNING << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>CRC16 INVALID<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
-                }
-              }
-            }
-              break;
-            default: {
-              LOG_WARNING << "Unpack not well";
+          }
+            break;
+          case STEP_LENGTH_LOW: {
+            data_length_ = byte_;
+            protocol_packet_[index_++] = byte_;
+            unpack_step_e_ = STEP_LENGTH_HIGH;
+          }
+            break;
+          case STEP_LENGTH_HIGH: {
+            data_length_ |= (byte_ << 8);
+            protocol_packet_[index_++] = byte_;
+            if (data_length_ < (PROTOCAL_FRAME_MAX_SIZE - HEADER_LEN - CMD_LEN - CRC_LEN)) {
+              unpack_step_e_ = STEP_FRAME_SEQ;
+            } else {
+              LOG_WARNING << "Data length too big";
               unpack_step_e_ = STEP_HEADER_SOF;
               index_ = 0;
             }
-              break;
           }
+            break;
+          case STEP_FRAME_SEQ: {
+            protocol_packet_[index_++] = byte_;
+            unpack_step_e_ = STEP_HEADER_CRC8;
+          }
+            break;
+          case STEP_HEADER_CRC8: {
+            protocol_packet_[index_++] = byte_;
+            bool crc8_result = VerifyCrcOctCheckSum(protocol_packet_, HEADER_LEN);
+            if (!crc8_result) {
+              LOG_WARNING << "****************CRC 8 error>>>>>>>>>>>>>>>>>";
+            }
+            if ((index_ == HEADER_LEN) && crc8_result) {
+              if (index_ < HEADER_LEN) {
+                LOG_WARNING << "CRC 8 index less.";
+              }
+              unpack_step_e_ = STEP_DATA_CRC16;
+            } else {
+              unpack_step_e_ = STEP_HEADER_SOF;
+              index_ = 0;
+            }
+          }
+            break;
+          case STEP_DATA_CRC16: {
+            if (index_ < (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
+              protocol_packet_[index_++] = byte_;
+            } else if (index_ > (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
+              LOG_WARNING << "Index Beyond";
+            }
+            if (index_ == (HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
+              unpack_step_e_ = STEP_HEADER_SOF;
+              index_ = 0;
+              if (VerifyCrcHexCheckSum(protocol_packet_, HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
+                DataHandle();
+              } else {
+                LOG_WARNING << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>CRC16 INVALID<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
+              }
+            }
+          }
+            break;
+          default: {
+            LOG_WARNING << "Unpack not well";
+            unpack_step_e_ = STEP_HEADER_SOF;
+            index_ = 0;
+          }
+            break;
         }
-    } else {
-      continue;
+      }
     }
   }
 }
@@ -368,7 +365,7 @@ void SerialComNode::DataHandle() {
         printf("Bottom Version-->%d\n", version_info_data_.num[0]);
       }
       break;
-    default:LOG_WARNING << "ID is beyond define";
+    default:LOG_WARNING << "ID is beyond defined";
       break;
   }
 }
@@ -407,8 +404,8 @@ void SerialComNode::GimbalControlCallback(const messages::EnemyPosConstPtr &msg)
       gimbal_control_data.ctrl_mode = GIMBAL_RELAX;
     }
   }
-  gimbal_control_data.pit_ref = msg->enemy_pitch;
-  gimbal_control_data.yaw_ref = msg->enemy_yaw;
+  gimbal_control_data.pit_ref = msg->enemy_pitch * 180 / M_PI;
+  gimbal_control_data.yaw_ref = msg->enemy_yaw * 180 / M_PI;
   gimbal_control_data.visual_valid = 1;
   int length = sizeof(GimbalControl), total_length = length + HEADER_LEN + CMD_LEN + CRC_LEN;
   SendDataHandle(GIMBAL_CTRL_ID, (uint8_t *) &gimbal_control_data, pack, length);
@@ -473,21 +470,20 @@ void SerialComNode::SendDataHandle(uint16_t cmd_id,
 }
 
 void SerialComNode::SendPack() {
-  while (is_open_ && !stop_send_) {
-    while (1) {
-      if (total_length_ > 0) {
-        mutex_send_.lock();
-        int result = SendData(total_length_);
-        printf("Com send OK and length: %d\n", result);
-        total_length_ = 0;
-        free_length_ = UART_BUFF_SIZE;
-        mutex_send_.unlock();
-      } else {
-        usleep(100);
-      }
+  while (is_open_ && !stop_send_ && ros::ok()) {
+    if (total_length_ > 0) {
+      mutex_send_.lock();
+      int result = SendData(total_length_);
+      printf("Com send OK and length: %d\n", result);
+      total_length_ = 0;
+      free_length_ = UART_BUFF_SIZE;
+      mutex_send_.unlock();
+    } else {
+      usleep(100);
     }
   }
 }
+
 int SerialComNode::SendData(int data_len) {
   int length = 0;
   length = write(fd_, tx_buf_, data_len);
@@ -505,8 +501,14 @@ SerialComNode::~SerialComNode() {
     receive_loop_thread_->join();
     delete receive_loop_thread_;
   }
-  stop_send_ = true;
+  if (send_loop_thread_ != nullptr) {
+    stop_send_ = true;
+    send_loop_thread_->join();
+    delete send_loop_thread_;
+  }
+  tcsetattr(fd_, TCSANOW, &termios_options_original_);
   close(fd_);
+  is_open_ = false;
 }
 
 void SerialComNode::Stop() {
