@@ -24,7 +24,6 @@ echo "Open map ${MAP}"
 roslaunch ${ROBORTS_PATH}/tools/sample/example.launch map:=${MAP}&
 ProcessDetection example.launch
 
-
 rst=$?
 while [ "$rst" = "0" ]; do
     ProcessDetection example.launch

@@ -1,6 +1,16 @@
 point {
-  x: 2.5
-  y: 16
+  x: 8.4
+  y: 14.35
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+point {
+  x: 14
+  y: 17
   z: 0
 
   roll:  0
@@ -10,7 +20,7 @@ point {
 
 point {
   x: 13
-  y: 8.25
+  y: 25
   z: 0
 
   roll:  0
@@ -19,8 +29,8 @@ point {
 }
 
 point {
-  x: 1.8
-  y: 5.0
+  x: 5
+  y: 19
   z: 0
 
   roll:  0
@@ -29,8 +39,28 @@ point {
 }
 
 point {
-  x: 11
+  x: 3
   y: 11
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+point {
+  x: 5
+  y: 3
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+point {
+  x: 13
+  y: 10
   z: 0
 
   roll:  0
