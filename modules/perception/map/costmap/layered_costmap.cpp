@@ -66,8 +66,8 @@ CostmapLayers::CostmapLayers(std::string global_frame, bool rolling_window, bool
 }
 
 CostmapLayers::~CostmapLayers() {
-  for(auto i = plugins_.size(); i > 0;  i--) {
-    delete plugins_[i-1];
+  for (auto i = plugins_.size(); i > 0; i--) {
+    delete plugins_[i - 1];
   }
   plugins_.clear();
 }
@@ -102,7 +102,7 @@ void CostmapLayers::UpdateMap(double robot_x, double robot_y, double robot_yaw) 
     costmap_.UpdateOrigin(new_origin_x, new_origin_y);
   }
   if (plugins_.size() == 0) {
-    LOG_WARNING<<"No Layer";
+    LOG_WARNING << "No Layer";
     return;
   }
 
@@ -116,7 +116,7 @@ void CostmapLayers::UpdateMap(double robot_x, double robot_y, double robot_yaw) 
     (*plugin)->UpdateBounds(robot_x, robot_y, robot_yaw, &minx_, &miny_, &maxx_, &maxy_);
     count++;
     if (minx_ > prev_minx || miny_ > prev_miny || maxx_ < prev_maxx || maxy_ < prev_maxy) {
-      LOG_WARNING<<"Illegal bounds change. The offending layer is "<<(*plugin)->GetName().c_str();
+      LOG_WARNING << "Illegal bounds change. The offending layer is " << (*plugin)->GetName().c_str();
     }
   }
   int x0, xn, y0, yn;
@@ -127,7 +127,6 @@ void CostmapLayers::UpdateMap(double robot_x, double robot_y, double robot_yaw) 
   y0 = std::max(0, y0);
   yn = std::min(int(costmap_.GetSizeYCell()), yn + 1);
   if (xn < x0 || yn < y0) {
-    LOG_WARNING<<"Bound update not well.";
     return;
   }
   costmap_.ResetPartMap(x0, y0, xn, yn);

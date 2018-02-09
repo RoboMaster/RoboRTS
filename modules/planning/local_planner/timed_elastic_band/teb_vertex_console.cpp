@@ -230,7 +230,7 @@ bool TebVertexConsole::InitTEBtoGoal(const DataBase &start,
       double orient_init = dir_to_goal;
 
       if (guess_backwards_motion && point_to_goal.dot(start.OrientationUnitVec()) < 0) {
-        orient_init = g2o::normalize_theta(orient_init + M_PI);
+        //orient_init = g2o::normalize_theta(orient_init + M_PI);
       }
 
       double dist_to_goal = point_to_goal.norm();
@@ -495,7 +495,9 @@ void TebVertexConsole::UpdateAndPruneTEB(boost::optional<const DataBase &> new_s
       if (dist < dist_cache) {
         dist_cache = dist;
         nearest_idx = i;
-      } else break;
+      } else {
+        break;
+      }
     }
 
     if (nearest_idx > 0) {

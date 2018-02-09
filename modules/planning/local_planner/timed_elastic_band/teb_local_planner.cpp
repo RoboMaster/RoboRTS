@@ -218,6 +218,7 @@ bool TebLocalPlanner::SetPlan(const nav_msgs::Path& plan, const geometry_msgs::P
   } else {
     global_plan_ = plan;
   }
+  //SetPlanOrientation();
 }
 
 bool TebLocalPlanner::PruneGlobalPlan() {
@@ -239,7 +240,7 @@ bool TebLocalPlanner::PruneGlobalPlan() {
     for (auto iterator = global_plan_.poses.begin(); iterator != global_plan_.poses.end(); ++iterator) {
       Eigen::Vector2d temp_vector (robot.getOrigin().x() - iterator->pose.position.x,
                                    robot.getOrigin().y() - iterator->pose.position.y);
-      if (robot_to_goal.dot(temp_vector) > 0) {
+      if (temp_vector.norm() < 0.8) {
         if (iterator == global_plan_.poses.begin()) {
           break;
         }
@@ -278,11 +279,11 @@ bool TebLocalPlanner::TransformGlobalPlan(int *current_goal_idx) {
     int i = 0;
     double sq_dist_threshold = dist_threshold * dist_threshold;
     double sq_dist = 1e10;
-
+    double new_sq_dist = 0;
     while (i < (int)global_plan_.poses.size()) {
       double x_diff = robot_pose.getOrigin().x() - global_plan_.poses[i].pose.position.x;
       double y_diff = robot_pose.getOrigin().y() - global_plan_.poses[i].pose.position.y;
-      double new_sq_dist = x_diff * x_diff + y_diff * y_diff;
+      new_sq_dist = x_diff * x_diff + y_diff * y_diff;
       if (new_sq_dist > sq_dist && sq_dist < sq_dist_threshold) {
         sq_dist = new_sq_dist;
         break;
@@ -594,11 +595,20 @@ bool TebLocalPlanner::SetPlanOrientation() {
     LOG_WARNING << "can not compute the orientation because the global plan size is: " << global_plan_.poses.size();
     return false;
   } else {
-    auto goal = DataConverter::LocalConvertGData(global_plan_.poses.back().pose);
-    auto line_vector = (robot_pose_.GetPosition() - goal.first);
-    auto  orientation = GetOrientation(line_vector);
-    for (int i = 0; i < global_plan_.poses.size(); ++i) {
+    //auto goal = DataConverter::LocalConvertGData(global_plan_.poses.back().pose);
+    //auto line_vector = (robot_pose_.GetPosition() - goal.first);
+    //auto  orientation = GetOrientation(line_vector);
+    for (int i = 0; i < global_plan_.poses.size() - 1; ++i) {
       auto pose = DataConverter::LocalConvertGData(global_plan_.poses[i].pose);
+      auto next_pose = DataConverter::LocalConvertGData(global_plan_.poses[i+1].pose);
+      double x = global_plan_.poses[i+1].pose.position.x - global_plan_.poses[i].pose.position.x;
+      double y = global_plan_.poses[i+1].pose.position.y - global_plan_.poses[i].pose.position.y;
+      double angle = atan2(y, x);
+      auto quaternion = EulerToQuaternion(0, 0, angle);
+      global_plan_.poses[i].pose.orientation.w = quaternion[0];
+      global_plan_.poses[i].pose.orientation.x = quaternion[1];
+      global_plan_.poses[i].pose.orientation.y = quaternion[2];
+      global_plan_.poses[i].pose.orientation.z = quaternion[3];
     }
   }
 }
