@@ -6,7 +6,7 @@ define block model
 define rplidar ranger
 (
   sensor(
-    range_max 16.0
+    range_max 8.0
     fov 360
     samples 360
   )
