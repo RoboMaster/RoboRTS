@@ -1,12 +1,11 @@
 <launch>
   <master auto="start"/>
-
+  <arg name="map"/>
   <param name="/use_sim_time" value="true"/>
 
   <!-- Run the Stage Simulator -->
-  <node pkg="stage_ros" type="stageros" name="stageros" args="$(env RoboRTS_PATH)/tools/stage/rm_ai_challenge.world" respawn="false" >
-
-  <!-- Run the Stage Simulator -->
+  <node pkg="stage_ros" type="stageros" name="stageros" args="$(env RoboRTS_PATH)/tools/stage/${arg map}.world" respawn="false" >
+    <remap from="base_scan" to="scan">
     <param name="base_watchdog_timeout" value="0.2"/>
   </node>
 
@@ -14,7 +13,7 @@
   <include file="$(env RoboRTS_PATH)/tools/stage/slam_gmapping.xml"/>
 
   <!-- Run the rviz -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(env RoboRTS_PATH)/tools/stage/simulator_slam.rviz" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(env RoboRTS_PATH)/tools/stage/mapping.rviz" />
 
 </launch>
 

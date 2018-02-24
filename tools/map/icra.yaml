@@ -1,4 +1,4 @@
-image: rm_ai_challenge_5cm.pgm
+image: icra.pgm
 resolution: 0.05
 origin: [0, 0, 0.000000]
 negate: 0

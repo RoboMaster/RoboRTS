@@ -28,7 +28,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: ""
   - Class: rviz/Tool Properties
     Expanded: ~
     Name: Tool Properties
@@ -181,15 +181,15 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 9.72083759
+      Distance: 11.8131237
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 3.93519711
-        Y: 4.3619709
+        X: 2.33441019
+        Y: 6.1039896
         Z: 0
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007

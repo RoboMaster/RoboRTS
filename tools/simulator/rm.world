@@ -22,6 +22,9 @@ define rmcar position
   gui_nose 1
   drive "omni"
   rplidar(pose [ 0 0 0 0 ])
+  # [ xmin xmax ymin ymax zmin zmax amin amax ]				
+  velocity_bounds [-2 2 -2 2 -2 2 -90 90 ]					
+  acceleration_bounds [-2 2 -2 2 -2 2 -90 90]
   
 )
 
@@ -60,10 +63,10 @@ window
 floorplan
 ( 
   name "RoboMaster Map"
-  bitmap "rm_ai_challenge_5cm.pgm"
-  size [8.1 5.1 1.000]
-  pose [4.05  2.55  0 0 ]
+  bitmap "../map/rm.pgm"
+  size [16.8 28.7 1.000]
+  pose [8.4  14.35  0 0 ]
 )
 
 # throw in a robot
- rmcar( pose [ 1 1 0 0 ] name "rmcar0" color "blue"   block(pose [ 0 0 0 0 ] color "blue"))
+ rmcar( pose [ 8.4 14.35 0 0 ] name "rmcar0" color "blue"   block(pose [ 0 0 0 0 ] color "blue"))
