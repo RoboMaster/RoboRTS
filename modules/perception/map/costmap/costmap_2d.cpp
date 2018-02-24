@@ -185,7 +185,6 @@ void Costmap2D::Map2World(unsigned int mx, unsigned int my, double &wx, double &
 
 bool Costmap2D::World2Map(double wx, double wy, unsigned int &mx, unsigned int &my) const {
   if (wx < origin_x_ || wy < origin_y_) {
-    LOG_WARNING<<"Point is beyond map region.";
     return false;
   }
   mx = (int) ((wx - origin_x_) / resolution_);
@@ -193,7 +192,6 @@ bool Costmap2D::World2Map(double wx, double wy, unsigned int &mx, unsigned int &
   if (mx < size_x_ && my < size_y_) {
     return true;
   }
-  LOG_WARNING<<"Point is beyond map region.";
   return false;
 }
 

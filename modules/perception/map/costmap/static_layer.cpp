@@ -171,7 +171,6 @@ void StaticLayer::UpdateBounds(double robot_x,
   double wx, wy;
   if(!layered_costmap_->IsRollingWindow()) {
     if(!map_received_ || !(has_updated_data_ || has_extra_bounds_)) {
-      LOG_WARNING<<"StaticLayer UpdateBounds with no changed data";
       return;
     }
   }
@@ -188,7 +187,6 @@ void StaticLayer::UpdateBounds(double robot_x,
 
 void StaticLayer::UpdateCosts(Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j) {
   if(!map_received_) {
-    LOG_WARNING<<"Static Layer UpdateCosts has not received map";
     return;
   }
   if(!layered_costmap_->IsRollingWindow()) {
