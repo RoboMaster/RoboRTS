@@ -27,7 +27,7 @@ void ArmorDetectionBase::LoadParam() {
 
 }
 
-ErrorInfo ArmorDetectionBase::DetectArmor(std::vector<double> &translation, std::vector<double> &rotation) {
+ErrorInfo ArmorDetectionBase::DetectArmor(double &distance, double &pitch, double &yaw) {
 
 }
 } //namespace detection

@@ -80,7 +80,7 @@ class ConstraintSet : public ArmorDetectionBase {
    * @param translation Translation information of the armor relative to the camera.
    * @param rotation Rotation information of the armor relative to the camera.
    */
-  ErrorInfo DetectArmor(std::vector<double> &translation, std::vector<double> &rotation) override;
+  ErrorInfo DetectArmor(double &distance, double &pitch, double &yaw) override;
   /**
    * @brief Detecting lights on the armors.
    * @param src Input image
@@ -108,6 +108,11 @@ class ConstraintSet : public ArmorDetectionBase {
    * @param Input armors
    */
   ArmorInfo SlectFinalArmor(std::vector<ArmorInfo> &armors);
+  void CalcControlInfo(const ArmorInfo & armor,
+                       double &distance,
+                       double &pitch,
+                       double &yaw,
+                       double bullet_speed);
   /**
    * @brief Using two lights(left light and right light) to calculate four points of armor.
    * @param armor_points Out put

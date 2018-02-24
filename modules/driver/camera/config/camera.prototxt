@@ -1,7 +1,7 @@
 camera: {
-  mode: CAMERA
+  mode: VIDEO
   camera_id: 0
-  video_path: "path/to/your/video"
+  video_path: "/dev/video0"
 
   camera_matrix {
     data: 839.923052
