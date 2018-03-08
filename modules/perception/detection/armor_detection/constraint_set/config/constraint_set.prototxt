@@ -12,8 +12,8 @@ threshold {
 }
 
 armor_size {
-  width: 40
-  height: 50
+  width: 110
+  height: 60
 }
 
 init_camera_id: 0

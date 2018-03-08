@@ -28,8 +28,6 @@ ArmorDetectionNode::ArmorDetectionNode(std::string name) :
     rrts::common::RRTS::RRTS(name),
     as_(nh_, name + "_action", boost::bind(&ArmorDetectionNode::ActionCB, this, _1), false) {
   initialized_ = false;
-  translation_.resize(demensions_, 0);
-  rotation_.resize(demensions_, 0);
   if (Init().IsOK()) {
     initialized_ = true;
     node_state_ = rrts::common::IDLE;
@@ -37,6 +35,7 @@ ArmorDetectionNode::ArmorDetectionNode(std::string name) :
     LOG_ERROR << "armor_detection_node initalized failed!";
     node_state_ = rrts::common::FAILURE;
   }
+  NOTICE("Waiting for input command in armor_detection_client...")
   as_.start();
 }
 
@@ -91,59 +90,55 @@ void ArmorDetectionNode::ActionCB(const messages::ArmorDetectionGoal::ConstPtr &
       return;
     }
 
-    if (!translation_.empty() && !rotation_.empty()) {
+    if (distance_ != -1.0) {
       {
         std::lock_guard<std::mutex> guard(mutex_);
         feedback.error_code = error_info_.error_code();
         feedback.error_msg = error_info_.error_msg();
 
-        feedback.enemy_x = translation_[0];
-        feedback.enemy_y = translation_[1];
-        feedback.enemy_z = translation_[2];
+        feedback.enemy_d = distance_;
 
-        feedback.enemy_roll = rotation_[0];
-        feedback.enemy_pitch = rotation_[1];
-        feedback.enemy_yaw = rotation_[2];
+        feedback.enemy_pitch = pitch_;
+        feedback.enemy_yaw   = yaw_;
         as_.publishFeedback(feedback);
-        translation_.clear();
-        rotation_.clear();
+        distance_ = -1.0;
       }
     }
   }
 }
 
 void ArmorDetectionNode::ExecuteLoop() {
-  std::vector<double> translation;
-  std::vector<double> rotation;
-  static struct timeval last_time, current_time;
-  static int count = 0, time_ms = 0;
-  gettimeofday(&current_time, nullptr);
-  while (running_) {
-    if (count == 0) {
-      count++;
-    } else {
-      time_ms = (current_time.tv_sec - last_time.tv_sec) * 1000 + (current_time.tv_usec - last_time.tv_usec) / 1000;
-    }
-    last_time = current_time;
+  double distance;
+  double pitch;
+  double yaw;
+  unsigned int count = 0;
+
+  while(running_) {
     if (node_state_ == NodeState::RUNNING) {
-      translation.clear();
-      rotation.clear();
-      ErrorInfo error_info = armor_detector_->DetectArmor(translation, rotation);
+      distance = -1.0;
+      ErrorInfo error_info = armor_detector_->DetectArmor(distance, pitch, yaw);
       {
         std::lock_guard<std::mutex> guard(mutex_);
-        translation_ = translation;
-        rotation_ = rotation;
+        distance_ = distance;
+        pitch_    = pitch;
+        yaw_      = yaw;
         error_info_ = error_info;
       }
 
-      if (translation.empty() && rotation.empty()) {
+      if(distance != -1.0)
+        count++;
+      else if(count > 0)
+        count--;
+
+      if(count >= 10) {
+        enemy_pos.enemy_dist  = distance;
+        enemy_pos.enemy_pitch = pitch;
+        enemy_pos.enemy_yaw   = yaw;
+        count = 0;
+      } else if(count == 0) {
         enemy_pos.enemy_dist = 0;
         enemy_pos.enemy_pitch = 0;
         enemy_pos.enemy_yaw = 0;
-      } else {
-        enemy_pos.enemy_dist = translation[2];
-        enemy_pos.enemy_pitch = rotation[1];
-        enemy_pos.enemy_yaw = rotation[2];
       }
       if (time_ms < 20) {
         usleep(1000 * (20 - time_ms));

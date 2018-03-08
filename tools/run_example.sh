@@ -11,7 +11,7 @@ function ProcessDetection() {
         return 0
     fi
 }
-MAP="rm"
+MAP="icra"
 INPUT_MAP="$1"
 if [ ! -z "$INPUT_MAP" ]
 then
@@ -21,7 +21,7 @@ then
   fi
 fi  
 echo "Open map ${MAP}"
-roslaunch ${ROBORTS_PATH}/tools/sample/example.launch map:=${MAP}&
+roslaunch ${ROBORTS_PATH}/tools/example/example.launch map:=${MAP}&
 ProcessDetection example.launch
 
 rst=$?

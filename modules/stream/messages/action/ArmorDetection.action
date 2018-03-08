@@ -11,10 +11,7 @@ bool  detected_enemy
 int32  error_code
 string error_msg
 
-float64 enemy_x
-float64 enemy_y
-float64 enemy_z
+float64 enemy_d
 
-float64 enemy_roll
 float64 enemy_pitch
 float64 enemy_yaw

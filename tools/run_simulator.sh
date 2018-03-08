@@ -12,7 +12,7 @@ function ProcessDetection() {
     fi
 }
 
-MAP="rm"
+MAP="icra"
 INPUT_MAP="$1"
 if [ ! -z "$INPUT_MAP" ]
 then

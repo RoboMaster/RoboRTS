@@ -14,6 +14,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
+#include <Eigen/Core>
+#include <opencv2/core/eigen.hpp>
 
 #include "modules/perception/detection/armor_detection/constraint_set/constraint_set.h"
 
@@ -60,7 +62,7 @@ void ConstraintSet::LoadParam() {
   armor_max_stddev_ = constraint_set_config_.threshold().armor_max_stddev();
 }
 
-ErrorInfo ConstraintSet::DetectArmor(std::vector<double> &translation, std::vector<double> &rotation) {
+ErrorInfo ConstraintSet::DetectArmor(double &distance, double &pitch, double &yaw) {
   TIMER_START(DetectArmor)
   std::vector<cv::RotatedRect> lights;
   std::vector<ArmorInfo> armors;
@@ -84,28 +86,15 @@ ErrorInfo ConstraintSet::DetectArmor(std::vector<double> &translation, std::vect
 
     if (!armors.empty()) {
       ArmorInfo final_armor = SlectFinalArmor(armors);
-      cv::Mat rvec;
-      cv::Mat tvec;
-      cv::solvePnP(armor_points_,
-                   final_armor.vertex,
-                   cameras_.GetCameraParam()[camera_id_].camera_matrix,
-                   cameras_.GetCameraParam()[camera_id_].camera_distortion,
-                   rvec,
-                   tvec);
-      for (unsigned int i = 0; i < 3; i++) {
-        double trans_tmp = tvec.at<double>(i);
-        double rot_tmp = rvec.at<double>(i);
-        translation.push_back(trans_tmp);
-        rotation.push_back(rot_tmp);
-      }
+      CalcControlInfo(final_armor, distance, pitch, yaw, 10);
     }
     lights.clear();
     armors.clear();
   } else {
     NOTICE("Waiting for run camera driver...")
   }
-  if (enable_debug_)
-    TIMER_END(DetectArmor)
+//  if (enable_debug_)
+//    TIMER_END(DetectArmor)
   return error_info_;
 }
 
@@ -289,6 +278,37 @@ ArmorInfo ConstraintSet::SlectFinalArmor(std::vector<ArmorInfo> &armors) {
   return armors[0];
 }
 
+void ConstraintSet::CalcControlInfo(const ArmorInfo & armor,
+                                    double &distance,
+                                    double &pitch,
+                                    double &yaw,
+                                    double bullet_speed) {
+  cv::Mat rvec;
+  cv::Mat tvec;
+  cv::solvePnP(armor_points_,
+               armor.vertex,
+               cameras_.GetCameraParam()[camera_id_].camera_matrix,
+               cameras_.GetCameraParam()[camera_id_].camera_distortion,
+               rvec,
+               tvec);
+
+  double fly_time = tvec.at<double>(2) / 1000.0 / bullet_speed;
+  double gravity_offset = 0.5 * 9.8 * fly_time * fly_time * 1000;
+  const double gimble_offset = 3.3;
+  double xyz[3] = {tvec.at<double>(0), tvec.at<double>(1) - gravity_offset + gimble_offset, tvec.at<double>(2)};
+
+  //calculate pitch
+  pitch = atan(-xyz[1]/xyz[2]);
+  //calculate yaw
+  yaw = atan2(xyz[0], xyz[2]);
+
+  //radian to angle
+  pitch = pitch * 180 / M_PI;
+  yaw   = yaw * 180 / M_PI;
+
+  distance = sqrt(tvec.at<double>(0)*tvec.at<double>(0) + tvec.at<double>(2)*tvec.at<double>(2));
+}
+
 void ConstraintSet::CalArmorInfo(std::vector<cv::Point2f> &armor_points,
                                  cv::RotatedRect left_light,
                                  cv::RotatedRect right_light) {
@@ -321,10 +341,10 @@ void ConstraintSet::CalArmorInfo(std::vector<cv::Point2f> &armor_points,
 
 void ConstraintSet::SolveArmorCoordinate(const float width,
                                          const float height) {
-  armor_points_.emplace_back(cv::Point3f(0.0,   0.0,    0.0));
-  armor_points_.emplace_back(cv::Point3f(width, 0.0,    0.0));
-  armor_points_.emplace_back(cv::Point3f(width, height, 0.0));
-  armor_points_.emplace_back(cv::Point3f(0.0,   height, 0.0));
+  armor_points_.emplace_back(cv::Point3f(-width/2, height/2,  0.0));
+  armor_points_.emplace_back(cv::Point3f(width/2,  height/2,  0.0));
+  armor_points_.emplace_back(cv::Point3f(width/2,  -height/2, 0.0));
+  armor_points_.emplace_back(cv::Point3f(-width/2, -height/2, 0.0));
 }
 
 ConstraintSet::~ConstraintSet() {
