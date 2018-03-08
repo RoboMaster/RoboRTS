@@ -182,10 +182,7 @@ void GlobalPlannerNode::SetGoal(geometry_msgs::PoseStamped goal) {
   goal_ = goal;
 }
 
-
-
 void GlobalPlannerNode::StartPlanning() {
-
   SetNodeState(NodeState::RUNNING);
   plan_thread_ = std::thread(&GlobalPlannerNode::PlanThread, this);
 }
@@ -257,8 +254,6 @@ void GlobalPlannerNode::PlanThread() {
     std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
     std::chrono::microseconds execution_duration =
         std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-//    std::cout << static_cast<double>(execution_duration.count()) * std::chrono::microseconds::period::num
-//        / std::chrono::microseconds::period::den<<std::endl;
     sleep_time = cycle_duration_ - execution_duration;
 
     if (sleep_time <= std::chrono::microseconds(0)) {

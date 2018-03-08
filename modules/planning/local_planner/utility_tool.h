@@ -84,7 +84,7 @@ inline double GetOrientation (Eigen::Vector2d vec) {
   return atan2(vec.coeffRef(1), vec.coeffRef(0));
 }
 
-inline void EulerToQuaternion(const double& roll, const double& pitch, const double& yaw) {
+inline std::vector<double> EulerToQuaternion(const double& roll, const double& pitch, const double& yaw) {
   double half_roll  = roll * 0.5;
   double half_pitch = pitch * 0.5;
   double half_yaw   = yaw * 0.5;
@@ -103,7 +103,12 @@ inline void EulerToQuaternion(const double& roll, const double& pitch, const dou
   auto y_q2 = cos_roll * sin_pitch * cos_yaw + sin_roll * cos_pitch * sin_yaw;
   auto z_q3 = cos_roll * cos_pitch * sin_yaw - sin_roll * sin_pitch * cos_yaw;
 
-
+  std::vector<double> Quaternion;
+  Quaternion.push_back(w_q0);
+  Quaternion.push_back(x_q1);
+  Quaternion.push_back(y_q2);
+  Quaternion.push_back(z_q3);
+  return Quaternion;
 
 }
 
