@@ -1,0 +1,2 @@
+Options: 
+CMake: 3.8.2@/home/vic/3dparty/clion-2017.2.3/bin/cmake/bin/cmake

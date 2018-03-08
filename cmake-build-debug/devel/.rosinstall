@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/vic/Workspace/bug/RoboRTS/cmake-build-debug/devel/setup.sh

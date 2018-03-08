@@ -14,19 +14,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
-
+#include <sys/time.h>
 #include "modules/perception/detection/armor_detection/armor_detection_node.h"
 
-namespace rrts{
+namespace rrts {
 namespace perception {
 namespace detection {
 
-ArmorDetectionNode::ArmorDetectionNode(std::string name):
+ArmorDetectionNode::ArmorDetectionNode(std::string name) :
     node_state_(rrts::common::IDLE),
     demensions_(3),
     initialized_(false),
     rrts::common::RRTS::RRTS(name),
-    as_(nh_, name+"_action", boost::bind(&ArmorDetectionNode::ActionCB, this, _1), false) {
+    as_(nh_, name + "_action", boost::bind(&ArmorDetectionNode::ActionCB, this, _1), false) {
   initialized_ = false;
   if (Init().IsOK()) {
     initialized_ = true;
@@ -65,31 +65,27 @@ void ArmorDetectionNode::ActionCB(const messages::ArmorDetectionGoal::ConstPtr &
   messages::ArmorDetectionFeedback feedback;
   messages::ArmorDetectionResult result;
 
-  if(!initialized_){
+  if (!initialized_) {
     feedback.error_code = error_info_.error_code();
-    feedback.error_msg  = error_info_.error_msg();
+    feedback.error_msg = error_info_.error_msg();
     as_.publishFeedback(feedback);
     as_.setAborted(result, feedback.error_msg);
-    LOG_INFO<<"Initialization Failed, Failed to execute action!";
+    LOG_INFO << "Initialization Failed, Failed to execute action!";
     return;
   }
 
   switch (data->command) {
-    case 1:
-      StartThread();
+    case 1:StartThread();
       break;
-    case 2:
-      PauseThread();
+    case 2:PauseThread();
       break;
-    case 3:
-      StopThread();
+    case 3:StopThread();
       break;
-    default:
-      break;
+    default:break;
   }
 
-  while(ros::ok()) {
-    if(as_.isPreemptRequested()) {
+  while (ros::ok()) {
+    if (as_.isPreemptRequested()) {
       as_.setPreempted();
       return;
     }
@@ -144,6 +140,9 @@ void ArmorDetectionNode::ExecuteLoop() {
         enemy_pos.enemy_pitch = 0;
         enemy_pos.enemy_yaw = 0;
       }
+      if (time_ms < 20) {
+        usleep(1000 * (20 - time_ms));
+      }
       PublishMsgs();
       //TODO(noah.guo): coordinat transformation, data fitting.
     } else if (node_state_ == NodeState::PAUSE) {
@@ -160,7 +159,7 @@ void ArmorDetectionNode::PublishMsgs() {
 void ArmorDetectionNode::StartThread() {
   LOG_INFO << "Armor detection node started!";
   running_ = true;
-  if(node_state_ == NodeState::IDLE) {
+  if (node_state_ == NodeState::IDLE) {
     armor_detection_thread_ = std::thread(&ArmorDetectionNode::ExecuteLoop, this);
   }
   node_state_ = NodeState::RUNNING;

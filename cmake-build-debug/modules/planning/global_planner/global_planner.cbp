@@ -1,0 +1,2157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="global_planner"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\opt\;CMake Files\..\..\..\..\..\opt\ros\;CMake Files\..\..\..\..\..\opt\ros\kinetic\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\platform\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\test\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\tools\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cpp_common\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cpp_common\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_runtime\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_runtime\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp_serialization\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp_serialization\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp_traits\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp_traits\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rostime\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rostime\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosconsole\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosconsole\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosgraph_msgs\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosgraph_msgs\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\xmlrpcpp\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\xmlrpcpp\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geometry_msgs\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geometry_msgs\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_filters\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_filters\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_ros\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_ros\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib_msgs\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib_msgs\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gencpp\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gencpp\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geneus\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geneus\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genlisp\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genlisp\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gennodejs\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gennodejs\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genpy\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genpy\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosgraph\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosgraph\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_msgs\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_msgs\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_generation\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_generation\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_py\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_py\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rospy\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rospy\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cv_bridge\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cv_bridge\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\image_transport\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\image_transport\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pluginlib\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pluginlib\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\class_loader\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\class_loader\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roslib\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roslib\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rospack\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rospack\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\laser_geometry\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\laser_geometry\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_conversions\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_conversions\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_msgs\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_msgs\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_ros\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_ros\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\dynamic_reconfigure\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\dynamic_reconfigure\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\nodelet\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\nodelet\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\bondcpp\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\bondcpp\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\bond\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\bond\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\smclib\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\smclib\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosbag\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosbag\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosbag_storage\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosbag_storage\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roslz4\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roslz4\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_srvs\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_srvs\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\topic_tools\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\topic_tools\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\nav_msgs\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\nav_msgs\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\interactive_markers\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\interactive_markers\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\visualization_msgs\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\visualization_msgs\cmake\;CMake Files\..\..\..\..\..\opt\ros\kinetic\share\OpenCV-3.3.1\;CMake Files\..\..\..\..\..\usr\;CMake Files\..\..\..\..\..\usr\lib\;CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\;CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\;CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\pcl\;CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Widgets\;CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Gui\;CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Core\;CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5OpenGL\;CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Sql\;CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5WebKitWidgets\;CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5WebKit\;CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Network\;CMake Files\..\..\..\..\..\usr\lib\cmake\;CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\;CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\;CMake Files\cmake-build-debug\;CMake Files\cmake-build-debug\catkin\;CMake Files\cmake-build-debug\catkin\catkin_generated\;CMake Files\cmake-build-debug\catkin\catkin_generated\version\;CMake Files\cmake-build-debug\catkin_generated\;CMake Files\cmake-build-debug\catkin_generated\installspace\;CMake Files\cmake-build-debug\devel\;CMake Files\cmake-build-debug\devel\share\;CMake Files\cmake-build-debug\devel\share\messages\;CMake Files\cmake-build-debug\devel\share\messages\cmake\;CMake Files\cmake-build-debug\modules\;CMake Files\cmake-build-debug\modules\stream\;CMake Files\cmake-build-debug\modules\stream\messages\;CMake Files\cmake-build-debug\modules\stream\messages\cmake\;CMake Files\cmake-build-debug\modules\perception\;CMake Files\cmake-build-debug\modules\perception\detection\;CMake Files\cmake-build-debug\modules\perception\detection\armor_detection\;CMake Files\cmake-build-debug\modules\perception\detection\armor_detection\constraint_set\;CMake Files\cmake-build-debug\modules\perception\detection\armor_detection\constraint_set\catkin_generated\;CMake Files\cmake\;CMake Files\modules\;CMake Files\modules\stream\;CMake Files\modules\stream\messages\;CMake Files\modules\stream\messages\action\;CMake Files\modules\stream\tf_tree\;CMake Files\modules\driver\;CMake Files\modules\driver\camera\;CMake Files\modules\driver\serial\;CMake Files\modules\perception\;CMake Files\modules\perception\map\;CMake Files\modules\perception\map\costmap\;CMake Files\modules\perception\localization\;CMake Files\modules\perception\localization\amcl\;CMake Files\modules\perception\detection\;CMake Files\modules\perception\detection\armor_detection\;CMake Files\modules\perception\detection\armor_detection\constraint_set\;CMake Files\modules\perception\detection\util\;CMake Files\modules\planning\;CMake Files\modules\planning\global_planner\;CMake Files\modules\planning\global_planner\a_star_planner\;CMake Files\modules\planning\local_planner\;CMake Files\modules\planning\local_planner\timed_elastic_band\;CMake Files\modules\decision\;CMake Files\common\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="global_planner_client">
+				<Option output="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/global_planner_client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DROS_PACKAGE_NAME=&quot;RRTS&quot;"/>
+					<Add option="-DROSCONSOLE_BACKEND_LOG4CXX"/>
+					<Add option="-DDISABLE_OPENNI2"/>
+					<Add option="-DDISABLE_PCAP"/>
+					<Add option="-DDISABLE_PNG"/>
+					<Add option="-DvtkFiltersFlowPaths_AUTOINIT=1(vtkFiltersParallelFlowPaths)"/>
+					<Add option="-DvtkIOExodus_AUTOINIT=1(vtkIOParallelExodus)"/>
+					<Add option="-DvtkIOGeometry_AUTOINIT=1(vtkIOMPIParallel)"/>
+					<Add option="-DvtkIOImage_AUTOINIT=1(vtkIOMPIImage)"/>
+					<Add option="-DvtkIOSQL_AUTOINIT=2(vtkIOMySQL,vtkIOPostgreSQL)"/>
+					<Add option="-DvtkRenderingContext2D_AUTOINIT=1(vtkRenderingContextOpenGL)"/>
+					<Add option="-DvtkRenderingCore_AUTOINIT=4(vtkInteractionStyle,vtkRenderingFreeType,vtkRenderingFreeTypeOpenGL,vtkRenderingOpenGL)"/>
+					<Add option="-DvtkRenderingFreeType_AUTOINIT=2(vtkRenderingFreeTypeFontConfig,vtkRenderingMatplotlib)"/>
+					<Add option="-DvtkRenderingLIC_AUTOINIT=1(vtkRenderingParallelLIC)"/>
+					<Add option="-DvtkRenderingVolume_AUTOINIT=1(vtkRenderingVolumeOpenGL)"/>
+					<Add directory="/usr/include/vtk-6.2"/>
+					<Add directory="/usr/include/freetype2"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/freetype2"/>
+					<Add directory="/usr/include/jsoncpp"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent/include"/>
+					<Add directory="/usr/lib/openmpi/include"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include/hdf5/openmpi"/>
+					<Add directory="/usr/include/libxml2"/>
+					<Add directory="/usr/include/tcl"/>
+					<Add directory="/home/vic/Workspace/bug/RoboRTS"/>
+					<Add directory="/opt/ros/kinetic/include"/>
+					<Add directory="/opt/ros/kinetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"/>
+					<Add directory="/opt/ros/kinetic/include/opencv-3.3.1"/>
+					<Add directory="/opt/ros/kinetic/include/opencv-3.3.1/opencv"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/include/pcl-1.7"/>
+					<Add directory="/usr/include/ni"/>
+					<Add directory="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/devel/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 global_planner_client"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="global_planner_client/fast">
+				<Option output="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/global_planner_client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DROS_PACKAGE_NAME=&quot;RRTS&quot;"/>
+					<Add option="-DROSCONSOLE_BACKEND_LOG4CXX"/>
+					<Add option="-DDISABLE_OPENNI2"/>
+					<Add option="-DDISABLE_PCAP"/>
+					<Add option="-DDISABLE_PNG"/>
+					<Add option="-DvtkFiltersFlowPaths_AUTOINIT=1(vtkFiltersParallelFlowPaths)"/>
+					<Add option="-DvtkIOExodus_AUTOINIT=1(vtkIOParallelExodus)"/>
+					<Add option="-DvtkIOGeometry_AUTOINIT=1(vtkIOMPIParallel)"/>
+					<Add option="-DvtkIOImage_AUTOINIT=1(vtkIOMPIImage)"/>
+					<Add option="-DvtkIOSQL_AUTOINIT=2(vtkIOMySQL,vtkIOPostgreSQL)"/>
+					<Add option="-DvtkRenderingContext2D_AUTOINIT=1(vtkRenderingContextOpenGL)"/>
+					<Add option="-DvtkRenderingCore_AUTOINIT=4(vtkInteractionStyle,vtkRenderingFreeType,vtkRenderingFreeTypeOpenGL,vtkRenderingOpenGL)"/>
+					<Add option="-DvtkRenderingFreeType_AUTOINIT=2(vtkRenderingFreeTypeFontConfig,vtkRenderingMatplotlib)"/>
+					<Add option="-DvtkRenderingLIC_AUTOINIT=1(vtkRenderingParallelLIC)"/>
+					<Add option="-DvtkRenderingVolume_AUTOINIT=1(vtkRenderingVolumeOpenGL)"/>
+					<Add directory="/usr/include/vtk-6.2"/>
+					<Add directory="/usr/include/freetype2"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/freetype2"/>
+					<Add directory="/usr/include/jsoncpp"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent/include"/>
+					<Add directory="/usr/lib/openmpi/include"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include/hdf5/openmpi"/>
+					<Add directory="/usr/include/libxml2"/>
+					<Add directory="/usr/include/tcl"/>
+					<Add directory="/home/vic/Workspace/bug/RoboRTS"/>
+					<Add directory="/opt/ros/kinetic/include"/>
+					<Add directory="/opt/ros/kinetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"/>
+					<Add directory="/opt/ros/kinetic/include/opencv-3.3.1"/>
+					<Add directory="/opt/ros/kinetic/include/opencv-3.3.1/opencv"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/include/pcl-1.7"/>
+					<Add directory="/usr/include/ni"/>
+					<Add directory="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/devel/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 global_planner_client/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="global_planner_node">
+				<Option output="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/global_planner_node" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DROS_PACKAGE_NAME=&quot;RRTS&quot;"/>
+					<Add option="-DROSCONSOLE_BACKEND_LOG4CXX"/>
+					<Add option="-DDISABLE_OPENNI2"/>
+					<Add option="-DDISABLE_PCAP"/>
+					<Add option="-DDISABLE_PNG"/>
+					<Add option="-DvtkFiltersFlowPaths_AUTOINIT=1(vtkFiltersParallelFlowPaths)"/>
+					<Add option="-DvtkIOExodus_AUTOINIT=1(vtkIOParallelExodus)"/>
+					<Add option="-DvtkIOGeometry_AUTOINIT=1(vtkIOMPIParallel)"/>
+					<Add option="-DvtkIOImage_AUTOINIT=1(vtkIOMPIImage)"/>
+					<Add option="-DvtkIOSQL_AUTOINIT=2(vtkIOMySQL,vtkIOPostgreSQL)"/>
+					<Add option="-DvtkRenderingContext2D_AUTOINIT=1(vtkRenderingContextOpenGL)"/>
+					<Add option="-DvtkRenderingCore_AUTOINIT=4(vtkInteractionStyle,vtkRenderingFreeType,vtkRenderingFreeTypeOpenGL,vtkRenderingOpenGL)"/>
+					<Add option="-DvtkRenderingFreeType_AUTOINIT=2(vtkRenderingFreeTypeFontConfig,vtkRenderingMatplotlib)"/>
+					<Add option="-DvtkRenderingLIC_AUTOINIT=1(vtkRenderingParallelLIC)"/>
+					<Add option="-DvtkRenderingVolume_AUTOINIT=1(vtkRenderingVolumeOpenGL)"/>
+					<Add option="-DQT_WIDGETS_LIB"/>
+					<Add option="-DQT_GUI_LIB"/>
+					<Add option="-DQT_CORE_LIB"/>
+					<Add option="-DQT_NO_DEBUG"/>
+					<Add directory="/usr/include/vtk-6.2"/>
+					<Add directory="/usr/include/freetype2"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/freetype2"/>
+					<Add directory="/usr/include/jsoncpp"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent/include"/>
+					<Add directory="/usr/lib/openmpi/include"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include/hdf5/openmpi"/>
+					<Add directory="/usr/include/libxml2"/>
+					<Add directory="/usr/include/tcl"/>
+					<Add directory="/home/vic/Workspace/bug/RoboRTS"/>
+					<Add directory="/opt/ros/kinetic/include"/>
+					<Add directory="/opt/ros/kinetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"/>
+					<Add directory="/opt/ros/kinetic/include/opencv-3.3.1"/>
+					<Add directory="/opt/ros/kinetic/include/opencv-3.3.1/opencv"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/include/pcl-1.7"/>
+					<Add directory="/usr/include/ni"/>
+					<Add directory="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/devel/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5/QtWidgets"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5/QtGui"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5/QtCore"/>
+					<Add directory="/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 global_planner_node"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="global_planner_node/fast">
+				<Option output="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/global_planner_node" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DROS_PACKAGE_NAME=&quot;RRTS&quot;"/>
+					<Add option="-DROSCONSOLE_BACKEND_LOG4CXX"/>
+					<Add option="-DDISABLE_OPENNI2"/>
+					<Add option="-DDISABLE_PCAP"/>
+					<Add option="-DDISABLE_PNG"/>
+					<Add option="-DvtkFiltersFlowPaths_AUTOINIT=1(vtkFiltersParallelFlowPaths)"/>
+					<Add option="-DvtkIOExodus_AUTOINIT=1(vtkIOParallelExodus)"/>
+					<Add option="-DvtkIOGeometry_AUTOINIT=1(vtkIOMPIParallel)"/>
+					<Add option="-DvtkIOImage_AUTOINIT=1(vtkIOMPIImage)"/>
+					<Add option="-DvtkIOSQL_AUTOINIT=2(vtkIOMySQL,vtkIOPostgreSQL)"/>
+					<Add option="-DvtkRenderingContext2D_AUTOINIT=1(vtkRenderingContextOpenGL)"/>
+					<Add option="-DvtkRenderingCore_AUTOINIT=4(vtkInteractionStyle,vtkRenderingFreeType,vtkRenderingFreeTypeOpenGL,vtkRenderingOpenGL)"/>
+					<Add option="-DvtkRenderingFreeType_AUTOINIT=2(vtkRenderingFreeTypeFontConfig,vtkRenderingMatplotlib)"/>
+					<Add option="-DvtkRenderingLIC_AUTOINIT=1(vtkRenderingParallelLIC)"/>
+					<Add option="-DvtkRenderingVolume_AUTOINIT=1(vtkRenderingVolumeOpenGL)"/>
+					<Add option="-DQT_WIDGETS_LIB"/>
+					<Add option="-DQT_GUI_LIB"/>
+					<Add option="-DQT_CORE_LIB"/>
+					<Add option="-DQT_NO_DEBUG"/>
+					<Add directory="/usr/include/vtk-6.2"/>
+					<Add directory="/usr/include/freetype2"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/freetype2"/>
+					<Add directory="/usr/include/jsoncpp"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent/include"/>
+					<Add directory="/usr/lib/openmpi/include"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include/hdf5/openmpi"/>
+					<Add directory="/usr/include/libxml2"/>
+					<Add directory="/usr/include/tcl"/>
+					<Add directory="/home/vic/Workspace/bug/RoboRTS"/>
+					<Add directory="/opt/ros/kinetic/include"/>
+					<Add directory="/opt/ros/kinetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"/>
+					<Add directory="/opt/ros/kinetic/include/opencv-3.3.1"/>
+					<Add directory="/opt/ros/kinetic/include/opencv-3.3.1/opencv"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/include/pcl-1.7"/>
+					<Add directory="/usr/include/ni"/>
+					<Add directory="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/devel/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5/QtWidgets"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5/QtGui"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5/QtCore"/>
+					<Add directory="/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 global_planner_node/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="a_star_planner">
+				<Option output="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/a_star_planner/liba_star_planner.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/a_star_planner"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DROS_PACKAGE_NAME=&quot;RRTS&quot;"/>
+					<Add option="-DROSCONSOLE_BACKEND_LOG4CXX"/>
+					<Add option="-DDISABLE_OPENNI2"/>
+					<Add option="-DDISABLE_PCAP"/>
+					<Add option="-DDISABLE_PNG"/>
+					<Add option="-DvtkFiltersFlowPaths_AUTOINIT=1(vtkFiltersParallelFlowPaths)"/>
+					<Add option="-DvtkIOExodus_AUTOINIT=1(vtkIOParallelExodus)"/>
+					<Add option="-DvtkIOGeometry_AUTOINIT=1(vtkIOMPIParallel)"/>
+					<Add option="-DvtkIOImage_AUTOINIT=1(vtkIOMPIImage)"/>
+					<Add option="-DvtkIOSQL_AUTOINIT=2(vtkIOMySQL,vtkIOPostgreSQL)"/>
+					<Add option="-DvtkRenderingContext2D_AUTOINIT=1(vtkRenderingContextOpenGL)"/>
+					<Add option="-DvtkRenderingCore_AUTOINIT=4(vtkInteractionStyle,vtkRenderingFreeType,vtkRenderingFreeTypeOpenGL,vtkRenderingOpenGL)"/>
+					<Add option="-DvtkRenderingFreeType_AUTOINIT=2(vtkRenderingFreeTypeFontConfig,vtkRenderingMatplotlib)"/>
+					<Add option="-DvtkRenderingLIC_AUTOINIT=1(vtkRenderingParallelLIC)"/>
+					<Add option="-DvtkRenderingVolume_AUTOINIT=1(vtkRenderingVolumeOpenGL)"/>
+					<Add option="-DQT_WIDGETS_LIB"/>
+					<Add option="-DQT_GUI_LIB"/>
+					<Add option="-DQT_CORE_LIB"/>
+					<Add option="-DQT_NO_DEBUG"/>
+					<Add directory="/usr/include/vtk-6.2"/>
+					<Add directory="/usr/include/freetype2"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/freetype2"/>
+					<Add directory="/usr/include/jsoncpp"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent/include"/>
+					<Add directory="/usr/lib/openmpi/include"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include/hdf5/openmpi"/>
+					<Add directory="/usr/include/libxml2"/>
+					<Add directory="/usr/include/tcl"/>
+					<Add directory="/home/vic/Workspace/bug/RoboRTS"/>
+					<Add directory="/opt/ros/kinetic/include"/>
+					<Add directory="/opt/ros/kinetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"/>
+					<Add directory="/opt/ros/kinetic/include/opencv-3.3.1"/>
+					<Add directory="/opt/ros/kinetic/include/opencv-3.3.1/opencv"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/include/pcl-1.7"/>
+					<Add directory="/usr/include/ni"/>
+					<Add directory="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/devel/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5/QtWidgets"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5/QtGui"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5/QtCore"/>
+					<Add directory="/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/a_star_planner/Makefile&quot;  VERBOSE=1 a_star_planner"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/a_star_planner/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/a_star_planner/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/a_star_planner/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="a_star_planner/fast">
+				<Option output="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/a_star_planner/liba_star_planner.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/a_star_planner"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DROS_PACKAGE_NAME=&quot;RRTS&quot;"/>
+					<Add option="-DROSCONSOLE_BACKEND_LOG4CXX"/>
+					<Add option="-DDISABLE_OPENNI2"/>
+					<Add option="-DDISABLE_PCAP"/>
+					<Add option="-DDISABLE_PNG"/>
+					<Add option="-DvtkFiltersFlowPaths_AUTOINIT=1(vtkFiltersParallelFlowPaths)"/>
+					<Add option="-DvtkIOExodus_AUTOINIT=1(vtkIOParallelExodus)"/>
+					<Add option="-DvtkIOGeometry_AUTOINIT=1(vtkIOMPIParallel)"/>
+					<Add option="-DvtkIOImage_AUTOINIT=1(vtkIOMPIImage)"/>
+					<Add option="-DvtkIOSQL_AUTOINIT=2(vtkIOMySQL,vtkIOPostgreSQL)"/>
+					<Add option="-DvtkRenderingContext2D_AUTOINIT=1(vtkRenderingContextOpenGL)"/>
+					<Add option="-DvtkRenderingCore_AUTOINIT=4(vtkInteractionStyle,vtkRenderingFreeType,vtkRenderingFreeTypeOpenGL,vtkRenderingOpenGL)"/>
+					<Add option="-DvtkRenderingFreeType_AUTOINIT=2(vtkRenderingFreeTypeFontConfig,vtkRenderingMatplotlib)"/>
+					<Add option="-DvtkRenderingLIC_AUTOINIT=1(vtkRenderingParallelLIC)"/>
+					<Add option="-DvtkRenderingVolume_AUTOINIT=1(vtkRenderingVolumeOpenGL)"/>
+					<Add option="-DQT_WIDGETS_LIB"/>
+					<Add option="-DQT_GUI_LIB"/>
+					<Add option="-DQT_CORE_LIB"/>
+					<Add option="-DQT_NO_DEBUG"/>
+					<Add directory="/usr/include/vtk-6.2"/>
+					<Add directory="/usr/include/freetype2"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/freetype2"/>
+					<Add directory="/usr/include/jsoncpp"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent/include"/>
+					<Add directory="/usr/lib/openmpi/include"/>
+					<Add directory="/usr/lib/openmpi/include/openmpi"/>
+					<Add directory="/usr/include/python2.7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include/hdf5/openmpi"/>
+					<Add directory="/usr/include/libxml2"/>
+					<Add directory="/usr/include/tcl"/>
+					<Add directory="/home/vic/Workspace/bug/RoboRTS"/>
+					<Add directory="/opt/ros/kinetic/include"/>
+					<Add directory="/opt/ros/kinetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"/>
+					<Add directory="/opt/ros/kinetic/include/opencv-3.3.1"/>
+					<Add directory="/opt/ros/kinetic/include/opencv-3.3.1/opencv"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/include/pcl-1.7"/>
+					<Add directory="/usr/include/ni"/>
+					<Add directory="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/devel/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5/QtWidgets"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5/QtGui"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/qt5/QtCore"/>
+					<Add directory="/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/a_star_planner/Makefile&quot;  VERBOSE=1 a_star_planner/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/a_star_planner/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/a_star_planner/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/planning/global_planner/a_star_planner/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/common/io.h">
+			<Option target="global_planner_node"/>
+			<Option target="a_star_planner"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/common/log.h">
+			<Option target="global_planner_node"/>
+			<Option target="a_star_planner"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/common/main_interface.h">
+			<Option target="global_planner_node"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/a_star_planner/a_star_planner.cpp">
+			<Option target="a_star_planner"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/a_star_planner/a_star_planner.h">
+			<Option target="a_star_planner"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/a_star_planner/proto/a_star_planner_config.pb.cc">
+			<Option target="a_star_planner"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/a_star_planner/proto/a_star_planner_config.pb.cpp.rule">
+			<Option target="a_star_planner"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/a_star_planner/proto/a_star_planner_config.pb.h">
+			<Option target="a_star_planner"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/global_planner_client.cpp">
+			<Option target="global_planner_client"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/global_planner_node.cpp">
+			<Option target="global_planner_node"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/global_planner_node.h">
+			<Option target="global_planner_node"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/proto/global_planner_config.pb.cc">
+			<Option target="global_planner_node"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/proto/global_planner_config.pb.cpp.rule">
+			<Option target="global_planner_node"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/proto/global_planner_config.pb.h">
+			<Option target="global_planner_node"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/package.xml">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkinConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkinConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/all.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/assert.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/atomic_configure_file.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkin_add_env_hooks.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkin_destinations.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkin_download.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkin_generate_environment.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkin_install_python.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkin_libraries.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkin_metapackage.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkin_package.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkin_package_xml.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkin_workspace.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/debug_message.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/em_expand.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/python.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/empy.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/find_program_required.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/legacy.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/list_append_deduplicate.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/list_append_unique.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/list_insert_in_workspace_order.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/safe_execute_process.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/stamp.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/string_starts_with.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkin_python_setup.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/interrogate_setup_dot_py.py">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkinConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkinConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkinConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkinConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkinConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkinConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkinConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/catkinConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/platform/lsb.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\platform\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/platform/ubuntu.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\platform\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/platform/windows.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\platform\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/test/tests.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\test\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/test/catkin_download_test_data.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\test\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/test/gtest.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\test\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/test/nosetests.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\test\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/tools/doxygen.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\tools\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/tools/libraries.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\tools\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/tools/rt.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\tools\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/_setup_util.py.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/env.sh.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/setup.bash.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/setup.sh.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/setup.zsh.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/rosinstall.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/_setup_util.py.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/env.sh.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/setup.bash.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/setup.sh.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/setup.zsh.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/rosinstall.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/generate_cached_setup.py.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/catkin/cmake/templates/env.sh.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\catkin\cmake\templates\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp/cmake/roscppConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp/cmake/roscppConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp/cmake/roscpp-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp/cmake/roscppConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp/cmake/roscppConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp/cmake/roscppConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp/cmake/roscppConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp/cmake/roscppConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp/cmake/roscppConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/cpp_common/cmake/cpp_commonConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cpp_common\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/cpp_common/cmake/cpp_commonConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cpp_common\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/message_runtime/cmake/message_runtimeConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_runtime\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/message_runtime/cmake/message_runtimeConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_runtime\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp_serialization/cmake/roscpp_serializationConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp_serialization\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp_serialization/cmake/roscpp_serializationConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp_serialization\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp_traits/cmake/roscpp_traitsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp_traits\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roscpp_traits/cmake/roscpp_traitsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roscpp_traits\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rostime/cmake/rostimeConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rostime\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rostime/cmake/rostimeConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rostime\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rosconsole/cmake/rosconsoleConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosconsole\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rosconsole/cmake/rosconsoleConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosconsole\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rosconsole/cmake/rosconsole-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosconsole\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rosgraph_msgs/cmake/rosgraph_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosgraph_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rosgraph_msgs/cmake/rosgraph_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosgraph_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rosgraph_msgs/cmake/rosgraph_msgs-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosgraph_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgs-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgs-msg-paths.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_msgs/cmake/std_msgs-msg-paths.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/xmlrpcpp/cmake/xmlrpcppConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\xmlrpcpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/xmlrpcpp/cmake/xmlrpcppConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\xmlrpcpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/xmlrpcpp/cmake/xmlrpcpp-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\xmlrpcpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf/cmake/tfConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf/cmake/tfConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf/cmake/tf-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf/cmake/tfConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf/cmake/tfConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf/cmake/tfConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf/cmake/tfConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf/cmake/tfConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf/cmake/tfConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geometry_msgs/cmake/geometry_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geometry_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geometry_msgs/cmake/geometry_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geometry_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geometry_msgs/cmake/geometry_msgs-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geometry_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geometry_msgs/cmake/geometry_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geometry_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geometry_msgs/cmake/geometry_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geometry_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geometry_msgs/cmake/geometry_msgs-msg-paths.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geometry_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geometry_msgs/cmake/geometry_msgs-msg-paths.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geometry_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/message_filters/cmake/message_filtersConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_filters\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/message_filters/cmake/message_filtersConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_filters\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/sensor_msgs/cmake/sensor_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/sensor_msgs/cmake/sensor_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/sensor_msgs/cmake/sensor_msgs-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/sensor_msgs/cmake/sensor_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/sensor_msgs/cmake/sensor_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/sensor_msgs/cmake/sensor_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/sensor_msgs/cmake/sensor_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/sensor_msgs/cmake/sensor_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/sensor_msgs/cmake/sensor_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/sensor_msgs/cmake/sensor_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/sensor_msgs/cmake/sensor_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\sensor_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf2_ros/cmake/tf2_rosConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_ros\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf2_ros/cmake/tf2_rosConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_ros\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/actionlib/cmake/actionlibConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/actionlib/cmake/actionlibConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/actionlib/cmake/actionlib-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/actionlib/cmake/actionlibConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/actionlib/cmake/actionlibConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/actionlib_msgs/cmake/actionlib_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/actionlib_msgs/cmake/actionlib_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/actionlib_msgs/cmake/actionlib_msgs-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/actionlib_msgs/cmake/actionlib_msgs-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/actionlib_msgs/cmake/actionlib_msgs-msg-paths.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/actionlib_msgs/cmake/actionlib_msgs-msg-paths.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\actionlib_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/genmsgConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/genmsgConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/genmsg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/genmsgConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/genmsgConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/pkg-msg-paths.cmake.develspace.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/pkg-msg-paths.cmake.installspace.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/pkg-msg-extras.cmake.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/pkg-msg-extras.cmake.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/pkg-genmsg.context.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/pkg-genmsg.cmake.em">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/pkg-msg-paths.cmake.develspace.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/pkg-msg-paths.cmake.installspace.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/pkg-msg-extras.cmake.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/pkg-msg-extras.cmake.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/pkg-genmsg.context.in">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genmsg/cmake/pkg-genmsg.cmake.em">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genmsg\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gencpp/cmake/gencppConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gencpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gencpp/cmake/gencppConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gencpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gencpp/cmake/gencpp-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gencpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gencpp/cmake/gencppConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gencpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gencpp/cmake/gencppConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gencpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gencpp/cmake/gencppConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gencpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gencpp/cmake/gencppConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gencpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geneus/cmake/geneusConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geneus\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geneus/cmake/geneusConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geneus\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geneus/cmake/geneus-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geneus\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geneus/cmake/geneusConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geneus\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geneus/cmake/geneusConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geneus\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geneus/cmake/geneusConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geneus\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/geneus/cmake/geneusConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\geneus\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genlisp/cmake/genlispConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genlisp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genlisp/cmake/genlispConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genlisp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genlisp/cmake/genlisp-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genlisp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genlisp/cmake/genlispConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genlisp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genlisp/cmake/genlispConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genlisp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genlisp/cmake/genlispConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genlisp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genlisp/cmake/genlispConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genlisp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gennodejs/cmake/gennodejsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gennodejs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gennodejs/cmake/gennodejsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gennodejs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gennodejs/cmake/gennodejs-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gennodejs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gennodejs/cmake/gennodejsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gennodejs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gennodejs/cmake/gennodejsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gennodejs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gennodejs/cmake/gennodejsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gennodejs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/gennodejs/cmake/gennodejsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\gennodejs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genpy/cmake/genpyConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genpy\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genpy/cmake/genpyConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genpy\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genpy/cmake/genpy-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genpy\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genpy/cmake/genpyConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genpy\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genpy/cmake/genpyConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genpy\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genpy/cmake/genpyConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genpy\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/genpy/cmake/genpyConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\genpy\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rosgraph/cmake/rosgraphConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosgraph\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rosgraph/cmake/rosgraphConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosgraph\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf2/cmake/tf2Config-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf2/cmake/tf2Config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf2_msgs/cmake/tf2_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf2_msgs/cmake/tf2_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf2_msgs/cmake/tf2_msgs-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/message_generation/cmake/message_generationConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_generation\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/message_generation/cmake/message_generationConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_generation\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/message_generation/cmake/message_generationConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_generation\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/message_generation/cmake/message_generationConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\message_generation\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf2_py/cmake/tf2_pyConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_py\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/tf2_py/cmake/tf2_pyConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\tf2_py\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rospy/cmake/rospyConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rospy\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rospy/cmake/rospyConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rospy\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/cv_bridge/cmake/cv_bridgeConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cv_bridge\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/cv_bridge/cmake/cv_bridgeConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cv_bridge\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/cv_bridge/cmake/cv_bridge-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cv_bridge\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/cv_bridge/cmake/cv_bridgeConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cv_bridge\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/cv_bridge/cmake/cv_bridgeConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cv_bridge\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/cv_bridge/cmake/cv_bridgeConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cv_bridge\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/cv_bridge/cmake/cv_bridgeConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cv_bridge\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/cv_bridge/cmake/cv_bridgeConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cv_bridge\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/cv_bridge/cmake/cv_bridgeConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\cv_bridge\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/image_transport/cmake/image_transportConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\image_transport\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/image_transport/cmake/image_transportConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\image_transport\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/image_transport/cmake/image_transportConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\image_transport\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/image_transport/cmake/image_transportConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\image_transport\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/image_transport/cmake/image_transportConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\image_transport\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/image_transport/cmake/image_transportConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\image_transport\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/image_transport/cmake/image_transportConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\image_transport\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/image_transport/cmake/image_transportConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\image_transport\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/pluginlib/cmake/pluginlibConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pluginlib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/pluginlib/cmake/pluginlibConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pluginlib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/class_loader/cmake/class_loaderConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\class_loader\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/class_loader/cmake/class_loaderConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\class_loader\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/class_loader/cmake/class_loader-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\class_loader\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roslib/cmake/roslibConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roslib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roslib/cmake/roslibConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roslib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roslib/cmake/roslib-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roslib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rospack/cmake/rospackConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rospack\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rospack/cmake/rospackConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rospack\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/laser_geometry/cmake/laser_geometryConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\laser_geometry\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/laser_geometry/cmake/laser_geometryConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\laser_geometry\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/pcl_conversions/cmake/pcl_conversionsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_conversions\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/pcl_conversions/cmake/pcl_conversionsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_conversions\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/pcl_msgs/cmake/pcl_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/pcl_msgs/cmake/pcl_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/pcl_msgs/cmake/pcl_msgs-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/pcl_ros/cmake/pcl_rosConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_ros\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/pcl_ros/cmake/pcl_rosConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\pcl_ros\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/dynamic_reconfigure/cmake/dynamic_reconfigureConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\dynamic_reconfigure\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/dynamic_reconfigure/cmake/dynamic_reconfigureConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\dynamic_reconfigure\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/dynamic_reconfigure/cmake/dynamic_reconfigure-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\dynamic_reconfigure\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/dynamic_reconfigure/cmake/dynamic_reconfigure-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\dynamic_reconfigure\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/dynamic_reconfigure/cmake/dynamic_reconfigure-macros.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\dynamic_reconfigure\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/nodelet/cmake/nodeletConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\nodelet\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/nodelet/cmake/nodeletConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\nodelet\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/nodelet/cmake/nodelet-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\nodelet\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/bondcpp/cmake/bondcppConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\bondcpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/bondcpp/cmake/bondcppConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\bondcpp\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/bond/cmake/bondConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\bond\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/bond/cmake/bondConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\bond\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/bond/cmake/bond-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\bond\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/smclib/cmake/smclibConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\smclib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/smclib/cmake/smclibConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\smclib\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rosbag/cmake/rosbagConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosbag\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rosbag/cmake/rosbagConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosbag\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rosbag_storage/cmake/rosbag_storageConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosbag_storage\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/rosbag_storage/cmake/rosbag_storageConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\rosbag_storage\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roslz4/cmake/roslz4Config-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roslz4\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/roslz4/cmake/roslz4Config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\roslz4\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_srvs/cmake/std_srvsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_srvs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_srvs/cmake/std_srvsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_srvs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/std_srvs/cmake/std_srvs-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\std_srvs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/topic_tools/cmake/topic_toolsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\topic_tools\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/topic_tools/cmake/topic_toolsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\topic_tools\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/topic_tools/cmake/topic_tools-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\topic_tools\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/nav_msgs/cmake/nav_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\nav_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/nav_msgs/cmake/nav_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\nav_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/nav_msgs/cmake/nav_msgs-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\nav_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/nav_msgs/cmake/nav_msgs-msg-paths.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\nav_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/nav_msgs/cmake/nav_msgs-msg-paths.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\nav_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/interactive_markers/cmake/interactive_markersConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\interactive_markers\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/interactive_markers/cmake/interactive_markersConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\interactive_markers\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/visualization_msgs/cmake/visualization_msgsConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\visualization_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/visualization_msgs/cmake/visualization_msgsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\visualization_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/visualization_msgs/cmake/visualization_msgs-msg-extras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\visualization_msgs\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/OpenCV-3.3.1/OpenCVConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\OpenCV-3.3.1\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/OpenCV-3.3.1/OpenCVConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\OpenCV-3.3.1\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/OpenCV-3.3.1/OpenCVModules.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\OpenCV-3.3.1\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../opt/ros/kinetic/share/OpenCV-3.3.1/OpenCVModules-none.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\opt\ros\kinetic\share\OpenCV-3.3.1\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\pcl\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/pcl/PCLConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\pcl\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfigExtras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsMacros.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Gui/Qt5GuiConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Gui/Qt5GuiConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Gui/Qt5GuiConfigExtras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Core/Qt5CoreConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Core/Qt5CoreConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Core/Qt5CoreConfigExtras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Core/Qt5CoreConfigExtrasMkspecDir.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Core/Qt5CoreMacros.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5OpenGL/Qt5OpenGLConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5OpenGL\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5OpenGL/Qt5OpenGLConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5OpenGL\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Sql/Qt5SqlConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Sql\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Sql/Qt5SqlConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Sql\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5WebKitWidgets/Qt5WebKitWidgetsConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5WebKitWidgets\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5WebKitWidgets/Qt5WebKitWidgetsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5WebKitWidgets\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5WebKit/Qt5WebKitConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5WebKit\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5WebKit/Qt5WebKitConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5WebKit\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Network/Qt5NetworkConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Network\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/x86_64-linux-gnu/cmake/Qt5Network/Qt5NetworkConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\x86_64-linux-gnu\cmake\Qt5Network\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/VTKConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/VTKConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/VTKTargets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/VTKTargets-none.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/vtkModuleAPI.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/UseVTK.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/VTKConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/VTKConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/vtkModuleAPI.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/UseVTK.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/VTKConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/VTKConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/vtkModuleAPI.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/UseVTK.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkChartsCore.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkCommonColor.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkCommonDataModel.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkCommonMath.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkCommonCore.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtksys.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkCommonMisc.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkCommonSystem.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkCommonTransforms.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkInfovisCore.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersExtraction.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkCommonExecutionModel.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersCore.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersGeneral.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkCommonComputationalGeometry.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersStatistics.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkImagingFourier.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkImagingCore.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkalglib.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingContext2D.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingCore.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersGeometry.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersSources.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingFreeType.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkfreetype.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkzlib.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkftgl.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkDICOMParser.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkDomainsChemistry.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOXML.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOGeometry.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOCore.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkjsoncpp.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOXMLParser.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkexpat.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersAMR.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkParallelCore.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOLegacy.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkUtilitiesHashSource.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersFlowPaths.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersGeneric.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersHybrid.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkImagingSources.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersHyperTree.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersImaging.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkImagingGeneral.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersModeling.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersParallel.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersParallelFlowPaths.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkParallelMPI.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersParallelGeometry.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersParallelImaging.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersParallelMPI.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersParallelStatistics.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersProgrammable.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersPython.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkPython.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkWrappingPythonCore.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkWrappingTools.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersReebGraph.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersSMP.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersSelection.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersTexture.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkFiltersVerdict.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkverdict.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkGUISupportQt.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkInteractionStyle.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingOpenGL.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkImagingHybrid.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOImage.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkMetaIO.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkjpeg.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkpng.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtktiff.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkParseOGLExt.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkUtilitiesEncodeString.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkGUISupportQtOpenGL.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkGUISupportQtSQL.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOSQL.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtksqlite.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkGUISupportQtWebkit.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkViewsQt.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkViewsInfovis.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkInfovisLayout.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingLabel.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkViewsCore.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkInteractionWidgets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingAnnotation.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkImagingColor.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingVolume.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkGeovisCore.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtklibproj4.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOAMR.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkhdf5.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOEnSight.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOExodus.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkexodusII.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtknetcdf.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOExport.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingGL2PS.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingContextOpenGL.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkgl2ps.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOFFMPEG.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOMovie.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkoggtheora.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOGDAL.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOGeoJSON.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOImport.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOInfovis.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtklibxml2.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOLSDyna.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOMINC.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOMPIImage.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOMPIParallel.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOMySQL.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIONetCDF.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOODBC.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOPLY.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOParallel.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOParallelExodus.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOParallelLSDyna.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOParallelNetCDF.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOParallelXML.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOPostgreSQL.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOVPIC.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkVPIC.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOVideo.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkIOXdmf2.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkxdmf2.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkImagingMath.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkImagingMorphological.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkImagingStatistics.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkImagingStencil.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkInfovisBoost.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkInfovisBoostGraphAlgorithms.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkInteractionImage.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkLocalExample.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkParallelMPI4Py.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkPythonInterpreter.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingExternal.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingFreeTypeFontConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingFreeTypeOpenGL.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingImage.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingLIC.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingLOD.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingMatplotlib.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingParallel.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingParallelLIC.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingQt.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingTk.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkTclTk.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkRenderingVolumeOpenGL.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkTestingCore.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkTestingGenericBridge.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkTestingIOSQL.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkTestingRendering.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkViewsContext2D.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkViewsGeovis.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkWrappingJava.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkWrappingTcl.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/../../../../../usr/lib/cmake/vtk-6.2/Modules/vtkglew.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib\cmake\vtk-6.2\Modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/catkin/catkin_generated/version/package.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\catkin\catkin_generated\version\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/catkin_generated/ordered_paths.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\catkin_generated\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/catkin_generated/ordered_paths.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\catkin_generated\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/catkin_generated/installspace/_setup_util.py">
+			<Option virtualFolder="CMake Files\cmake-build-debug\catkin_generated\installspace\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/devel/share/messages/cmake/messages-msg-paths.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\devel\share\messages\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/devel/share/messages/cmake/messages-msg-paths.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\devel\share\messages\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/stream/messages/cmake/messages-genmsg.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\modules\stream\messages\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/stream/messages/cmake/messages-genmsg.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\modules\stream\messages\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/perception/detection/armor_detection/constraint_set/catkin_generated/ordered_paths.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\modules\perception\detection\armor_detection\constraint_set\catkin_generated\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/perception/detection/armor_detection/constraint_set/catkin_generated/ordered_paths.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\modules\perception\detection\armor_detection\constraint_set\catkin_generated\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/perception/detection/armor_detection/constraint_set/catkin_generated/ordered_paths.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\modules\perception\detection\armor_detection\constraint_set\catkin_generated\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/perception/detection/armor_detection/constraint_set/catkin_generated/ordered_paths.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\modules\perception\detection\armor_detection\constraint_set\catkin_generated\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/perception/detection/armor_detection/constraint_set/catkin_generated/ordered_paths.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\modules\perception\detection\armor_detection\constraint_set\catkin_generated\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake-build-debug/modules/perception/detection/armor_detection/constraint_set/catkin_generated/ordered_paths.cmake">
+			<Option virtualFolder="CMake Files\cmake-build-debug\modules\perception\detection\armor_detection\constraint_set\catkin_generated\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake/FindG2O.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake/FindSUITESPARSE.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake/FindEigen3.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake/FindGlog.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/cmake/FindProtoBuf.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\stream\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/messages/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\stream\messages\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/messages/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\stream\messages\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/messages/action/example.action">
+			<Option virtualFolder="CMake Files\modules\stream\messages\action\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/messages/action/LocalPlanner.action">
+			<Option virtualFolder="CMake Files\modules\stream\messages\action\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/messages/action/GlobalPlanner.action">
+			<Option virtualFolder="CMake Files\modules\stream\messages\action\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/messages/action/ArmorDetection.action">
+			<Option virtualFolder="CMake Files\modules\stream\messages\action\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/messages/action/Localization.action">
+			<Option virtualFolder="CMake Files\modules\stream\messages\action\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/messages/action/example.action">
+			<Option virtualFolder="CMake Files\modules\stream\messages\action\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/messages/action/LocalPlanner.action">
+			<Option virtualFolder="CMake Files\modules\stream\messages\action\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/messages/action/GlobalPlanner.action">
+			<Option virtualFolder="CMake Files\modules\stream\messages\action\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/messages/action/ArmorDetection.action">
+			<Option virtualFolder="CMake Files\modules\stream\messages\action\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/messages/action/Localization.action">
+			<Option virtualFolder="CMake Files\modules\stream\messages\action\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/tf_tree/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\stream\tf_tree\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/stream/tf_tree/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\stream\tf_tree\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/driver/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\driver\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/driver/camera/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\driver\camera\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/driver/camera/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\driver\camera\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/driver/serial/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\driver\serial\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/driver/serial/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\driver\serial\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/map/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\map\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/map/costmap/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\map\costmap\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/map/costmap/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\map\costmap\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/localization/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\localization\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/localization/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\localization\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/localization/amcl/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\localization\amcl\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/localization/amcl/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\localization\amcl\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/localization/amcl/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\localization\amcl\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/detection/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\detection\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/detection/armor_detection/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\detection\armor_detection\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/detection/armor_detection/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\detection\armor_detection\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/detection/armor_detection/constraint_set/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\detection\armor_detection\constraint_set\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/detection/armor_detection/constraint_set/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\detection\armor_detection\constraint_set\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/detection/armor_detection/constraint_set/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\detection\armor_detection\constraint_set\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/detection/util/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\detection\util\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/perception/detection/util/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\perception\detection\util\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\planning\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\planning\global_planner\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\planning\global_planner\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/a_star_planner/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\planning\global_planner\a_star_planner\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/a_star_planner/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\planning\global_planner\a_star_planner\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/global_planner/a_star_planner/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\planning\global_planner\a_star_planner\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/local_planner/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\planning\local_planner\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/local_planner/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\planning\local_planner\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/local_planner/timed_elastic_band/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\planning\local_planner\timed_elastic_band\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/local_planner/timed_elastic_band/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\planning\local_planner\timed_elastic_band\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/planning/local_planner/timed_elastic_band/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\planning\local_planner\timed_elastic_band\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/decision/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\decision\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/modules/decision/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\modules\decision\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/common/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\common\"/>
+		</Unit>
+		<Unit filename="/home/vic/Workspace/bug/RoboRTS/common/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\common\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

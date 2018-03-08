@@ -1,0 +1,20 @@
+#Send a flag to server to control the thread start, pause, restart and stop
+#command == 1 start
+#command == 2 pause
+#command == 3 stop
+int32 command
+---
+float32 result
+---
+#feedback
+bool  detected_enemy
+int32  error_code
+string error_msg
+
+float64 enemy_x
+float64 enemy_y
+float64 enemy_z
+
+float64 enemy_roll
+float64 enemy_pitch
+float64 enemy_yaw
