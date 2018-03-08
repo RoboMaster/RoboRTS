@@ -44,7 +44,7 @@ obstacles_opt {
     inflation_dist: 0
     include_costmap_obstacles: True
     costmap_obstacles_behind_robot_dist: 0.6
-    obstacle_poses_affected: 30
+    obstacle_poses_affected: 30maibva
     legacy_obstacle_association: False
     obstacle_association_cutoff_factor: 5.0
     obstacle_association_force_inclusion_factor: 1.5
@@ -84,7 +84,7 @@ optimize_info {
     weight_acc_lim_theta: 30
     weight_kinematics_nh: 10
     weight_kinematics_forward_drive: 30
-    weight_kinematics_turning_radius: 0.1
+    weight_kinematics_turning_radius: 0.05
     weight_optimaltime: 1
     weight_obstacle: 30
     weight_inflation: 0.1
