@@ -7,7 +7,7 @@ trajectory_opt {
     teb_autosize: True
     dt_ref: 0.15
     dt_hysteresis: 0.01
-    global_plan_overwrite_orientation: false
+    global_plan_overwrite_orientation: true
     allow_init_with_backwards_motion: true
     global_plan_viapoint_sep: 1.5
     via_points_ordered: False
@@ -28,7 +28,7 @@ kinematics_opt {
     acc_lim_x: 1.5
     acc_lim_y: 1.5
     acc_lim_theta: 3
-    min_turning_radius: 0.0
+    min_turning_radius: 1
     wheelbase: 1.0
     cmd_angle_instead_rotvel: false
 }
@@ -83,14 +83,14 @@ optimize_info {
     weight_acc_lim_y: 10
     weight_acc_lim_theta: 30
     weight_kinematics_nh: 10
-    weight_kinematics_forward_drive: 0
-    weight_kinematics_turning_radius: 0
+    weight_kinematics_forward_drive: 30
+    weight_kinematics_turning_radius: 0.1
     weight_optimaltime: 1
     weight_obstacle: 30
     weight_inflation: 0.1
     weight_dynamic_obstacle: 10
     weight_viapoint: 10
     weight_adapt_factor: 2.0
-    weight_prefer_rotdir: 50
+    weight_prefer_rotdir: 10
 }
 

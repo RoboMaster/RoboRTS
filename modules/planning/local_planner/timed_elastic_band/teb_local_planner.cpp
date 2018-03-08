@@ -218,7 +218,6 @@ bool TebLocalPlanner::SetPlan(const nav_msgs::Path& plan, const geometry_msgs::P
   } else {
     global_plan_ = plan;
   }
-  //SetPlanOrientation();
 }
 
 bool TebLocalPlanner::PruneGlobalPlan() {

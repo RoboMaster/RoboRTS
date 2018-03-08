@@ -283,7 +283,7 @@ bool TebVertexConsole::InitTEBtoGoal(const nav_msgs::Path &plan,
                                      double dt,
                                      bool estimate_orient,
                                      int min_samples,
-                                     bool guess_backwards_motion){
+                                     bool guess_backwards_motion) {
 
   if (!IsInit()) {
     auto temp_start_pose = DataConverter::LocalConvertGData(plan.poses.front().pose);
@@ -306,8 +306,9 @@ bool TebVertexConsole::InitTEBtoGoal(const nav_msgs::Path &plan,
         double dx = plan.poses[i + 1].pose.position.x - plan.poses[i].pose.position.x;
         double dy = plan.poses[i + 1].pose.position.y - plan.poses[i].pose.position.y;
         yaw = std::atan2(dy, dx);
-        if (backwards)
+        if (backwards) {
           yaw = g2o::normalize_theta(yaw + M_PI);
+        } 
       } else {
         yaw = tf::getYaw(plan.poses[i].pose.orientation);
       }
