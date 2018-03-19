@@ -53,6 +53,7 @@
  * Author: Christoph Rösmann
  *********************************************************************/
 
+#include <modules/perception/map/costmap/costmap_interface.h>
 #include "modules/planning/local_planner/timed_elastic_band/teb_local_planner.h"
 
 namespace rrts {
@@ -125,7 +126,11 @@ rrts::common::ErrorInfo TebLocalPlanner::ComputeVelocityCommands(geometry_msgs::
   tf::poseStampedMsgToTF(transformed_plan_.poses.back(), goal_point);
   robot_goal_.GetPosition().coeffRef(0) = goal_point.getOrigin().getX();
   robot_goal_.GetPosition().coeffRef(1) = goal_point.getOrigin().getY();
-  if (global_plan_overwrite_orientation_) {
+
+  if (global_plan_.poses.size() - goal_idx < 5) {
+    robot_goal_.GetTheta() = tf::getYaw(global_plan_.poses.back().pose.orientation);
+    transformed_plan_.poses.back().pose.orientation = tf::createQuaternionMsgFromYaw(robot_goal_.GetTheta());
+  } else if (global_plan_overwrite_orientation_) {
     robot_goal_.GetTheta() = EstimateLocalGoalOrientation(goal_point, goal_idx);
     transformed_plan_.poses.back().pose.orientation = tf::createQuaternionMsgFromYaw(robot_goal_.GetTheta());
   } else {
@@ -190,9 +195,6 @@ rrts::common::ErrorInfo TebLocalPlanner::ComputeVelocityCommands(geometry_msgs::
 
 bool TebLocalPlanner::IsGoalReached () {
 
-  geometry_msgs::PoseStamped a;
-
-
   tf::Stamped<tf::Pose> global_goal;
   tf::poseStampedMsgToTF(global_plan_.poses.back(), global_goal);
   global_goal.setData( plan_to_global_transform_ * global_goal );
@@ -200,6 +202,7 @@ bool TebLocalPlanner::IsGoalReached () {
 
   auto distance = (goal.first - robot_pose_.GetPosition()).norm();
   double delta_orient = g2o::normalize_theta( goal.second - robot_pose_.GetTheta());
+
   if (distance < xy_goal_tolerance_
       && fabs(delta_orient) < yaw_goal_tolerance_) {
     LOG_INFO << "goal reached";
@@ -443,11 +446,11 @@ void TebLocalPlanner::UpdateViaPointsContainer() {
 }
 
 void TebLocalPlanner::UpdateRobotPose() {
-  rrts::perception::map::RobotPose robot_pose;
-  local_cost_.lock()->GetRobotPose(robot_pose);
-  auto temp_pose = DataConverter::LocalConvertRMData(robot_pose);
-  robot_pose_ = DataBase(temp_pose.first, temp_pose.second);
   local_cost_.lock()->GetRobotPose(robot_tf_pose_);
+  Eigen::Vector2d position;
+  position.coeffRef(0) = robot_tf_pose_.getOrigin().getX();
+  position.coeffRef(1) = robot_tf_pose_.getOrigin().getY();
+  robot_pose_ = DataBase(position, tf::getYaw(robot_tf_pose_.getRotation()));
 }
 
 void TebLocalPlanner::UpdateRobotVel() {

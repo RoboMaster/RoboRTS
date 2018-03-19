@@ -8,7 +8,7 @@ trajectory_opt {
     dt_ref: 0.15
     dt_hysteresis: 0.01
     global_plan_overwrite_orientation: true
-    allow_init_with_backwards_motion: false
+    allow_init_with_backwards_motion: true
     global_plan_viapoint_sep: 1.5
     via_points_ordered: False
     max_global_plan_lookahead_dist: 2.0
@@ -24,10 +24,10 @@ kinematics_opt {
     max_vel_x: 1.5
     max_vel_x_backwards: 1.5
     max_vel_y: 1.5
-    max_vel_theta: 3
+    max_vel_theta: 1.5 
     acc_lim_x: 1.5
     acc_lim_y: 1.5
-    acc_lim_theta: 3
+    acc_lim_theta: 1.5 
     min_turning_radius: 1
     wheelbase: 1.0
     cmd_angle_instead_rotvel: false

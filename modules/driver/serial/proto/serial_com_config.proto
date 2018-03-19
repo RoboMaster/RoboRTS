@@ -9,6 +9,8 @@ message SerialPortConfig {
     optional string parity = 6 [default = 'N'];
     optional bool is_debug = 7 [default = true];
     optional bool is_simulator = 8 [default = false];
+    optional double link_column = 9 [default = 50];
+    optional double link_beam = 10 [default = 90];
 }
 
 
