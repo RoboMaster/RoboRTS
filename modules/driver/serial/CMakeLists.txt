@@ -13,5 +13,3 @@ target_link_libraries(serial_com_node
         ${PROTOBUF_LIBRARIES}
         ${GLOG_LIBRARY}
         )
-
-

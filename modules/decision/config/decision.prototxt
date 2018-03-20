@@ -1,3 +1,75 @@
+## rm map
+#point {
+#  x: 8.4
+#  y: 14.35
+#  z: 0
+#
+#  roll:  0
+#  pitch: 0
+#  yaw:   0
+#}
+#
+#point {
+#  x: 14
+#  y: 17
+#  z: 0
+#
+#  roll:  0
+#  pitch: 0
+#  yaw:   0
+#}
+#
+#point {
+#  x: 13
+#  y: 25
+#  z: 0
+#
+#  roll:  0
+#  pitch: 0
+#  yaw:   0
+#}
+#
+#point {
+#  x: 5
+#  y: 19
+#  z: 0
+#
+#  roll:  0
+#  pitch: 0
+#  yaw:   0
+#}
+#
+#point {
+#  x: 3
+#  y: 11
+#  z: 0
+#
+#  roll:  0
+#  pitch: 0
+#  yaw:   0
+#}
+#
+#point {
+#  x: 5
+#  y: 3
+#  z: 0
+#
+#  roll:  0
+#  pitch: 0
+#  yaw:   0
+#}
+#
+#point {
+#  x: 13
+#  y: 10
+#  z: 0
+#
+#  roll:  0
+#  pitch: 0
+#  yaw:   0
+#}
+
+# icra map 
 point {
   x: 7
   y: 0.7
@@ -27,3 +99,4 @@ point {
   pitch: 0
   yaw:   0
 }
+

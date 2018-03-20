@@ -39,8 +39,8 @@ transform_tolerance : 0.1
 recovery_alpha_slow : 0.001
 recovery_alpha_fast : 0.1
 
-initial_pose_x :1.0
-initial_pose_y :1.0
+initial_pose_x :1 #8.40 #1.0
+initial_pose_y :1 #14.35 #1.0
 initial_pose_a :0
 initial_cov_xx :0.1
 initial_cov_yy :0.1
