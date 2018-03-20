@@ -44,7 +44,7 @@ obstacles_opt {
     inflation_dist: 0
     include_costmap_obstacles: True
     costmap_obstacles_behind_robot_dist: 0.6
-    obstacle_poses_affected: 30maibva
+    obstacle_poses_affected: 30
     legacy_obstacle_association: False
     obstacle_association_cutoff_factor: 5.0
     obstacle_association_force_inclusion_factor: 1.5
