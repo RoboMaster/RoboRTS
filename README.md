@@ -67,7 +67,7 @@ source ~/.bashrc
 ### Run Examples
 
 ```shell
-./tools/run_simulator.sh
+./tools/script/run.sh -s 
 ```
 
 <img src="docs/images/run_example.gif" style="zoom:80%"/>

@@ -156,7 +156,7 @@ void Amcl::UpdatePoseFromProto() {
     LOG_WARNING << "ignoring NAN in initial pose X position";
   }
   if(!std::isnan(amcl_param_.initial_pose_y())){
-    init_pose_[1] = amcl_param_.initial_pose_x();
+    init_pose_[1] = amcl_param_.initial_pose_y();
   } else
   {
     LOG_WARNING << "ignoring NAN in initial pose Y position";

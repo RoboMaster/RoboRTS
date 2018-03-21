@@ -15,12 +15,7 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#include <time.h>
-#include <cmath>
-#include <sys/time.h>
-#include <messages/EnemyPos.h>
 #include "modules/driver/serial/serial_com_node.h"
-#include "infantry_info.h"
 
 namespace rrts {
 namespace driver {
@@ -33,8 +28,12 @@ SerialComNode::SerialComNode(std::string module_name)
   << "Error loading proto file for serial.";
   CHECK(serial_port_config.has_serial_port()) << "Port not set.";
   CHECK(serial_port_config.has_serial_boudrate()) << "Baudrate not set.";
+  length_beam_ = serial_port_config.link_beam();
+  length_column_ = serial_port_config.link_column();
   baudrate_ = serial_port_config.serial_boudrate();
   port_ = serial_port_config.serial_port();
+  uwb_position_.header.frame_id = "uwb";
+  uwb_position_.header.seq = 0;
   CHECK(Initialization()) << "Initialization error.";
   is_open_ = true;
   stop_receive_ = false;
@@ -45,6 +44,11 @@ SerialComNode::SerialComNode(std::string module_name)
   total_length_ = 0;
   free_length_ = UART_BUFF_SIZE;
   odom_pub_ = nh_.advertise<nav_msgs::Odometry>("odom", 30);
+  gim_pub_ = nh_.advertise<messages::GimbalAngle>("gimbal", 30);
+  uwb_pose_pub_ = nh_.advertise<messages::PositionUWB>("uwb_pose", 30);
+  if (is_debug_) {
+    fp_ = fopen("debug_com.txt", "w+");
+  }
 }
 
 bool SerialComNode::Initialization() {
@@ -59,9 +63,21 @@ bool SerialComNode::SerialInitialization(std::string port,
                                          int parity) {
   fd_ = open(port.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
   CHECK(fd_ != -1) << "Serial port open failed!";
-  CHECK(tcgetattr(fd_, &termios_options_) == 0) << "Get serial attributes error!";
+  CHECK(tcgetattr(fd_, &termios_options_) == 0) << "1st Time Get serial attributes error!";
   termios_options_original_ = termios_options_;
   ConfigBaudrate(baudrate);
+  switch (data_bits) {
+    case 5 :termios_options_.c_cflag |= CS5;
+      break;
+    case 6 :termios_options_.c_cflag |= CS6;
+      break;
+    case 7 :termios_options_.c_cflag |= CS7;
+      break;
+    case 8 :termios_options_.c_cflag |= CS8;
+      break;
+    default: LOG_FATAL << "Unsupported data size";
+      return false;
+  }
   termios_options_.c_cflag |= CLOCAL;
   termios_options_.c_cflag |= CREAD;
   termios_options_.c_cflag &= ~CSIZE;
@@ -75,22 +91,10 @@ bool SerialComNode::SerialInitialization(std::string port,
     default: termios_options_.c_cflag &= ~CRTSCTS;
       break;
   }
-  switch (data_bits) {
-    case 5 :termios_options_.c_cflag |= CS5;
-      break;
-    case 6 :termios_options_.c_cflag |= CS6;
-      break;
-    case 7 :termios_options_.c_cflag |= CS7;
-      break;
-    case 8 :termios_options_.c_cflag |= CS8;
-      break;
-    default: LOG_FATAL << "Unsupported data size";
-      return false;
-  }
   switch (parity) {
     case 'n':
     case 'N':termios_options_.c_cflag &= ~(PARENB | PARODD);
-      termios_options_.c_iflag &= ~INPCK;
+//      termios_options_.c_iflag &= ~INPCK;
       break;
     case 'o':
     case 'O':termios_options_.c_cflag |= (PARODD | PARENB);
@@ -116,23 +120,26 @@ bool SerialComNode::SerialInitialization(std::string port,
     default: LOG_FATAL << "Unsupported stop bits";
       return false;
   }
+  termios_options_.c_iflag = IGNBRK;
+  termios_options_.c_iflag &= ~(IXON | IXOFF | IXANY);
   termios_options_.c_lflag = 0;
   termios_options_.c_oflag = 0;
-  termios_options_.c_oflag &= ~OPOST;
-  termios_options_.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
   termios_options_.c_cc[VTIME] = 1;
   termios_options_.c_cc[VMIN] = 60;
-  termios_options_.c_iflag = IGNBRK;
   CHECK_EQ(tcsetattr(fd_, TCSANOW, &termios_options_), 0)
     << "Set serial attributes error!";
   LOG_INFO << "Com config success";
+  int mcs = 0;
+  ioctl(fd_, TIOCMGET, &mcs);
+  mcs |= TIOCM_RTS;
+  ioctl(fd_, TIOCMSET, &mcs);
   return true;
 }
 
 bool SerialComNode::ConfigBaudrate(int baudrate) {
   int i;
-  int speed_arr[] = {B921600, B115200, B19200, B9600, B4800, B2400, B1200, B300};
-  int name_arr[] = {921600, 115200, 19200, 9600, 4800, 2400, 1200, 300};
+  int speed_arr[] = {B921600, B576000, B460800, B230400, B115200, B19200, B9600, B4800, B2400, B1200, B300};
+  int name_arr[] = {921600, 576000, 460800, 230400, 115200, 19200, 9600, 4800, 2400, 1200, 300};
   for (i = 0; i < sizeof(speed_arr) / sizeof(int); i++) {
     if (baudrate == name_arr[i]) {
       cfsetispeed(&termios_options_, speed_arr[i]);
@@ -215,7 +222,7 @@ void SerialComNode::ReceiveLoop() {
             protocol_packet_[index_++] = byte_;
             bool crc8_result = VerifyCrcOctCheckSum(protocol_packet_, HEADER_LEN);
             if (!crc8_result) {
-              LOG_WARNING << "****************CRC 8 error>>>>>>>>>>>>>>>>>";
+              LOG_WARNING << "CRC 8 error";
             }
             if ((index_ == HEADER_LEN) && crc8_result) {
               if (index_ < HEADER_LEN) {
@@ -240,7 +247,7 @@ void SerialComNode::ReceiveLoop() {
               if (VerifyCrcHexCheckSum(protocol_packet_, HEADER_LEN + CMD_LEN + data_length_ + CRC_LEN)) {
                 DataHandle();
               } else {
-                LOG_WARNING << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>CRC16 INVALID<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
+                LOG_WARNING << "CRC16 error";
               }
             }
           }
@@ -274,6 +281,17 @@ int SerialComNode::ReceiveData(int fd, int data_length) {
   selected = select(fd + 1, &fs_read, NULL, NULL, &time);
   if (selected > 0) {
     received_length = read(fd, rx_buf_, data_length);
+    int count = received_length;
+    int p = 0;
+    if (is_debug_) {
+      fprintf(fp_, "%d,", received_length);
+      while (count--) {
+        fprintf(fp_, "%x,", rx_buf_[p++]);
+      }
+      fprintf(fp_, "\n");
+//    fwrite(rx_buf_, sizeof(uint8_t), received_length, fp_);
+      fflush(fp_);
+    }
   } else if (selected == 0) {
     received_length = 0;
   } else {
@@ -284,6 +302,8 @@ int SerialComNode::ReceiveData(int fd, int data_length) {
 }
 
 void SerialComNode::DataHandle() {
+  ros::Time current_time = ros::Time::now();
+  geometry_msgs::Quaternion q;
   std::lock_guard<std::mutex> guard(mutex_receive_);
   auto *p_header = (FrameHeader *) protocol_packet_;
   uint16_t data_length = p_header->data_length;
@@ -291,6 +311,15 @@ void SerialComNode::DataHandle() {
   uint8_t *data_addr = protocol_packet_ + HEADER_LEN + CMD_LEN;
   switch (cmd_id) {
     case GAME_INFO_ID: memcpy(&game_information_, data_addr, data_length);
+      uwb_position_.header.stamp = current_time;
+      uwb_position_.header.seq++;
+      uwb_position_.valid_flag = game_information_.position.valid_flag;
+      uwb_position_.x = game_information_.position.x;
+      uwb_position_.y = game_information_.position.y;
+      uwb_position_.z = game_information_.position.z;
+      uwb_position_.yaw = game_information_.position.yaw;
+      uwb_pose_pub_.publish(uwb_position_);
+      LOG_INFO << "Game info OK";
       if (is_debug_) {
         LOG_INFO << "Game remaining blood: " << game_information_.remain_hp;
       }
@@ -315,7 +344,6 @@ void SerialComNode::DataHandle() {
       if (is_debug_) {
         LOG_INFO << "Chassis bottom data is received.";
       }
-      ros::Time current_time = ros::Time::now();
       memcpy(&chassis_information_, data_addr, data_length);
       nav_msgs::Odometry odom;
       odom.header.stamp = current_time;
@@ -325,7 +353,7 @@ void SerialComNode::DataHandle() {
       odom.pose.pose.position.x = x;
       odom.pose.pose.position.y = y;
       odom.pose.pose.position.z = 0.0;
-      geometry_msgs::Quaternion q = tf::createQuaternionMsgFromYaw(chassis_information_.gyro_angle / 180.0 * M_PI);
+      q = tf::createQuaternionMsgFromYaw(chassis_information_.gyro_angle / 180.0 * M_PI);
       odom.pose.pose.orientation = q;
       odom.twist.twist.linear.x = (double) chassis_information_.x_speed / 1000.0;
       odom.twist.twist.linear.y = (double) chassis_information_.y_speed / 1000.0;
@@ -343,6 +371,18 @@ void SerialComNode::DataHandle() {
     }
       break;
     case GIMBAL_DATA_ID: memcpy(&gimbal_information_, data_addr, data_length);
+      gim_angle_.pitch = gimbal_information_.pit_relative_angle / 180 * M_PI;
+      gim_angle_.yaw = gimbal_information_.yaw_relative_angle / 180 * M_PI;
+      gim_pub_.publish(gim_angle_);
+      q = tf::createQuaternionMsgFromRollPitchYaw(0.0, gim_angle_.pitch, gim_angle_.yaw);
+      arm_tf_.header.frame_id = "base_link";
+      arm_tf_.child_frame_id = "tool0";
+      arm_tf_.header.stamp = current_time;
+      arm_tf_.transform.rotation = q;
+      arm_tf_.transform.translation.x = length_beam_ * cos(gim_angle_.pitch) * cos(gim_angle_.yaw) / 1000;
+      arm_tf_.transform.translation.y = length_beam_ * cos(gim_angle_.pitch) * sin(gim_angle_.yaw) / 1000;
+      arm_tf_.transform.translation.z = (length_column_ + length_beam_ * sin(gim_angle_.pitch)) / 1000;
+      tf_broadcaster_.sendTransform(arm_tf_);
       if (is_debug_) {
         LOG_INFO << "Gimbal info-->" << gimbal_information_.pit_relative_angle;
       }
@@ -382,7 +422,7 @@ void SerialComNode::DataHandle() {
         printf("Bottom Version-->%d\n", version_info_data_.num[0]);
       }
       break;
-    default:LOG_WARNING << "ID is beyond defined";
+    default:
       break;
   }
 }
@@ -454,7 +494,8 @@ void SerialComNode::ChassisControlCallback(const geometry_msgs::Twist::ConstPtr 
     uint8_t pack[PACK_MAX_SIZE];
     ChassisControl chassis_control_data;
 //TODO(Krik): get the effective command from the decision module
-    chassis_control_data.ctrl_mode = AUTO_FOLLOW_GIMBAL;
+    chassis_control_data.ctrl_mode = AUTO_SEPARATE_GIMBAL;    //AUTO_FOLLOW_GIMBAL
+
     chassis_control_data.x_speed = vel->linear.x * 1000.0;
     chassis_control_data.y_speed = vel->linear.y * 1000.0;
     chassis_control_data.w_info.x_offset = 0;
@@ -490,8 +531,7 @@ void SerialComNode::SendPack() {
   while (is_open_ && !stop_send_ && ros::ok()) {
     if (total_length_ > 0) {
       mutex_send_.lock();
-      int result = SendData(total_length_);
-      printf("Com send OK and length: %d\n", result);
+      SendData(total_length_);
       total_length_ = 0;
       free_length_ = UART_BUFF_SIZE;
       mutex_send_.unlock();
@@ -504,10 +544,12 @@ void SerialComNode::SendPack() {
 int SerialComNode::SendData(int data_len) {
   int length = 0;
   length = write(fd_, tx_buf_, data_len);
+  lseek(fd_, 0, SEEK_CUR);
+  std::cout << "Com sending: " << length << std::endl;
   if (length == data_len) {
     return length;
   } else {
-    LOG_FATAL << "Serial write error";
+    LOG_WARNING << "Serial write error";
     return -1;
   }
 }
@@ -526,6 +568,9 @@ SerialComNode::~SerialComNode() {
   tcsetattr(fd_, TCSANOW, &termios_options_original_);
   close(fd_);
   is_open_ = false;
+  if (is_debug_) {
+    fclose(fp_);
+  }
 }
 
 void SerialComNode::Stop() {

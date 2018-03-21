@@ -18,13 +18,17 @@
 #ifndef MODULES_DRIVER_SERIAL_SERIAL_COM_NODE_H
 #define MODULES_DRIVER_SERIAL_SERIAL_COM_NODE_H
 
-#include <fcntl.h>
-#include <termios.h>
+#include <ctime>
+#include <cmath>
+#include <sys/ioctl.h>
+#include <sys/fcntl.h>
+#include <sys/termios.h>
 #include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <fstream>
 #include <string>
 #include <mutex>
 #include <thread>
@@ -37,6 +41,9 @@
 #include "common/error_code.h"
 #include "common/node_state.h"
 #include "common/main_interface.h"
+#include "messages/GimbalAngle.h"
+#include "messages/PositionUWB.h"
+#include "messages/EnemyPos.h"
 #include "modules/driver/serial/infantry_info.h"
 #include "modules/driver/serial/proto/serial_com_config.pb.h"
 
@@ -231,17 +238,22 @@ class SerialComNode : public rrts::common::RRTS {
    */
   void SendPack();
 
+  FILE * fp_;
   int fd_, baudrate_, length_, pack_length_, total_length_, free_length_, key_, valid_key_;
+  double length_column_, length_beam_;
   struct termios termios_options_, termios_options_original_;
   std::string port_;
   std::thread *receive_loop_thread_, *send_loop_thread_, *keyboard_in_;
   std::mutex mutex_receive_, mutex_send_, mutex_pack_;
-  bool is_open_, stop_receive_, stop_send_, is_sim_, is_debug_;
+  bool is_open_, stop_receive_, stop_send_, is_sim_, is_debug_, is_debug_tx_;
   ros::NodeHandle nh_;
   //TODO(krik): use actionlib and add more subscribers, more publishers.
   ros::Subscriber sub_cmd_vel_, sub_cmd_gim_;
-  ros::Publisher odom_pub_;
+  ros::Publisher odom_pub_, gim_pub_, uwb_pose_pub_;
+  messages::GimbalAngle gim_angle_;
+  geometry_msgs::TransformStamped arm_tf_;
   tf::TransformBroadcaster tf_broadcaster_;
+  messages::PositionUWB uwb_position_;
   //TODO(krik): add the error code and node state
   rrts::common::ErrorCode error_code_;
   rrts::common::NodeState node_state_;
@@ -253,7 +265,6 @@ class SerialComNode : public rrts::common::RRTS {
   int32_t read_len_, read_buff_index_, index_;
   GimbalControl gimbal_control_data_;
   ChassisControl chassis_control_data_;
-
   FrameHeader computer_frame_header_;
   GameInfo game_information_;
   HurtData robot_hurt_data_;
