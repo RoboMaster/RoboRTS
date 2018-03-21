@@ -154,7 +154,7 @@ done
 
 function help(){
   echo "Usage:
-  ./$0 [COMMAND]"
+  $0 [COMMAND]"
   echo "COMMAND:
   --help -h
         Show help message
@@ -175,7 +175,13 @@ if [[ $# -eq 0  ]];then
 fi
 
 ARGS=`getopt -o "s,m:,h" -l "simulation,map:,help" -- "$@"`
+if [ $? != 0 ] ; then 
+    help
+    exit 1
+fi
 eval set -- "${ARGS}"
+
+
 
 while true;
 do
@@ -186,12 +192,13 @@ do
             ;;
         "--map"|"-m")
             INPUT_MAP="$2"
-            if [ ! -z "$INPUT_MAP" ]
-            then
-              if [ -e "${ROOT_DIR}/tools/map/${INPUT_MAP}.yaml" ]
-              then
+            if [ ! -z "$INPUT_MAP" ]; then
+              if [ -e "${ROOT_DIR}/tools/map/${INPUT_MAP}.yaml" ]; then
                 MAP="$INPUT_MAP"
-              fi
+	      else
+		echo "Map ${INPUT_MAP} is not found, ${ROOT_DIR}/tools/map/${INPUT_MAP}.yaml does not exist."
+                exit 1
+	      fi
             fi
             echo "Load map: ${MAP}"
             shift 2
@@ -210,5 +217,12 @@ do
             ;;
     esac
 done
-
-run_all
+if [ ! "$#" -eq 0 ]; then
+    for arg do
+        echo "Arg $arg is invalid."
+	help
+	exit 1
+    done
+else
+    run_all
+fi 
