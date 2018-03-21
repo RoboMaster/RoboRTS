@@ -8,6 +8,9 @@ LOG_DIR="/tmp/RoboRTS/log"
 echo "RoboRTS Version 0.5"
 echo "Path: ${ROOT_DIR}"
 
+
+SERIAL_MODULE="build/modules/driver/serial/serial_com_node"
+TF_MODULE="build/modules/stream/tf_tree/tf_tree"
 LOCALIZATION_MODULE="build/modules/perception/localization/localization_node"
 GLOBAL_PLANNING_MODULE="build/modules/planning/global_planner/global_planner_node"
 LOCAL_PLANNING_MODULE="build/modules/planning/local_planner/local_planner_node"
@@ -105,11 +108,21 @@ function check_process() {
 }
 
 function run_all(){
-
-MODULES=(${LOCALIZATION_MODULE} \
-        ${GLOBAL_PLANNING_MODULE} \
-        ${LOCAL_PLANNING_MODULE} \
-        ${DECISION_MODULE})
+if [ "${SIMULATION}" -eq 1 ]; then
+    echo "Simulation Mode"
+	MODULES=(${LOCALIZATION_MODULE} \
+        	${GLOBAL_PLANNING_MODULE} \
+        	${LOCAL_PLANNING_MODULE} \
+        	${DECISION_MODULE})
+else
+    echo "Test Mode"
+	MODULES=(${SERIAL_MODULE} \
+	        ${TF_MODULE} \
+	        ${LOCALIZATION_MODULE} \
+        	${GLOBAL_PLANNING_MODULE} \
+        	${LOCAL_PLANNING_MODULE} \
+        	${DECISION_MODULE})
+fi
 
 start_ros
 
@@ -132,6 +145,7 @@ while [ "${CLOSE}" -eq 0 ]; do
 done
 
 shutdown_ros
+
 for MODULE in ${MODULES[@]}
 do
     shutdown ${MODULE}
@@ -168,7 +182,6 @@ do
     case "$1" in
         "--simulation"|"-s")
             SIMULATION=1
-            echo "Run in simulation mode"
             shift
             ;;
         "--map"|"-m")
