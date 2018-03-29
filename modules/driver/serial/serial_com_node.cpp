@@ -503,7 +503,7 @@ void SerialComNode::ChassisControlCallback(const geometry_msgs::Twist::ConstPtr 
     chassis_control_data.w_info.w_speed = vel->angular.z * 180.0 / M_PI;
     int length = sizeof(ChassisControl), pack_length = length + HEADER_LEN + CMD_LEN + CRC_LEN;
     SendDataHandle(CHASSIS_CTRL_ID, (uint8_t *) &chassis_control_data, pack, length);
-    if (pack_length_ <= free_length_) {
+    if (pack_length <= free_length_) {
       memcpy(tx_buf_ + total_length_, pack, pack_length);
       free_length_ -= pack_length;
       total_length_ += pack_length;
