@@ -76,7 +76,7 @@ source ~/.bashrc
 
 * [Hardware setup](docs/hardware_setup.md): Instruction to build a RoboMaster infantry robot.
 * [Software architecture](docs/software_architecture.md): The software architecture of RoboRTS framework.
-* [Protocol](docs/protocol.md): The protocol between the on-board computer and the MCU.
+* [Protocol](https://github.com/RoboMaster/RoboRTS-Firmware/blob/master/Doc/protocol/readme.md): The protocol between the on-board computer and the MCU.
 * [Tutorial](): Additional tutorials will be released in the future.
 
 ## Copyright and License
