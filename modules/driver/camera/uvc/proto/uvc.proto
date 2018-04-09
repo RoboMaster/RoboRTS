@@ -1,5 +1,5 @@
 syntax = "proto2";
-package rrts.drivers;
+package rrts.driver.camera;
 
 message CameraMatrix {
     repeated double data = 1;

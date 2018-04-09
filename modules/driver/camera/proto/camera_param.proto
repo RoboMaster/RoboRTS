@@ -1,0 +1,46 @@
+syntax = "proto2";
+package rrts.driver.camera;
+
+enum Mode{
+  VIDEO  = 1;
+  CAMERA = 2;
+}
+
+message CameraMatrix {
+  repeated double data = 1;
+}
+
+message CameraDistortion {
+  repeated double data = 1;
+}
+
+message Resolution {
+  required uint32 width = 1;
+  required uint32 height = 2;
+}
+
+message Camera {
+  required string camera_type = 1;
+  required Mode mode = 2;
+  required uint32 camera_id = 3;
+  required string video_path = 4;
+  required CameraMatrix camera_matrix = 5;
+  required CameraDistortion camera_distortion = 6;
+
+  optional uint32 fps = 7;
+  optional Resolution resolution = 8;
+
+  optional bool auto_exposure = 9; //1 open, 0 close
+  optional uint32 exposure_value = 10;
+  optional uint32 exposure_time = 11;//us
+
+  optional bool auto_white_balance = 12; //1 open, 0 close
+
+  optional bool auto_gain = 13;////1 open, 0 close
+
+  optional uint32 contrast = 19;
+}
+
+message Cameras {
+  repeated Camera camera = 3;
+}

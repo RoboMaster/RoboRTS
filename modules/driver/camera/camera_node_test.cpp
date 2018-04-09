@@ -75,4 +75,14 @@ CameraNode::~CameraNode() {
 } //namespace drivers
 } //namespace rrts
 
-MAIN(rrts::driver::camera::CameraNode, "camera_node")
+int main(int argc, char **argv){
+  rrts::common::GLogWrapper glog_wrapper(argv[0]);
+  signal(SIGINT, SignalHandler);
+  signal(SIGTERM,SignalHandler);
+  ros::init(argc, argv, "test", ros::init_options::NoSigintHandler);
+  rrts::driver::camera::CameraNode rrts("test");
+  ros::AsyncSpinner async_spinner(1);
+  async_spinner.start();
+  ros::waitForShutdown();
+  return 0;
+}

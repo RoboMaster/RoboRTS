@@ -15,52 +15,47 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#ifndef DRIVERS_CAMERAPARAM_H
-#define DRIVERS_CAMERAPARAM_H
+#ifndef DRIVER_CAMERA_UVC_H
+#define DRIVER_CAMERA_UVC_H
 
 #include <thread>
-#include <string>
-#include <opencv2/opencv.hpp>
+
+#include "ros/ros.h"
+#include "opencv2/opencv.hpp"
+#include "actionlib/server/simple_action_server.h"
+
+#include "modules/driver/camera/camera_param.h"
+#include "modules/driver/camera/camera_base.h"
+#include "common/algorithm_factory.h"
+#include "common/rrts.h"
+#include "common/io.h"
+#include "common/log.h"
 
 namespace rrts {
 namespace driver {
 namespace camera {
 
-struct CameraInfo {
-  std::string camera_type;
-  int mode;
-  unsigned int camera_id;
-  std::string video_path;
-  cv::Mat camera_matrix;
-  cv::Mat camera_distortion;
-
-  unsigned int resolution_width;
-  unsigned int resolution_height;
-
-  unsigned int fps;
-  bool auto_exposure;
-  unsigned int exposure_value;
-  unsigned int exposure_time;
-  bool auto_white_balance;
-  bool auto_gain;
-  unsigned int contrast;
-
-
-  cv::VideoCapture cap_handle;
-};
-
-class CameraParam {
+class UVCDriver: public CameraBase {
  public:
-  CameraParam();
-  void LoadCameraParam();
-  void GetCameraParam(std::vector<CameraInfo> &cameras_param);
-  std::vector<CameraInfo> GetCameraParam();
-  ~CameraParam() = default;
+  UVCDriver();
+  void LoadParam() override;
+  void Init(unsigned int camera_num);
+  /**
+   * Initializing the image buffer and creating a new thread to read camera.
+   */
+  void StartReadCamera(unsigned int camera_num, cv::Mat &img) override;
+  void StopReadCamera();
+  void SetCameraExposure(std::string id, int val);
+  ~UVCDriver() override;
  private:
-  std::vector<CameraInfo> cameras_param_;
+  CameraParam camera_param_;
+  std::vector<CameraInfo> cameras_;
+  bool read_camera_initialized_;
 };
+
+rrts::common::REGISTER_ALGORITHM(CameraBase, "uvc", UVCDriver);
+
 } //namespace camera
 } //namespace driver
 } //namespace rrts
-
-#endif //DRIVERS_CAMERAPARAM_H
+#endif //DRIVER_CAMERA_UVC_H

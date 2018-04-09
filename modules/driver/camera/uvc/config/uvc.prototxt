@@ -27,6 +27,7 @@ camera: {
     width: 640
     height: 480
   }
+  exposure: 60
 }
 
 #camera: {

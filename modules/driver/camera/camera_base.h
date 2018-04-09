@@ -15,52 +15,28 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#ifndef DRIVERS_CAMERAPARAM_H
-#define DRIVERS_CAMERAPARAM_H
+#ifndef MODULES_DRIVERS_CAMERA_CAMERA_BASE_H
+#define MODULES_DRIVERS_CAMERA_CAMERA_BASE_H
 
-#include <thread>
-#include <string>
+#include <vector>
 #include <opencv2/opencv.hpp>
+#include "common/error_code.h"
 
-namespace rrts {
+namespace rrts{
 namespace driver {
 namespace camera {
 
-struct CameraInfo {
-  std::string camera_type;
-  int mode;
-  unsigned int camera_id;
-  std::string video_path;
-  cv::Mat camera_matrix;
-  cv::Mat camera_distortion;
+using rrts::common::ErrorInfo;
 
-  unsigned int resolution_width;
-  unsigned int resolution_height;
-
-  unsigned int fps;
-  bool auto_exposure;
-  unsigned int exposure_value;
-  unsigned int exposure_time;
-  bool auto_white_balance;
-  bool auto_gain;
-  unsigned int contrast;
-
-
-  cv::VideoCapture cap_handle;
-};
-
-class CameraParam {
+class CameraBase {
  public:
-  CameraParam();
-  void LoadCameraParam();
-  void GetCameraParam(std::vector<CameraInfo> &cameras_param);
-  std::vector<CameraInfo> GetCameraParam();
-  ~CameraParam() = default;
- private:
-  std::vector<CameraInfo> cameras_param_;
+  CameraBase();
+  virtual void LoadParam();
+  virtual void StartReadCamera(unsigned int camera_num, cv::Mat &img) = 0;
+  virtual ~CameraBase() = default;
 };
 } //namespace camera
 } //namespace driver
 } //namespace rrts
 
-#endif //DRIVERS_CAMERAPARAM_H
+#endif //MODULES_DRIVERS_CAMERA_CAMERA_BASE_H

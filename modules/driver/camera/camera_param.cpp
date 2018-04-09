@@ -15,8 +15,8 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#include "modules/driver/camera/proto/camera.pb.h"
 #include "modules/driver/camera/camera_param.h"
+#include "modules/driver/camera/proto/camera_param.pb.h"
 
 #include "common/io.h"
 #include "common/log.h"
@@ -30,16 +30,18 @@ CameraParam::CameraParam() {
 }
 
 void CameraParam::LoadCameraParam() {
-  rrts::drivers::Cameras camera_info;
-  std::string file_name = "modules/driver/camera/config/camera.prototxt";
+  Cameras camera_info;
+  std::string file_name = "modules/driver/camera/config/camera_param.prototxt";
   bool read_state = rrts::common::ReadProtoFromTextFile(file_name, &camera_info);
   CHECK(read_state) << "Cannot open " << file_name;
 
   //camera number and ids
   int camera_num = camera_info.camera().size();
   cameras_param_.resize(camera_num);
-  for (unsigned int index = 0; index < camera_num; index++) {
+  for(unsigned int index = 0; index < camera_num; index++) {
+
     //camera id
+    cameras_param_[index].camera_type = camera_info.camera(index).camera_type();
     cameras_param_[index].mode = camera_info.camera(index).mode();
     cameras_param_[index].camera_id = (unsigned int) camera_info.camera(index).camera_id();
     cameras_param_[index].video_path = camera_info.camera(index).video_path();
@@ -47,6 +49,21 @@ void CameraParam::LoadCameraParam() {
     //camera resolution
     cameras_param_[index].resolution_width = camera_info.camera(index).resolution().width();
     cameras_param_[index].resolution_height = camera_info.camera(index).resolution().height();
+
+    //fps
+    cameras_param_[index].fps = camera_info.camera(index).fps();
+
+    //exposure
+    cameras_param_[index].auto_exposure = camera_info.camera(index).auto_exposure();
+    cameras_param_[index].exposure_value = camera_info.camera(index).exposure_value();
+    cameras_param_[index].exposure_time = camera_info.camera(index).exposure_time();
+
+    //white_balance and gain
+    cameras_param_[index].auto_white_balance = camera_info.camera(index).auto_white_balance();
+    cameras_param_[index].auto_gain = camera_info.camera(index).auto_gain();
+
+    //constrast
+    cameras_param_[index].contrast = camera_info.camera(index).contrast();
 
     //camera matrix
     int camera_m_size = camera_info.camera(index).camera_matrix().data().size();

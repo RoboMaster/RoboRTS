@@ -19,35 +19,42 @@
 #define DRIVERS_CAMERA_NODE_H
 
 #include <thread>
+#include <vector>
 
-#include "ros/ros.h"
-#include "opencv2/opencv.hpp"
-#include "actionlib/server/simple_action_server.h"
+#include <ros/ros.h>
+#include <opencv2/opencv.hpp>
+#include <actionlib/server/simple_action_server.h>
+#include <image_transport/image_transport.h>
 
+#include "modules/driver/camera/uvc/uvc_driver.h"
 #include "modules/driver/camera/camera_param.h"
+#include "modules/driver/camera/camera_base.h"
+#include "common/algorithm_factory.h"
 #include "common/rrts.h"
 #include "common/io.h"
 #include "common/log.h"
+
 namespace rrts {
 namespace driver {
 namespace camera {
 
 class CameraNode : public rrts::common::RRTS {
  public:
-  CameraNode(std::string name);
-  void LoadParam();
+  explicit CameraNode(std::string name);
+  void StartThread();
   /**
    * Initializing the image buffer and creating a new thread to read camera.
    */
-  void StartReadCamera();
-  void Update(const unsigned int &index);
-  void StopReadCamera();
-  ~CameraNode() override;
+  void Update(const unsigned int camera_num_);
+  void StoptThread();
+  ~CameraNode();
  private:
+  std::vector<std::shared_ptr<CameraBase>> camera_driver_;
   CameraParam camera_param_;
-  std::vector<CameraInfo> cameras_;
+  unsigned long camera_num_;
   bool read_camera_initialized_;
   bool running_;
+  std::vector<std::thread> camera_threads_;
 
   //ros
   ros::NodeHandle nh;
