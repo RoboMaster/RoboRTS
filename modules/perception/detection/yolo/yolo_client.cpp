@@ -26,7 +26,6 @@ int main(int argc, char **argv) {
 
   // create the action client
   actionlib::SimpleActionClient<messages::InfantryInfoAction> ac("yolo_node_action", true);
-  //messages::ArmorDetectionResult node_result;
   LOG_INFO<<"Waiting for action server to start.";
   ac.waitForServer();
   LOG_INFO<<"Start.";
