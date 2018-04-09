@@ -27,6 +27,7 @@
 #include "image_transport/image_transport.h"
 #include "cv_bridge/cv_bridge.h"
 
+#include "modules/perception/detection/armor_detection/constraint_set/proto/constraint_set.pb.h"
 #include "modules/driver/camera/camera_param.h"
 #include "common/log.h"
 

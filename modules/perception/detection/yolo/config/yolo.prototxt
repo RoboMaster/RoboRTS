@@ -1,0 +1,5 @@
+init_camera_id: 0
+enable_debug: true
+datacfg: "modules/perception/detection/yolo/config/yolov3-rm.data"
+cfg: "modules/perception/detection/yolo/config/yolov3-rm.cfg"
+weights: "modules/perception/detection/yolo/weights/yolov3-rm.weights"

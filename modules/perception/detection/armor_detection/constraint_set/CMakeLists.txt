@@ -23,7 +23,7 @@ add_library(detection::constraint_set ALIAS constraint_set)
 
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
-    drivers::camera_param
+    driver::camera_param
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}
   )

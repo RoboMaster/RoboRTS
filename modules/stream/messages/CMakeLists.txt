@@ -8,6 +8,7 @@ add_action_files(
   GlobalPlanner.action
   ArmorDetection.action
   Localization.action
+  InfantryInfo.action
 )
 
 add_message_files(
