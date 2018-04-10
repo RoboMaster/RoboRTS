@@ -11,6 +11,7 @@ message Point {
     optional float yaw   = 6;
 }
 
-message PatrolPoints{
+message DecisionConfig{
     repeated Point point = 1;
 }
+

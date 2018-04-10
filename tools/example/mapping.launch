@@ -10,5 +10,9 @@
       <param name="inverted" type="bool" value="false"/>
       <param name="angle_compensate" type="bool" value="true"/>
    </node>
+
+  <!-- Run the slam -->
+  <include file="$(env ROBORTS_PATH)/tools/simulator/slam_gmapping.xml"/>
+
 </launch>
 

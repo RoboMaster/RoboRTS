@@ -226,10 +226,12 @@ class PolygonRobotFootprint : public BaseRobotFootprintModel {
     // here we are doing the transformation into the world frame manually
     double cos_th = std::cos(current_pose.GetTheta());
     double sin_th = std::sin(current_pose.GetTheta());
+
     Point2dContainer polygon_world(vertices_.size());
     for (std::size_t i = 0; i < vertices_.size(); ++i) {
       polygon_world[i].x() = current_pose.GetPosition().coeffRef(0) + cos_th * vertices_[i].x() - sin_th * vertices_[i].y();
       polygon_world[i].y() = current_pose.GetPosition().coeffRef(1) + sin_th * vertices_[i].x() + cos_th * vertices_[i].y();
+
     }
     return obstacle->GetMinimumDistance(polygon_world);
   }

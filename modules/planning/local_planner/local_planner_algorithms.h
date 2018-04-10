@@ -15,10 +15,10 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#ifndef RRTS_LOCAL_PLANNER_ALGORITHMS_H
-#define RRTS_LOCAL_PLANNER_ALGORITHMS_H
+#ifndef MODULES_PLANNING_LOCAL_PLANNER_ALGORITHMS_H
+#define MODULES_PLANNING_LOCAL_PLANNER_ALGORITHMS_H
 
 #include "modules/planning/local_planner/timed_elastic_band/teb_local_planner.h"
 
-#endif //RRTS_LOCAL_PLANNER_ALGORITHMS_H
+#endif //MODULES_PLANNING_LOCAL_PLANNER_ALGORITHMS_H
 

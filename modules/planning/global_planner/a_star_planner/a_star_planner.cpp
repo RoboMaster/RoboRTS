@@ -70,11 +70,20 @@ ErrorInfo AStarPlanner::Plan(const geometry_msgs::PoseStamped &start,
   unsigned int start_index, goal_index;
   start_index = costmap_ptr_->GetCostMap()->GetIndex(start_x, start_y);
   goal_index = costmap_ptr_->GetCostMap()->GetIndex(goal_x, goal_y);
-
-  ErrorInfo error_info = SearchPath(start_index, goal_index, path);
-  if ( error_info.IsOK() ){
-      path.back() = goal;
+  ErrorInfo error_info;
+  if(start_index == goal_index){
+    error_info=ErrorInfo::OK();
+    path.clear();
+    path.push_back(start);
+    path.push_back(goal);
   }
+  else{
+    error_info = SearchPath(start_index, goal_index, path);
+    if ( error_info.IsOK() ){
+        path.back() = goal;
+    }
+  }
+
   return error_info;
 }
 

@@ -8,7 +8,7 @@ trajectory_opt {
     dt_ref: 0.15
     dt_hysteresis: 0.01
     global_plan_overwrite_orientation: true
-    allow_init_with_backwards_motion: true
+    allow_init_with_backwards_motion: false
     global_plan_viapoint_sep: 1.5
     via_points_ordered: False
     max_global_plan_lookahead_dist: 2.0
@@ -21,52 +21,52 @@ trajectory_opt {
 }
 
 kinematics_opt {
-    max_vel_x: 1.5
-    max_vel_x_backwards: 1.5
-    max_vel_y: 1.5
-    max_vel_theta: 1.5 
-    acc_lim_x: 1.5
-    acc_lim_y: 1.5
-    acc_lim_theta: 1.5 
-    min_turning_radius: 1
-    wheelbase: 1.0
+    max_vel_x: 2
+    max_vel_x_backwards: 2
+    max_vel_y: 2
+    max_vel_theta: 2
+    acc_lim_x: 2
+    acc_lim_y: 2
+    acc_lim_theta: 2
+    min_turning_radius: 0
+    wheelbase: 0
     cmd_angle_instead_rotvel: false
 }
 
 tolerance_opt {
-    xy_goal_tolerance: 0.5
+    xy_goal_tolerance: 0.1
     yaw_goal_tolerance: 0.1
     free_goal_vel: False
 }
 
 obstacles_opt {
-    min_obstacle_dist: 0.28
+    min_obstacle_dist: 0.30 #0.8
     inflation_dist: 0
     include_costmap_obstacles: True
     costmap_obstacles_behind_robot_dist: 0.6
-    obstacle_poses_affected: 30
+    obstacle_poses_affected: 60
     legacy_obstacle_association: False
     obstacle_association_cutoff_factor: 5.0
     obstacle_association_force_inclusion_factor: 1.5
 }
 
 robot_type {
-    type: POLYGON
+    type: POINT
     robot_vertices {
         x: 0.3
-        y: 0.2
+        y: 0.22
     }
     robot_vertices {
         x: -0.3
-        y: 0.2
+        y: 0.22
     }
     robot_vertices {
         x: -0.3
-        y: -0.2
+        y: -0.22
     }
     robot_vertices {
         x: 0.3
-        y: -0.2
+        y: -0.22
     }
 }
 
@@ -79,14 +79,14 @@ optimize_info {
     weight_max_vel_x: 2
     weight_max_vel_y: 2
     weight_max_vel_theta: 1
-    weight_acc_lim_x: 10
-    weight_acc_lim_y: 10
-    weight_acc_lim_theta: 30
-    weight_kinematics_nh: 10
-    weight_kinematics_forward_drive: 30
-    weight_kinematics_turning_radius: 0.05
+    weight_acc_lim_x: 1
+    weight_acc_lim_y: 1
+    weight_acc_lim_theta: 1
+    weight_kinematics_nh: 1
+    weight_kinematics_forward_drive: 1
+    weight_kinematics_turning_radius: 1.0
     weight_optimaltime: 1
-    weight_obstacle: 30
+    weight_obstacle: 50
     weight_inflation: 0.1
     weight_dynamic_obstacle: 10
     weight_viapoint: 10

@@ -26,7 +26,7 @@ add_library(${PROJECT_NAME}
   )
 
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE
+  PUBLIC
   common::log
   common::io
   perception::map::costmap

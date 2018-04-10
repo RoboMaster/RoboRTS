@@ -56,6 +56,8 @@
 #ifndef MODULES_PLANNING_LOCAL_PLANNER_TEB_H
 #define MODULES_PLANNING_LOCAL_PLANNER_TEB_H
 
+#include <mutex>
+
 #include "common/io.h"
 #include "common/algorithm_factory.h"
 
@@ -85,6 +87,7 @@ class TebLocalPlanner : public LocalPlannerBase {
   rrts::common::ErrorInfo Initialize (std::shared_ptr<rrts::perception::map::CostmapInterface> local_cost,
                    std::shared_ptr<tf::TransformListener> tf, LocalVisualizationPtr visual) override;
   bool SetPlan(const nav_msgs::Path& plan, const geometry_msgs::PoseStamped& goal) override ;
+  bool GetPlan(const nav_msgs::Path& plan);
   bool SetPlanOrientation();
   void RegisterErrorCallBack(ErrorInfoCallback error_callback) override;
 
@@ -92,7 +95,7 @@ class TebLocalPlanner : public LocalPlannerBase {
 
   bool TransformGlobalPlan(int *current_goal_idx = NULL);
 
-  double EstimateLocalGoalOrientation(const tf::Stamped<tf::Pose>& local_goal,
+  double EstimateLocalGoalOrientation(const DataBase& local_goal,
                                       int current_goal_idx, int moving_average_length=3) const;
 
   void UpdateViaPointsContainer();
@@ -121,21 +124,24 @@ class TebLocalPlanner : public LocalPlannerBase {
   double robot_inscribed_radius_;
   double robot_circumscribed_radius;
   OdomInfo odom_info_;
-  nav_msgs::Path global_plan_;
+  nav_msgs::Path global_plan_, temp_plan_;
   geometry_msgs::Twist last_cmd_, robot_current_vel_;
   DataBase robot_pose_;
   tf::Stamped<tf::Pose> robot_tf_pose_;
   DataBase robot_goal_;
   LocalVisualizationPtr visual_;
   tf::StampedTransform plan_to_global_transform_;
-  nav_msgs::Path transformed_plan_;
+  std::vector<DataBase> transformed_plan_;
   tf::Stamped<tf::Pose> local_goal_;
   rrts::common::ErrorInfo teb_error_info_;
   ErrorInfoCallback error_callback_;
   std::chrono::system_clock::time_point oscillation_;
   double oscillation_time_;
   DataBase last_robot_pose_;
+  std::mutex plan_mutex_;
 
+
+  int ijk = 0;
 
   Config param_config_;
   bool  free_goal_vel_;

@@ -116,6 +116,7 @@ RobotFootprintModelPtr GetRobotFootprintModel (T config) {
       return boost::make_shared<PointRobotFootprint>();
     }
 
+    LOG_INFO << "Footprint model 'line' loaded";
     return boost::make_shared<LineRobotFootprint>(line_start, line_end);
   } else if (config.robot_type(0).type() == 2) {
 
@@ -129,6 +130,8 @@ RobotFootprintModelPtr GetRobotFootprintModel (T config) {
     front_radius = config.robot_type(0).front_radius();
     rear_offset = config.robot_type(0).rear_offset();
     rear_radius = config.robot_type(0).rear_radius();
+
+    LOG_INFO << "Footprint model 'two circle' loaded";
     return boost::make_shared<TwoCirclesRobotFootprint>(front_offset, front_radius, rear_offset, rear_radius);
   } else if ( config.robot_type(0).type() == 4) {
 
@@ -143,7 +146,9 @@ RobotFootprintModelPtr GetRobotFootprintModel (T config) {
       temp_point.coeffRef(1) = config.robot_type(0).robot_vertices(j).y();
       polygon.push_back(temp_point);
     }
-    return boost::make_shared<PointRobotFootprint>();
+
+    LOG_INFO << "Footprint model 'polygon' loaded";
+    return boost::make_shared<PolygonRobotFootprint>(polygon);
   } else {
     LOG_INFO << "this type doesn't exist, Using point-shaped model";
     return boost::make_shared<PointRobotFootprint>();

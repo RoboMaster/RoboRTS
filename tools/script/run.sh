@@ -10,11 +10,18 @@ echo "Path: ${ROOT_DIR}"
 
 
 SERIAL_MODULE="build/modules/driver/serial/serial_com_node"
+CAMERA_MODULE="build/modules/driver/camera/camera_node"
+
 TF_MODULE="build/modules/stream/tf_tree/tf_tree"
+
 LOCALIZATION_MODULE="build/modules/perception/localization/localization_node"
+ARMOR_DETECTION_MODULE="build/modules/perception/detection/armor_detection/armor_detection_node"
+
 GLOBAL_PLANNING_MODULE="build/modules/planning/global_planner/global_planner_node"
 LOCAL_PLANNING_MODULE="build/modules/planning/local_planner/local_planner_node"
-DECISION_MODULE="build/modules/decision/decision_node"
+
+DECISION_MODULE="build/modules/decision/behavior_decision_sim_node"
+DECISION_SIM_MODULE="build/modules/decision/behavior_decision_sim_node"
 
 MAP="icra"
 SIMULATION=1
@@ -113,12 +120,14 @@ if [ "${SIMULATION}" -eq 1 ]; then
 	MODULES=(${LOCALIZATION_MODULE} \
         	${GLOBAL_PLANNING_MODULE} \
         	${LOCAL_PLANNING_MODULE} \
-        	${DECISION_MODULE})
+        	${DECISION_SIM_MODULE})
 else
     echo "Test Mode"
 	MODULES=(${SERIAL_MODULE} \
+	        ${CAMERA_MODULE} \
 	        ${TF_MODULE} \
 	        ${LOCALIZATION_MODULE} \
+	        ${ARMOR_DETECTION_MODULE} \
         	${GLOBAL_PLANNING_MODULE} \
         	${LOCAL_PLANNING_MODULE} \
         	${DECISION_MODULE})
@@ -167,7 +176,7 @@ function help(){
 
 function default_config(){
 MAP="icra"
-SIMULATION=1
+SIMULATION=0
 }
 
 if [[ $# -eq 0  ]];then

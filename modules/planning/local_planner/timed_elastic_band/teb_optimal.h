@@ -81,7 +81,6 @@
 #include "modules/planning/local_planner/utility_tool.h"
 #include "modules/planning/local_planner/local_visualization.h"
 #include "modules/planning/local_planner/robot_position_cost.h"
-
 #include "modules/planning/local_planner/timed_elastic_band/teb_vertex_console.h"
 #include "modules/planning/local_planner/timed_elastic_band/teb_acceleration_eage.h"
 #include "modules/planning/local_planner/timed_elastic_band/teb_kinematics_edge.h"
@@ -118,7 +117,7 @@ class TebOptimal : public OptimalBase {
                   RobotFootprintModelPtr robot_model = boost::make_shared<PointRobotFootprint>(),
                   LocalVisualizationPtr visual = LocalVisualizationPtr(),const ViaPointContainer* via_points = NULL);
 
-  bool Optimal(const nav_msgs::Path& initial_plan, const geometry_msgs::Twist* start_vel = NULL,
+  bool Optimal(std::vector<DataBase>& initial_plan, const geometry_msgs::Twist* start_vel = NULL,
                bool free_goal_vel = false) override;
 
   bool Optimal(const DataBase& start, const DataBase& goal, const geometry_msgs::Twist* start_vel = NULL,
@@ -198,7 +197,7 @@ class TebOptimal : public OptimalBase {
   bool IsTrajectoryFeasible(rrts::common::ErrorInfo &error_info, RobotPositionCost* position_cost, const std::vector<Eigen::Vector2d>& footprint_spec,
                             double inscribed_radius = 0.0, double circumscribed_radius=0.0, int look_ahead_idx=-1) override ;
 
-  bool IsHorizonReductionAppropriate(const std::vector<geometry_msgs::PoseStamped>& initial_plan) const override ;
+  bool IsHorizonReductionAppropriate(const std::vector<DataBase>& initial_plan) const override ;
 
  protected:
   bool BuildGraph(double weight_multiplier=1.0);
@@ -238,6 +237,7 @@ class TebOptimal : public OptimalBase {
   double cost_;
   RotType prefer_rotdir_;
   LocalVisualizationPtr visualization_;
+
 
   RobotFootprintModelPtr robot_model_;
   TebVertexConsole vertex_console_;

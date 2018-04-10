@@ -123,18 +123,18 @@ void GlobalPlannerNode::GoalCallback(const messages::GlobalPlannerGoal::ConstPtr
     if(node_state == NodeState::RUNNING || node_state == NodeState::SUCCESS || node_state == NodeState::FAILURE) {
       messages::GlobalPlannerFeedback feedback;
       messages::GlobalPlannerResult result;
-        if (!error_info.IsOK() || new_path_) {
-          if (!error_info.IsOK()) {
-            feedback.error_code = error_info.error_code();
-            feedback.error_msg = error_info.error_msg();
-            SetErrorInfo(ErrorInfo::OK());
-          }
-          if (new_path_) {
-            feedback.path = path_;
-            new_path_ = false;
-          }
-          as_.publishFeedback(feedback);
+      if (!error_info.IsOK() || new_path_) {
+        if (!error_info.IsOK()) {
+          feedback.error_code = error_info.error_code();
+          feedback.error_msg = error_info.error_msg();
+          SetErrorInfo(ErrorInfo::OK());
         }
+        if (new_path_) {
+          feedback.path = path_;
+          new_path_ = false;
+        }
+        as_.publishFeedback(feedback);
+      }
       if(node_state == NodeState::SUCCESS){
         result.error_code = error_info.error_code();
         as_.setSucceeded(result,error_info.error_msg());
@@ -200,7 +200,7 @@ void GlobalPlannerNode::PlanThread() {
   geometry_msgs::PoseStamped current_goal;
   std::vector<geometry_msgs::PoseStamped> current_path;
   std::chrono::microseconds sleep_time = std::chrono::microseconds(0);
-
+  ErrorInfo error_info;
   int retries = 0;
   while (GetNodeState() == NodeState::RUNNING) {
 
@@ -218,8 +218,8 @@ void GlobalPlannerNode::PlanThread() {
     bool error_set = false;
     while (!costmap_ptr_->GetRobotPose(current_start)) {
       if (!error_set) {
-         LOG_ERROR<<"Get Robot Pose Error.";
-         SetErrorInfo(ErrorInfo(ErrorCode::GP_GET_POSE_ERROR, "Get Robot Pose Error."));
+        LOG_ERROR<<"Get Robot Pose Error.";
+        SetErrorInfo(ErrorInfo(ErrorCode::GP_GET_POSE_ERROR, "Get Robot Pose Error."));
         error_set = true;
       }
     }
@@ -230,24 +230,26 @@ void GlobalPlannerNode::PlanThread() {
       current_goal = costmap_ptr_->Pose2GlobalFrame(current_goal);
     }
 
-    ErrorInfo error_info = global_planner_ptr_->Plan(current_start, current_goal, current_path);
 
-    if (error_info.IsOK()) {
-      retries = 0;
-      PathVisualization(current_path);
-      if (GetDistance(current_start, current_goal) < goal_distance_tolerance_
-        && GetAngle(current_start, current_goal) < goal_angle_tolerance_
-                    ) {
-        SetNodeState(NodeState::SUCCESS);
+
+      error_info = global_planner_ptr_->Plan(current_start, current_goal, current_path);
+
+      if (error_info.IsOK()) {
+        retries = 0;
+        PathVisualization(current_path);
+        if (GetDistance(current_start, current_goal) < goal_distance_tolerance_
+            && GetAngle(current_start, current_goal) < goal_angle_tolerance_
+            ) {
+          SetNodeState(NodeState::SUCCESS);
+        }
+      } else if (max_retries_ > 0 && retries > max_retries_) {
+        LOG_ERROR << "Can not get plan with max retries( " << max_retries_ << " )";
+        error_info = ErrorInfo(ErrorCode::GP_MAX_RETRIES_FAILURE, "Over max retries.");
+        SetNodeState(NodeState::FAILURE);
+      } else {
+        retries++;
+        LOG_ERROR << "Can not get plan for once. " << error_info.error_msg();
       }
-    } else if (max_retries_ > 0 && retries > max_retries_) {
-      LOG_ERROR << "Can not get plan with max retries( " << max_retries_ << " )";
-      error_info =  ErrorInfo(ErrorCode::GP_MAX_RETRIES_FAILURE, "Over max retries.");
-      SetNodeState(NodeState::FAILURE);
-    } else {
-      retries++;
-      LOG_ERROR << "Can not get plan for once. "<<error_info.error_msg();
-    }
 
     SetErrorInfo(error_info);
 
@@ -263,6 +265,7 @@ void GlobalPlannerNode::PlanThread() {
       SetErrorInfo(ErrorInfo(ErrorCode::GP_TIME_OUT_ERROR, "Planning once time out."));
     }
   }
+
 
   LOG_INFO << "Plan thread terminated!";
 }

@@ -7,7 +7,7 @@ laser_max_range           : 8.0
 laser_max_beams           : 30
 
 min_particles             : 30
-max_particles             : 5000
+max_particles             : 2000
 
 kld_err                   : 0.05
 kld_z                     : 0.99

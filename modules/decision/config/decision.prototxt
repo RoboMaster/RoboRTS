@@ -69,10 +69,52 @@
 #  yaw:   0
 #}
 
+
 # icra map 
 point {
+  x: 1.0 
+  y: 1.0
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+point {
+  x: 4.0 
+  y: 2.5
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+
+point {
+  x: 7.1
+  y: 4.6
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+point {
   x: 7
-  y: 0.7
+  y: 0.85
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+point {
+  x: 4.0 
+  y: 2.5
   z: 0
 
   roll:  0
@@ -90,13 +132,5 @@ point {
   yaw:   0
 }
 
-point {
-  x: 7
-  y: 4
-  z: 0
 
-  roll:  0
-  pitch: 0
-  yaw:   0
-}
 

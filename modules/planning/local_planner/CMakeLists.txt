@@ -3,6 +3,7 @@ project(local_planner)
 
 add_subdirectory(timed_elastic_band)
 
+
 set(EXTERNAL_INCLUDE_DIRS
   ${EIGEN3_INCLUDE_DIR}
   ${SUITESPARSE_INCLUDE_DIRS}
@@ -26,6 +27,28 @@ add_executable(${PROJECT_NAME}_node
   obstacles.cpp
   odom_info.cpp
   robot_position_cost.cpp
+  )
+
+add_executable(${PROJECT_NAME}_test
+  ${LocalPlanProtoSrc}
+  ${LocalPlanProtoHds}
+  test_optim_node.cpp
+  local_visualization.cpp
+  obstacles.cpp
+  odom_info.cpp
+  robot_position_cost.cpp
+  )
+
+target_link_libraries(${PROJECT_NAME}_test
+  PRIVATE
+  common::log
+  common::io
+  common::rrts
+  perception::map::costmap
+  planning::timed_elastic_band
+  ${catkin_LIBRARIES}
+  ${GLOG_LIBRARY}
+  ${EXTERNAL_LIBS}
   )
 
 target_link_libraries(${PROJECT_NAME}_node

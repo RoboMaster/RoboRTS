@@ -79,6 +79,10 @@ class DataBase {
 
   ~DataBase() {}
 
+  void SetPosition(Eigen::Vector2d position) {
+    position_ = position;
+  }
+
   Eigen::Vector2d& GetPosition () {
     return  position_;
   }
@@ -89,6 +93,10 @@ class DataBase {
 
   double& GetTheta() {
     return theta_;
+  }
+
+  void SetTheta(double theta) {
+    theta_ = theta;
   }
 
   const double& GetTheta() const {

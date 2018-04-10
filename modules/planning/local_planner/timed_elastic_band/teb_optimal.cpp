@@ -219,7 +219,7 @@ void TebOptimal::SetVelocityEnd(const geometry_msgs::Twist &vel_end) {
   vel_end_.second = vel_end;
 }
 
-bool TebOptimal::Optimal(const nav_msgs::Path &initial_plan,
+bool TebOptimal::Optimal(std::vector<DataBase> &initial_plan,
                       const geometry_msgs::Twist *start_vel,
                       bool free_goal_vel) {
   if (!initialized_) {
@@ -230,17 +230,15 @@ bool TebOptimal::Optimal(const nav_msgs::Path &initial_plan,
     vertex_console_.InitTEBtoGoal(initial_plan, trajectory_info_.dt_ref(), trajectory_info_.global_plan_overwrite_orientation(),
                                   trajectory_info_.min_samples(), trajectory_info_.allow_init_with_backwards_motion());
   } else {
-    auto front_info = DataConverter::LocalConvertGData(initial_plan.poses.front().pose);
-    auto back_info = DataConverter::LocalConvertGData(initial_plan.poses.back().pose);
-    DataBase start_(front_info.first, front_info.second);
-    DataBase goal_(back_info.first, back_info.second);
+
+    DataBase start = initial_plan.front();
+    DataBase goal = initial_plan.back();
 
     if ( (vertex_console_.SizePoses() > 0)
-        && (goal_.GetPosition() - vertex_console_.BackPose().GetPosition()).norm()
+        && (goal.GetPosition() - vertex_console_.BackPose().GetPosition()).norm()
             < trajectory_info_.force_reinit_new_goal_dist()) {
-      vertex_console_.UpdateAndPruneTEB(start_, goal_, trajectory_info_.min_samples());
+      vertex_console_.UpdateAndPruneTEB(start, goal, trajectory_info_.min_samples());
     } else  {
-
       vertex_console_.ClearAllVertex();
       vertex_console_.InitTEBtoGoal(initial_plan, trajectory_info_.dt_ref(), trajectory_info_.global_plan_overwrite_orientation(),
                                     trajectory_info_.min_samples(), trajectory_info_.allow_init_with_backwards_motion());
@@ -917,7 +915,7 @@ bool TebOptimal::IsTrajectoryFeasible(rrts::common::ErrorInfo &error_info, Robot
   return true;
 }
 
-bool TebOptimal::IsHorizonReductionAppropriate(const std::vector<geometry_msgs::PoseStamped> &initial_plan) const {
+bool TebOptimal::IsHorizonReductionAppropriate(const std::vector<DataBase> &initial_plan) const {
   if (vertex_console_.SizePoses() < int( 1.5*double(trajectory_info_.min_samples()) ) ){
     return false;
   }
@@ -943,15 +941,15 @@ bool TebOptimal::IsHorizonReductionAppropriate(const std::vector<geometry_msgs::
 
   int idx=0;
   for (; idx < (int)initial_plan.size(); ++idx) {
-    if ( std::sqrt(std::pow(initial_plan[idx].pose.position.x-vertex_console_.Pose(0).GetPosition().x(), 2) +
-        std::pow(initial_plan[idx].pose.position.y-vertex_console_.Pose(0).GetPosition().y(), 2)) ) {
+    if ( std::sqrt(std::pow(initial_plan[idx].GetPosition().coeff(0)-vertex_console_.Pose(0).GetPosition().x(), 2) +
+        std::pow(initial_plan[idx].GetPosition().coeff(1)-vertex_console_.Pose(0).GetPosition().y(), 2)) ) {
       break;
     }
   }
   double ref_path_length = 0;
   for (; idx < int(initial_plan.size())-1; ++idx) {
-    ref_path_length += std::sqrt(std::pow(initial_plan[idx+1].pose.position.x-initial_plan[idx].pose.position.x, 2)
-                                     + std::pow(initial_plan[idx+1].pose.position.y-initial_plan[idx].pose.position.y, 2) );
+    ref_path_length += std::sqrt(std::pow(initial_plan[idx+1].GetPosition().coeff(0)-initial_plan[idx].GetPosition().coeff(0), 2)
+                                     + std::pow(initial_plan[idx+1].GetPosition().coeff(1)-initial_plan[idx].GetPosition().coeff(1), 2) );
   }
 
   double teb_length = 0;

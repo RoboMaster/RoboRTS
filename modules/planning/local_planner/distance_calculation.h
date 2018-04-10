@@ -103,18 +103,26 @@ inline bool CheckLineSegmentsIntersection2D(const Eigen::Ref<const Eigen::Vector
   Eigen::Vector2d line2 = line2_end - line2_start;
 
   denom = line1.x() * line2.y() - line2.x() * line1.y();
-  if (denom == 0) return false;
+  if (denom == 0) {
+    return false;
+  }
   bool denomPositive = denom > 0;
 
   Eigen::Vector2d aux = line1_start - line2_start;
 
   s_numer = line1.x() * aux.y() - line1.y() * aux.x();
-  if ((s_numer < 0) == denomPositive) return false;
+  if ((s_numer < 0) == denomPositive) {
+    return false;
+  }
 
   t_numer = line2.x() * aux.y() - line2.y() * aux.x();
-  if ((t_numer < 0) == denomPositive) return false;
+  if ((t_numer < 0) == denomPositive) {
+    return false;
+  }
 
-  if (((s_numer > denom) == denomPositive) || ((t_numer > denom) == denomPositive)) return false;
+  if (((s_numer > denom) == denomPositive) || ((t_numer > denom) == denomPositive)) {
+    return false;
+  }
 
   t = t_numer / denom;
   if (intersection) {
@@ -151,18 +159,23 @@ inline double DistancePointToPolygon2D(const Eigen::Vector2d &point, const Point
   }
 
   for (int i = 0; i < (int) vertices.size() - 1; ++i) {
-    double new_dist = DistancePointToSegment2D(point, vertices.at(i), vertices.at(i + 1));
+
+    double new_dist = PointToLineDistance(point.coeffRef(0), point.coeffRef(1), vertices.at(i).coeffRef(0), vertices.at(i).coeffRef(1),
+                                          vertices.at(i + 1).coeffRef(0), vertices.at(i + 1).coeffRef(1));
     if (new_dist < dist) {
       dist = new_dist;
     }
+
   }
 
-  if (vertices.size() > 2) {
-    double new_dist = DistancePointToSegment2D(point, vertices.back(), vertices.front());
+  /*if (vertices.size() > 2) {
+    double new_dist = PointToLineDistance(point.coeffRef(0), point.coeffRef(1), vertices.back().coeffRef(0), vertices.back().coeffRef(1),
+                                          vertices.front().coeffRef(0), vertices.front().coeffRef(1));
     if (new_dist < dist) {
-      return new_dist;
+      std::cout << "here" << std::endl;
+      dist = new_dist;
     }
-  }
+  }*/
 
   return dist;
 }

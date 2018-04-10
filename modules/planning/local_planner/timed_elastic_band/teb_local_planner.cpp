@@ -37,6 +37,7 @@
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
+    LOG_INFO << "Footprint model 'polygon' loaded";
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -53,8 +54,8 @@
  * Author: Christoph Rösmann
  *********************************************************************/
 
-#include <modules/perception/map/costmap/costmap_interface.h>
 #include "modules/planning/local_planner/timed_elastic_band/teb_local_planner.h"
+
 
 namespace rrts {
 namespace planning {
@@ -78,6 +79,7 @@ rrts::common::ErrorInfo TebLocalPlanner::ComputeVelocityCommands(geometry_msgs::
     return algorithm_init_error;
   }
 
+  GetPlan(temp_plan_);
 
   cmd_vel.linear.x = 0;
   cmd_vel.linear.y = 0;
@@ -116,40 +118,40 @@ rrts::common::ErrorInfo TebLocalPlanner::ComputeVelocityCommands(geometry_msgs::
     return PlanTransformError;
   }
 
-  if (transformed_plan_.poses.empty()) {
+  if (transformed_plan_.empty()) {
     rrts::common::ErrorInfo PlanTransformError(rrts::common::LP_PLANTRANSFORM_ERROR, "transformed plan is empty");
     LOG_ERROR << "transformed plan is empty";
     return PlanTransformError;
   }
 
-  tf::Stamped<tf::Pose> goal_point;
+  /*tf::Stamped<tf::Pose> goal_point;
   tf::poseStampedMsgToTF(transformed_plan_.poses.back(), goal_point);
   robot_goal_.GetPosition().coeffRef(0) = goal_point.getOrigin().getX();
-  robot_goal_.GetPosition().coeffRef(1) = goal_point.getOrigin().getY();
+  robot_goal_.GetPosition().coeffRef(1) = goal_point.getOrigin().getY();*/
 
-  if (global_plan_.poses.size() - goal_idx < 5) {
+  /*if (global_plan_.poses.size() - goal_idx < 5) {
     robot_goal_.GetTheta() = tf::getYaw(global_plan_.poses.back().pose.orientation);
     transformed_plan_.poses.back().pose.orientation = tf::createQuaternionMsgFromYaw(robot_goal_.GetTheta());
-  } else if (global_plan_overwrite_orientation_) {
-    robot_goal_.GetTheta() = EstimateLocalGoalOrientation(goal_point, goal_idx);
-    transformed_plan_.poses.back().pose.orientation = tf::createQuaternionMsgFromYaw(robot_goal_.GetTheta());
-  } else {
-    robot_goal_.GetTheta() = tf::getYaw(goal_point.getRotation());
+  } else*/ if (global_plan_overwrite_orientation_) {
+    transformed_plan_.back().SetTheta(EstimateLocalGoalOrientation(transformed_plan_.back(), goal_idx));
   }
 
-  if (transformed_plan_.poses.size()==1) {// plan only contains the goal
-    transformed_plan_.poses.insert(transformed_plan_.poses.begin(), geometry_msgs::PoseStamped()); // insert start (not yet initialized)
+  if (transformed_plan_.size()==1) {// plan only contains the goal
+    transformed_plan_.insert(transformed_plan_.begin(), robot_pose_); // insert start (not yet initialized)
+  } else {
+    transformed_plan_.front() = robot_pose_;// update start;
   }
-  tf::poseTFToMsg(robot_tf_pose_, transformed_plan_.poses.front().pose); // update start;
+
 
   obst_vector_.clear();
 
+
+  robot_goal_ = transformed_plan_.back();
   if (obst_vector_.empty()) {
     UpdateObstacleWithCostmap(robot_goal_.GetPosition());
   }
 
   UpdateViaPointsContainer();
-
   bool success = optimal_->Optimal(transformed_plan_, &robot_current_vel_, free_goal_vel_);
 
   if (!success) {
@@ -187,6 +189,10 @@ rrts::common::ErrorInfo TebLocalPlanner::ComputeVelocityCommands(geometry_msgs::
 
   last_cmd_ = cmd_vel;
 
+//  cmd_vel.linear.x = 0;
+//  cmd_vel.linear.y = 0;
+//  cmd_vel.angular.z = 0;
+
   optimal_->Visualize();
 
   LOG_INFO << "compute velocity succeed";
@@ -214,12 +220,21 @@ bool TebLocalPlanner::IsGoalReached () {
 }
 
 bool TebLocalPlanner::SetPlan(const nav_msgs::Path& plan, const geometry_msgs::PoseStamped& goal) {
+  if (plan_mutex_.try_lock()) {
+    LOG_INFO << "set plan";
+    if (plan.poses.empty()) {
+      temp_plan_.poses.push_back(goal);
+    } else {
+      temp_plan_ = plan;
+    }
+    plan_mutex_.unlock();
+  }
+}
 
-  LOG_INFO << "set plan";
-  if (plan.poses.empty()) {
-    global_plan_.poses.push_back(goal);
-  } else {
+bool TebLocalPlanner::GetPlan(const nav_msgs::Path& plan) {
+  if (plan_mutex_.try_lock()) {
     global_plan_ = plan;
+    plan_mutex_.unlock();
   }
 }
 
@@ -261,7 +276,7 @@ bool TebLocalPlanner::PruneGlobalPlan() {
 bool TebLocalPlanner::TransformGlobalPlan(int *current_goal_idx) {
 
 
-  transformed_plan_.poses.clear();
+  transformed_plan_.clear();
 
   try {
     if (global_plan_.poses.empty()) {
@@ -308,8 +323,10 @@ bool TebLocalPlanner::TransformGlobalPlan(int *current_goal_idx) {
       tf_pose.stamp_ = plan_to_global_transform_.stamp_;
       tf_pose.frame_id_ = global_frame_;
       tf::poseStampedTFToMsg(tf_pose, newer_pose);
+      auto temp = DataConverter::LocalConvertGData(newer_pose.pose);
+      DataBase data_pose(temp.first, temp.second);
 
-      transformed_plan_.poses.push_back(newer_pose);
+      transformed_plan_.push_back(data_pose);
 
       double x_diff = robot_pose.getOrigin().x() - global_plan_.poses[i].pose.position.x;
       double y_diff = robot_pose.getOrigin().y() - global_plan_.poses[i].pose.position.y;
@@ -323,14 +340,17 @@ bool TebLocalPlanner::TransformGlobalPlan(int *current_goal_idx) {
       ++i;
     }
 
-    if (transformed_plan_.poses.empty()) {
+    if (transformed_plan_.empty()) {
       tf::poseStampedMsgToTF(global_plan_.poses.back(), tf_pose);
       tf_pose.setData(plan_to_global_transform_ * tf_pose);
       tf_pose.stamp_ = plan_to_global_transform_.stamp_;
       tf_pose.frame_id_ = global_frame_;
       tf::poseStampedTFToMsg(tf_pose, newer_pose);
 
-      transformed_plan_.poses.push_back(newer_pose);
+      auto temp = DataConverter::LocalConvertGData(newer_pose.pose);
+      DataBase data_pose(temp.first, temp.second);
+
+      transformed_plan_.push_back(data_pose);
 
       if (current_goal_idx) {
         *current_goal_idx = int(global_plan_.poses.size())-1;
@@ -362,14 +382,14 @@ bool TebLocalPlanner::TransformGlobalPlan(int *current_goal_idx) {
   return true;
 }
 
-double TebLocalPlanner::EstimateLocalGoalOrientation(const tf::Stamped<tf::Pose>& local_goal,
+double TebLocalPlanner::EstimateLocalGoalOrientation(const DataBase& local_goal,
                                                      int current_goal_idx, int moving_average_length) const {
   int n = (int)global_plan_.poses.size();
 
 
   if (current_goal_idx > n-moving_average_length-2) {
     if (current_goal_idx >= n-1) {
-      return tf::getYaw(local_goal_.getRotation());
+      return local_goal.GetTheta();
     } else {
       tf::Quaternion global_orientation;
       tf::quaternionMsgToTF(global_plan_.poses.back().pose.orientation, global_orientation);
@@ -380,18 +400,22 @@ double TebLocalPlanner::EstimateLocalGoalOrientation(const tf::Stamped<tf::Pose>
   moving_average_length = std::min(moving_average_length, n-current_goal_idx-1 );
 
   std::vector<double> candidates;
-  tf::Stamped<tf::Pose> tf_pose_k = local_goal;
+  tf::Stamped<tf::Pose> tf_pose_k;
   tf::Stamped<tf::Pose> tf_pose_kp1;
+
+  const geometry_msgs::PoseStamped& pose_k = global_plan_.poses.at(current_goal_idx);
+  tf::poseStampedMsgToTF(pose_k, tf_pose_k);
+  tf_pose_kp1.setData(plan_to_global_transform_ * tf_pose_k);
 
   int range_end = current_goal_idx + moving_average_length;
   for (int i = current_goal_idx; i < range_end; ++i) {
 
-    const geometry_msgs::PoseStamped& pose = global_plan_.poses.at(i+1);
-    tf::poseStampedMsgToTF(pose, tf_pose_kp1);
+    const geometry_msgs::PoseStamped& pose_k1 = global_plan_.poses.at(i+1);
+    tf::poseStampedMsgToTF(pose_k1, tf_pose_kp1);
     tf_pose_kp1.setData(plan_to_global_transform_ * tf_pose_kp1);
 
     candidates.push_back( std::atan2(tf_pose_kp1.getOrigin().getY() - tf_pose_k.getOrigin().getY(),
-                                     tf_pose_kp1.getOrigin().getX() - tf_pose_k.getOrigin().getX() ) );
+                                     tf_pose_kp1.getOrigin().getX() - tf_pose_k.getOrigin().getX() ));
 
     if (i<range_end-1)
       tf_pose_k = tf_pose_kp1;
@@ -433,14 +457,15 @@ void TebLocalPlanner::UpdateViaPointsContainer() {
   }
 
   std::size_t prev_idx = 0;
-  for (std::size_t i=1; i < transformed_plan_.poses.size(); ++i) {// skip first one, since we do not need any point before the first min_separation [m]
+  for (std::size_t i=1; i < transformed_plan_.size(); ++i) {// skip first one, since we do not need any point before the first min_separation [m]
 
-    if (Distance( transformed_plan_.poses[prev_idx].pose.position.x, transformed_plan_.poses[prev_idx].pose.position.y,
-                  transformed_plan_.poses[i].pose.position.x, transformed_plan_.poses[i].pose.position.y ) < min_separation) {
+    if (Distance( transformed_plan_[prev_idx].GetPosition().coeff(0), transformed_plan_[prev_idx].GetPosition().coeff(1),
+                  transformed_plan_[i].GetPosition().coeff(0), transformed_plan_[i].GetPosition().coeff(1) ) < min_separation) {
       continue;
     }
 
-    via_points_.push_back( Eigen::Vector2d( transformed_plan_.poses[i].pose.position.x, transformed_plan_.poses[i].pose.position.y ) );
+    auto temp = transformed_plan_[i].GetPosition();
+    via_points_.push_back(temp);
     prev_idx = i;
   }
 }
@@ -586,8 +611,8 @@ void TebLocalPlanner::RegisterErrorCallBack(ErrorInfoCallback error_callback) {
 }
 
 bool TebLocalPlanner::CutAndTransformGlobalPlan(int *current_goal_idx) {
-  if (!transformed_plan_.poses.empty()) {
-    transformed_plan_.poses.clear();
+  if (!transformed_plan_.empty()) {
+    transformed_plan_.clear();
   }
 
 }

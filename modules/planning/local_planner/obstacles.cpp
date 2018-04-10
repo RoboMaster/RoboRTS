@@ -165,11 +165,13 @@ bool PolygonObstacle::CheckLineIntersection(const Eigen::Vector2d &line_start,
                                             double min_dist) const {
 
   for (int i = 0; i < NoVertices() - 1; ++i) {
-    if (CheckLineSegmentsIntersection2D(line_start, line_end, vertices_.at(i), vertices_.at(i + 1)))
+    if (CheckLineSegmentsIntersection2D(line_start, line_end, vertices_.at(i), vertices_.at(i + 1))) {
       return true;
+    }
   }
-  if (NoVertices() == 2)
+  if (NoVertices() == 2) {
     return false;
+  }
 
   return CheckLineSegmentsIntersection2D(line_start,
                                              line_end,

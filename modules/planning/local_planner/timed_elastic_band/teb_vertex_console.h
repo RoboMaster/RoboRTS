@@ -187,7 +187,7 @@ class TebVertexConsole {
                      int min_samples = 3,
                      bool guess_backwards_motion = false);
 
-  bool InitTEBtoGoal(const nav_msgs::Path &plan,
+  bool InitTEBtoGoal(std::vector<DataBase>& plan,
                      double dt,
                      bool estimate_orient = false,
                      int min_samples = 3,

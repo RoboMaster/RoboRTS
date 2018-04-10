@@ -279,41 +279,36 @@ bool TebVertexConsole::InitTEBtoGoal(const DataBase &start,
   return true;
 }
 
-bool TebVertexConsole::InitTEBtoGoal(const nav_msgs::Path &plan,
+bool TebVertexConsole::InitTEBtoGoal(std::vector<DataBase> &plan,
                                      double dt,
                                      bool estimate_orient,
                                      int min_samples,
                                      bool guess_backwards_motion) {
 
   if (!IsInit()) {
-    auto temp_start_pose = DataConverter::LocalConvertGData(plan.poses.front().pose);
-    auto temp_goal_pose = DataConverter::LocalConvertGData(plan.poses.back().pose);
-    DataBase start(temp_start_pose.first, temp_start_pose.second);
-    DataBase goal(temp_goal_pose.first, temp_goal_pose.second);
+    DataBase start = plan.front();
+    DataBase goal = plan.back();
 
     AddPose(start);
     SetPoseVertexFixed(0, true);
 
     bool backwards = false;
-    if (guess_backwards_motion
+    /*if (guess_backwards_motion
         && (goal.GetPosition() - start.GetPosition()).dot(start.OrientationUnitVec()) < 0) {
       backwards = true;
-    }
+    }*/
 
-    for (int i = 1; i < (int) plan.poses.size() - 1; ++i) {
+    for (int i = 1; i < (int) plan.size() - 1; ++i) {
       double yaw;
       if (estimate_orient) {
-        double dx = plan.poses[i + 1].pose.position.x - plan.poses[i].pose.position.x;
-        double dy = plan.poses[i + 1].pose.position.y - plan.poses[i].pose.position.y;
-        yaw = std::atan2(dy, dx);
-        if (backwards) {
-          yaw = g2o::normalize_theta(yaw + M_PI);
-        } 
-      } else {
-        yaw = tf::getYaw(plan.poses[i].pose.orientation);
+        double dx = plan[i + 1].GetPosition().coeffRef(0) - plan[i].GetPosition().coeffRef(0);
+        double dy = plan[i + 1].GetPosition().coeffRef(1) - plan[i].GetPosition().coeffRef(1);
+        plan[i].SetTheta(std::atan2(dy, dx));
+        /*if (backwards) {
+          plan[i].GetTheta() = g2o::normalize_theta(yaw + M_PI);
+        } */
       }
-      auto temp_pose = DataConverter::LocalConvertCData(plan.poses[i].pose.position.x, plan.poses[i].pose.position.y, yaw);
-      AddPoseAndTimeDiff(temp_pose.first, temp_pose.second, dt);
+      AddPoseAndTimeDiff(plan[i], dt);
     }
 
     if (SizePoses() < min_samples - 1) {

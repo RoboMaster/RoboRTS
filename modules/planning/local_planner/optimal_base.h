@@ -75,7 +75,7 @@ class OptimalBase {
   OptimalBase(){
 
   }
-  virtual bool Optimal(const nav_msgs::Path& initial_plan, const geometry_msgs::Twist* start_vel = NULL,
+  virtual bool Optimal(std::vector<DataBase>& initial_plan, const geometry_msgs::Twist* start_vel = NULL,
                     bool free_goal_vel = false) = 0;
 
   virtual bool Optimal(const DataBase& start, const DataBase& goal, const geometry_msgs::Twist* start_vel = NULL,
@@ -90,7 +90,7 @@ class OptimalBase {
   virtual bool IsTrajectoryFeasible(rrts::common::ErrorInfo &error_info, RobotPositionCost* position_cost, const std::vector<Eigen::Vector2d>& footprint_spec,
                                     double inscribed_radius = 0.0, double circumscribed_radius=0.0, int look_ahead_idx = -1) = 0;
 
-  virtual bool IsHorizonReductionAppropriate(const std::vector<geometry_msgs::PoseStamped>& initial_plan) const {
+  virtual bool IsHorizonReductionAppropriate(const std::vector<DataBase>& initial_plan) const {
     return false;
   }
 

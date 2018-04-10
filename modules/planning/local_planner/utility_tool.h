@@ -51,20 +51,34 @@ inline double Distance (double x0, double y0, double x1, double y1) {
 }
 
 inline double PointToLineDistance (double px, double py, double x0, double y0, double x1, double y1) {
-  double A_x = px - x0;
-  double A_y = py - y0;
-  double B_x = x1 - x0;
-  double B_y = y1 - y0;
+  double A = px - x0;
+  double B = py - y0;
+  double C = x1 - x0;
+  double D = y1 - y0;
 
-  double N_x = 1;
-  double N_y = -(B_x / B_y);
+  double dot = A * C + B * D;
+  double len_sq = C * C + D * D;
+  double param = dot / len_sq;
 
-  double N_module  = std::sqrt(std::pow(N_x, 2) + std::pow(N_y, 2));
+  double xx, yy;
 
-  double U_x = N_x / N_module;
-  double U_y = N_y / N_module;
+  if (param < 0)
+  {
+    xx = x0;
+    yy = y0;
+  }
+  else if (param > 1)
+  {
+    xx = x1;
+    yy = y1;
+  }
+  else
+  {
+    xx = x0 + param * C;
+    yy = y0 + param * D;
+  }
 
-  return abs(U_x * A_x + U_y * B_y);
+  return Distance(px, py, xx, yy);
 }
 
 inline double AverageAngles(const std::vector<double>& angles) {
