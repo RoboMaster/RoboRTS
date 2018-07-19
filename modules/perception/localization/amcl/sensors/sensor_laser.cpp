@@ -37,6 +37,7 @@
  */
 
 #include <common/log.h>
+#include <sensor_msgs/LaserScan.h>
 #include "modules/perception/localization/amcl/sensors/sensor_laser.h"
 
 namespace rrts {
@@ -61,7 +62,8 @@ void SensorLaser::SetModelLikelihoodFieldProb(double z_hit,
 											  bool do_beamskip,
 											  double beam_skip_distance,
 											  double beam_skip_threshold,
-											  double beam_skip_error_threshold) {
+											  double beam_skip_error_threshold,
+											  double laser_filter_weight) {
 
 	this->model_type_ = LASER_MODEL_LIKELIHOOD_FIELD_PROB;
 	this->z_hit_ = z_hit;
@@ -72,6 +74,7 @@ void SensorLaser::SetModelLikelihoodFieldProb(double z_hit,
 	this->beam_skip_threshold_ = beam_skip_threshold;
 	this->beam_skip_error_threshold_ = beam_skip_error_threshold;
 	this->map_ptr_->UpdateCSpace(max_occ_dist);
+	laser_filter_weight_ = laser_filter_weight;
 }
 
 double SensorLaser::LikelihoodFieldModelProb(SensorLaserData *sensor_laser_data_ptr,
@@ -97,7 +100,6 @@ double SensorLaser::LikelihoodFieldModelProb(SensorLaserData *sensor_laser_data_
 	auto max_occ_dist = this->map_ptr_->GetMaxOccDist();
 	double max_dist_prob = std::exp(-(max_occ_dist* max_occ_dist) / z_hit_denom);
 
-	LOG_INFO << "Max occ dist" << max_occ_dist;
 	//Beam skipping - ignores beams for which a majoirty of particles do not agree with the map
 	//prevents correct particles from getting down weighted because of unexpected obstacles
 	//such as humans
@@ -108,14 +110,13 @@ double SensorLaser::LikelihoodFieldModelProb(SensorLaserData *sensor_laser_data_
 	//we only do beam skipping if the filter has converged
 	if(do_beamskip && !sample_set_ptr->converged){
 		do_beamskip = false;
-		LOG_INFO << "Filter not converged";
+		DLOG_INFO << "Filter not converged";
 	}
 
 	//we need a count the no of particles for which the beam agreed with the map
-	auto *obs_count = new int[this->max_beams_]();
 	//we also need a mask of which observations to integrate (to decide which beams to integrate to all particles)
-	auto *obs_mask = new bool[this->max_beams_]();
-
+	std::unique_ptr<int[]> obs_count(new int[this->max_beams_]);
+	std::unique_ptr<bool[]> obs_mask(new bool[this->max_beams_]);
 
 	int beam_ind = 0;
 
@@ -138,7 +139,7 @@ double SensorLaser::LikelihoodFieldModelProb(SensorLaserData *sensor_laser_data_
 		}
 	}
 
-	DLOG_INFO << "Compute the sample weights";
+	//Compute the sample weights
 
 	for(j=0;j<sample_set_ptr->sample_count;j++){
 
@@ -177,8 +178,9 @@ double SensorLaser::LikelihoodFieldModelProb(SensorLaserData *sensor_laser_data_
 				pz += this->z_hit_ * max_dist_prob;
 			} else
 			{
+
 				int cell_ind = this->map_ptr_->ComputeCellIndexByMap(mi,mj);
-				z = this->map_ptr_->GetCellsVec()[cell_ind]->occ_dist;
+				z = this->map_ptr_->GetCellOccDistByIndex(cell_ind);
 				if(z < beam_skip_distance){
 					obs_count[beam_ind] += 1;
 				}
@@ -190,6 +192,7 @@ double SensorLaser::LikelihoodFieldModelProb(SensorLaserData *sensor_laser_data_
 
 			// Part 2: random measurements
 			pz += this->z_rand_ * z_rand_mult;
+
 			LOG_FATAL_IF(pz > 1.0||pz < 0.0) << "pz error num = "<< pz;
 
 			if(!do_beamskip){
@@ -200,6 +203,13 @@ double SensorLaser::LikelihoodFieldModelProb(SensorLaserData *sensor_laser_data_
 				CHECK_GT(this->temp_obs_.at(j).size(),0);
 				this->temp_obs_.at(j).at(beam_ind) = pz;
 			}
+
+			//TODO: Non-Field-Object-Filter
+			auto tmp_weight = pz;
+			if(tmp_weight < laser_filter_weight_){
+				sensor_laser_data_ptr->ranges_clean_mask(i,0) = 1;
+			}
+
 		}
 
 		if(!do_beamskip){
@@ -209,7 +219,7 @@ double SensorLaser::LikelihoodFieldModelProb(SensorLaserData *sensor_laser_data_
 
 	}
 
-	DLOG(INFO) << "Do beamskip";
+	//Skip part of beams
 	if(do_beamskip){
 		int skipped_beam_count = 0;
 		for (beam_ind = 0; beam_ind < this->max_beams_; beam_ind++){
@@ -254,11 +264,7 @@ double SensorLaser::LikelihoodFieldModelProb(SensorLaserData *sensor_laser_data_
 		}
 	}
 
-	delete [] obs_count;
-	delete [] obs_mask;
-	LOG_INFO << "Return total weight";
 	return (total_weight);
-
 };
 
 bool SensorLaser::UpdateSensor(ParticleFilterPtr  pf_ptr, SensorData *sensor_data_ptr) {
@@ -280,7 +286,7 @@ bool SensorLaser::UpdateSensor(ParticleFilterPtr  pf_ptr, SensorData *sensor_dat
 			set->samples_vec[i].weight /= total;
 		}
 
-		LOG_INFO << "Update running averages of likelihood of samples"; //(Prob Rob p258)
+		DLOG_INFO << "Update running averages of likelihood of samples"; //(Prob Rob p258)
 
 		w_avg /= set->sample_count;
 		if (pf_ptr->w_slow_ == 0.0)
@@ -304,24 +310,14 @@ bool SensorLaser::UpdateSensor(ParticleFilterPtr  pf_ptr, SensorData *sensor_dat
 
 void SensorLaser::ResetTempData(int new_max_samples, int new_max_obs){
 
-	LOG_INFO << "Temp obs size " << temp_obs_.size();
-	if(!temp_obs_.empty()){
-		for(auto &temp_obs_it : temp_obs_){
-			temp_obs_it.clear();
-			temp_obs_it.shrink_to_fit();
-		}
-		temp_obs_.clear();
-		temp_obs_.shrink_to_fit();
-	}
-
 	max_obs_ = new_max_obs;
 	max_samples_ = std::max(max_samples_,new_max_samples);
-	LOG_INFO << "New max obs = " << max_obs_ << "New max samples = " << max_samples_;
+	DLOG_INFO << __FUNCTION__ << ": New max obs = " << max_obs_ << "New max samples = " << max_samples_;
 	CHECK_GT(max_samples_,0);
 	temp_obs_.resize(max_samples_);
 	for(int k=0; k < max_samples_; k++){
 		CHECK_GT(max_obs_,0);
-		temp_obs_[k].resize(max_obs_);
+		temp_obs_[k].resize(max_obs_,0);
 	}
 }
 

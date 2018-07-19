@@ -221,16 +221,19 @@ void TebOptimal::SetVelocityEnd(const geometry_msgs::Twist &vel_end) {
 
 bool TebOptimal::Optimal(std::vector<DataBase> &initial_plan,
                       const geometry_msgs::Twist *start_vel,
-                      bool free_goal_vel) {
+                      bool free_goal_vel, bool micro_control) {
   if (!initialized_) {
     LOG_ERROR << "optimal not be initialized";
   }
-  bool teb_inited;
-  if (!vertex_console_.IsInit()) {
-    vertex_console_.InitTEBtoGoal(initial_plan, trajectory_info_.dt_ref(), trajectory_info_.global_plan_overwrite_orientation(),
-                                  trajectory_info_.min_samples(), trajectory_info_.allow_init_with_backwards_motion());
-  } else {
 
+  if (!vertex_console_.IsInit()) {
+    vertex_console_.InitTEBtoGoal(initial_plan, trajectory_info_.dt_ref(),
+                                  trajectory_info_.global_plan_overwrite_orientation(),
+                                  trajectory_info_.min_samples(),
+                                  trajectory_info_.allow_init_with_backwards_motion(),
+                                  micro_control);
+
+  } else {
     DataBase start = initial_plan.front();
     DataBase goal = initial_plan.back();
 
@@ -238,10 +241,14 @@ bool TebOptimal::Optimal(std::vector<DataBase> &initial_plan,
         && (goal.GetPosition() - vertex_console_.BackPose().GetPosition()).norm()
             < trajectory_info_.force_reinit_new_goal_dist()) {
       vertex_console_.UpdateAndPruneTEB(start, goal, trajectory_info_.min_samples());
+
     } else  {
       vertex_console_.ClearAllVertex();
-      vertex_console_.InitTEBtoGoal(initial_plan, trajectory_info_.dt_ref(), trajectory_info_.global_plan_overwrite_orientation(),
-                                    trajectory_info_.min_samples(), trajectory_info_.allow_init_with_backwards_motion());
+      vertex_console_.InitTEBtoGoal(initial_plan, trajectory_info_.dt_ref(),
+                                    trajectory_info_.global_plan_overwrite_orientation(),
+                                    trajectory_info_.min_samples(),
+                                    trajectory_info_.allow_init_with_backwards_motion(),
+                                    micro_control);
     }
   }
   if (start_vel) {
@@ -261,7 +268,7 @@ bool TebOptimal::Optimal(std::vector<DataBase> &initial_plan,
 bool TebOptimal::Optimal(const DataBase &start,
                       const DataBase &goal,
                       const geometry_msgs::Twist *start_vel,
-                      bool free_goal_vel) {
+                      bool free_goal_vel, bool micro_control) {
   if (!initialized_) {
     LOG_ERROR << "optimal not be initialized";
   }

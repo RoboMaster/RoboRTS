@@ -1,9 +1,9 @@
-project(RRTS)
+project(roborts)
 cmake_minimum_required(VERSION 3.1)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(CMAKE_BUILD_TYPE Release) 
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -41,7 +41,7 @@ find_package(ProtoBuf REQUIRED)
 add_subdirectory(modules/stream/messages)
 list(APPEND catkin_INCLUDE_DIRS ${msg_INCLUDE_DIRS})
 message(STATUS ${catkin_INCLUDE_DIRS})
-include_directories(${CMAKE_SOURCE_DIR} ${catkin_INCLUDE_DIRS})
-
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${catkin_INCLUDE_DIRS})
+catkin_package()
 add_subdirectory(common)
 add_subdirectory(modules)

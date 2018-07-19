@@ -73,7 +73,7 @@ ParticleFilter::ParticleFilter(int min_samples,
       sample_set_it->samples_vec[i].weight = 1.0 / max_samples;
     }
 
-    sample_set_it->kd_tree_ptr = new ParticleFilterKDTree;
+    sample_set_it->kd_tree_ptr = std::make_unique<ParticleFilterKDTree>();
     sample_set_it->kd_tree_ptr->InitializeByMaxSize(3 * max_samples);
     sample_set_it->cluster_count = 0;
     sample_set_it->cluster_max_count = max_samples_;
@@ -96,7 +96,7 @@ ParticleFilter::~ParticleFilter() {
   int i;
   for (i = 0; i < 2; i++) {
     this->sample_set_ptr_array_[i]->clusters_vec.clear();
-    delete (this->sample_set_ptr_array_[i]->kd_tree_ptr);
+    this->sample_set_ptr_array_[i]->kd_tree_ptr.reset();
     this->sample_set_ptr_array_[i]->clusters_vec.shrink_to_fit();
     this->sample_set_ptr_array_[i]->samples_vec.clear();
     this->sample_set_ptr_array_[i]->samples_vec.shrink_to_fit();
@@ -131,7 +131,7 @@ void ParticleFilter::InitByGuassian(const math::Vec3d &mean, const math::Mat3d &
 bool ParticleFilter::UpdateConverged() {
   auto sample_set_ptr = sample_set_ptr_array_[current_set_];
   double mean_x = 0, mean_y = 0;
-  double total = 0;
+
   int i;
 
   for (i = 0; i < sample_set_ptr->sample_count; i++) {
@@ -142,8 +142,8 @@ bool ParticleFilter::UpdateConverged() {
   mean_y /= sample_set_ptr->sample_count;
 
   for (i = 0; i < sample_set_ptr->sample_count; i++) {
-    if (std::fabs(sample_set_ptr->samples_vec[i].pose(0) - mean_x) > this->dist_threshold_
-        || std::fabs(sample_set_ptr->samples_vec[i].pose(1) - mean_y) > this->dist_threshold_) {
+    if (std::fabs(sample_set_ptr->samples_vec[i].pose(0) - mean_x) > this->dist_threshold_ ||
+        std::fabs(sample_set_ptr->samples_vec[i].pose(1) - mean_y) > this->dist_threshold_) {
       sample_set_ptr->converged = false;
       this->converged_ = false;
       return false;
@@ -156,7 +156,7 @@ bool ParticleFilter::UpdateConverged() {
 }
 
 void ParticleFilter::InitConverged() {
-  this->sample_set_ptr_array_[current_set_]->converged = 0;
+  this->sample_set_ptr_array_[current_set_]->converged = false;
   this->converged_ = false;
 }
 
@@ -182,7 +182,7 @@ void ParticleFilter::ClusterStatistics(const SampleSetPtr &sample_set_ptr) {
   sample_set_ptr->cluster_count = 0;
 
   for (i = 0; i < sample_set_ptr->cluster_max_count; i++) {
-    sample_set_ptr->clusters_vec[i].Init();
+    sample_set_ptr->clusters_vec[i].Reset();
   }
   // Initialize overall filter stats
   count = 0;
@@ -254,14 +254,13 @@ void ParticleFilter::ClusterStatistics(const SampleSetPtr &sample_set_ptr) {
       }
     }
 
-    // Covariance in angular components; I think this is the correct
-    // formula for circular statistics.
+    // Covariance in angular components
     cluster->cov(2, 2) = -2 * std::log(
         std::sqrt(
             cluster->ws_vec(2) * cluster->ws_vec(2) +
                 cluster->ws_vec(3) * cluster->ws_vec(3)
         ));
-    LOG_INFO << "cluster: " << cluster->count
+    DLOG_INFO << "cluster: " << cluster->count
              << "," << cluster->weight
              << "," << cluster->mean(0)
              << "," << cluster->mean(1) << "," << cluster->mean(2);
@@ -271,18 +270,17 @@ void ParticleFilter::ClusterStatistics(const SampleSetPtr &sample_set_ptr) {
   sample_set_ptr->mean(0) = tmp_ws_vec(0) / weight;
   sample_set_ptr->mean(1) = tmp_ws_vec(1) / weight;
   sample_set_ptr->mean(2) = std::atan2(tmp_ws_vec(3), tmp_ws_vec(2));
+
   // Covariance in linear components
   for (j = 0; j < 2; j++) {
     for (k = 0; k < 2; k++) {
       sample_set_ptr->covariant(j, k) = tmp_ws_mat(j, k) / weight - sample_set_ptr->mean(j) * sample_set_ptr->mean(k);
     }
   }
-  // Covariance in angular components; I think this is the correct
-  // formula for circular statistics.
-  sample_set_ptr->covariant(2, 2) = -2 * std::log(std::sqrt(tmp_ws_vec(2) * tmp_ws_vec(2)
-                                                                + tmp_ws_vec(3) * tmp_ws_vec(3)));
 
-  return;
+  // Covariance in angular components;
+  sample_set_ptr->covariant(2, 2) = -2 * std::log(std::sqrt(tmp_ws_vec(2) * tmp_ws_vec(2) + tmp_ws_vec(3) * tmp_ws_vec(3)));
+
 }
 
 int ParticleFilter::GetClusterStatistics(int clabel,
@@ -297,7 +295,7 @@ int ParticleFilter::GetClusterStatistics(int clabel,
   *mean = set->clusters_vec[clabel].mean;
   *cov = set->clusters_vec[clabel].cov;
 
-  LOG_INFO << "Get (weight,mean,cov) (" << *weight << "\n" << *mean << "\n" << *cov << ")";
+  DLOG_INFO << "Get (weight,mean,cov) (" << *weight << "\n" << *mean << "\n" << *cov << ")";
 
   return 1;
 
@@ -349,8 +347,9 @@ void ParticleFilter::UpdateResample() {
   // Build up cumulative probability table for resampling.
   // TODO: Replace this with a more efficient procedure
   // (e.g., http://www.network-theory.co.uk/docs/gslref/GeneralDiscreteDistributions.html)
-  int c_size = set_a->sample_count+1;
-  auto c = new(double[c_size]);
+  const int c_size = set_a->sample_count+1;
+  std::vector<double> c;
+  c.resize(c_size);
   c[0] = 0.0;
   for (i = 0; i < set_a->sample_count; i++) {
     c[i + 1] = c[i] + set_a->samples_vec[i].weight;
@@ -367,16 +366,6 @@ void ParticleFilter::UpdateResample() {
     w_diff = 0.0;
   }
 
-  // Can't (easily) combine low-variance sampler with KLD adaptive
-  // sampling, so we'll take the more traditional route.
-  /*
-  // Low-variance resampler, taken from Probabilistic Robotics, p110
-	  count_inv = 1.0/set_a->sample_count;
-	  r = drand48() * count_inv;
-	  c = set_a->samples[0].weight;
-	  i = 0;
-	  m = 0;
-  */
   while (set_b->sample_count < this->max_samples_) {
     sample_b = &set_b->samples_vec[set_b->sample_count++];
 
@@ -404,8 +393,10 @@ void ParticleFilter::UpdateResample() {
     set_b->kd_tree_ptr->InsertPose(sample_b->pose, sample_b->weight);
 
     // See if we have enough samples yet
-    DLOG_INFO << "Leaf count " << set_b->kd_tree_ptr->GetLeafCount();
-    if (set_b->sample_count > ResampleLimit(set_b->kd_tree_ptr->GetLeafCount())) {
+    DLOG_INFO << "Histogram bins num: " << set_b->kd_tree_ptr->GetLeafCount();
+    auto kld_resample_num = ResampleLimit(set_b->kd_tree_ptr->GetLeafCount());
+    if (set_b->sample_count > kld_resample_num) {
+      LOG_INFO << "KLD-Resample num : " << kld_resample_num;
       break;
     }
   }
@@ -424,7 +415,7 @@ void ParticleFilter::UpdateResample() {
   ClusterStatistics(set_b);
   current_set_ = (current_set_ + 1) % 2;
   UpdateConverged();
-  delete[] c;
+//  c.reset();
 
 }
 

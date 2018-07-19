@@ -52,7 +52,7 @@
 #ifndef MODULES_PERCEPTION_MAP_COSTMAP_INFLATION_LAYER_H
 #define MODULES_PERCEPTION_MAP_COSTMAP_INFLATION_LAYER_H
 
-#include <boost/thread.hpp>
+#include <mutex>
 #include "modules/perception/map/costmap/map_common.h"
 #include "modules/perception/map/costmap/layer.h"
 #include "modules/perception/map/costmap/layered_costmap.h"
@@ -130,7 +130,7 @@ class InflationLayer : public Layer {
 
  protected:
   virtual void OnFootprintChanged();
-  boost::recursive_mutex *inflation_access_;
+  std::recursive_mutex *inflation_access_;
 
  private:
   /**

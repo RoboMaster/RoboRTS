@@ -27,23 +27,25 @@ using rrts::common::ErrorInfo;
 using rrts::common::NodeState;
 GlobalPlannerNode::GlobalPlannerNode(std::string name) :
     rrts::common::RRTS::RRTS(name),
-    new_path_(false), node_state_(NodeState::IDLE), error_info_(ErrorCode::OK),
+    new_path_(false),pause_(false), node_state_(NodeState::IDLE), error_info_(ErrorCode::OK),
     as_(nh_,"global_planner_node_action",boost::bind(&GlobalPlannerNode::GoalCallback,this,_1),false) {
 
   if (Init().IsOK()) {
     LOG_INFO<<"Initialization completed.";
+    StartPlanning();
+    as_.start();
   } else {
     LOG_WARNING<<"Initialization failed.";
     SetNodeState(NodeState::FAILURE);
   }
-  as_.start();
+
 }
 
 ErrorInfo GlobalPlannerNode::Init() {
 
   //Load proto planning configuration parameters
   GlobalPlannerConfig global_planner_config;
-  if (!rrts::common::ReadProtoFromTextFile("modules/planning/global_planner/config/global_planner_config.prototxt",
+  if (!rrts::common::ReadProtoFromTextFile("/modules/planning/global_planner/config/global_planner_config.prototxt",
                                            &global_planner_config)) {
     LOG_ERROR<<"Cannot load global planner protobuf configuration file.";
     return ErrorInfo(ErrorCode::GP_INITILIZATION_ERROR,
@@ -62,9 +64,9 @@ ErrorInfo GlobalPlannerNode::Init() {
   //Create the instance of the selected algorithm
   tf_ptr_ = std::make_shared<tf::TransformListener>(ros::Duration(10));
 
-  costmap_ptr_ = std::make_shared<rrts::perception::map::CostmapInterface>("costmap",
+  costmap_ptr_ = std::make_shared<rrts::perception::map::CostmapInterface>("global_costmap",
                                                                            *tf_ptr_,
-                                                                           "modules/perception/map/costmap/config/costmap_parameter_config_for_global_plan.prototxt");
+                                                                           "/modules/perception/map/costmap/config/costmap_parameter_config_for_global_plan.prototxt");
   global_planner_ptr_ = rrts::common::AlgorithmFactory<GlobalPlannerBase,CostmapPtr >::CreateAlgorithm(
       selected_algorithm_, costmap_ptr_);
   if (global_planner_ptr_== nullptr) {
@@ -74,45 +76,50 @@ ErrorInfo GlobalPlannerNode::Init() {
   }
   path_.header.frame_id = costmap_ptr_->GetGlobalFrameID();
   return ErrorInfo(ErrorCode::OK);
-
 }
 
 void GlobalPlannerNode::GoalCallback(const messages::GlobalPlannerGoal::ConstPtr &msg) {
-  LOG_INFO<<__FUNCTION__<<" start!";
+  LOG_INFO<<"Received a Goal from client!";
 
   ErrorInfo error_info = GetErrorInfo();
   NodeState node_state = GetNodeState();
 
-  if (node_state == NodeState::FAILURE) {
-    messages::GlobalPlannerFeedback feedback;
-    messages::GlobalPlannerResult result;
-    feedback.error_code = error_info.error_code();
-    feedback.error_msg = error_info.error_msg();
-    result.error_code = feedback.error_code;
-    as_.publishFeedback(feedback);
-    as_.setAborted(result,feedback.error_msg);
-    LOG_ERROR << "Initialization Failed, Failed to execute action!";
-    return;
-  }
+//  if (node_state == NodeState::FAILURE) {
+//    messages::GlobalPlannerFeedback feedback;
+//    messages::GlobalPlannerResult result;
+//    feedback.error_code = error_info.error_code();
+//    feedback.error_msg = error_info.error_msg();
+//    result.error_code = feedback.error_code;
+//    as_.publishFeedback(feedback);
+//    as_.setAborted(result,feedback.error_msg);
+//    LOG_ERROR << "Initialization Failed, Failed to execute action!";
+//    return;
+//  }
 
   SetGoal(msg->goal);
-  plan_condition_.notify_one();
 
-  if (GetNodeState() == NodeState::IDLE) {
-    StartPlanning();
+  if (GetNodeState() != NodeState::RUNNING) {
+    SetNodeState(NodeState::RUNNING);
   }
+
+  {
+    std::unique_lock<std::mutex> plan_lock(plan_mutex_);
+    plan_condition_.notify_one();
+  }
+
+
 
   while (ros::ok()) {
 
     if (as_.isPreemptRequested()) {
       if (as_.isNewGoalAvailable()) {
         as_.setPreempted();
-        std::cout<<"Override!"<<std::endl;
+        LOG_INFO<<"Override!";
         break;
       }else{
         as_.setPreempted();
-        StopPlanning();
-        std::cout<<"Cancel!"<<std::endl;
+        SetNodeState(NodeState::IDLE);
+        LOG_INFO<<"Cancel!";
         break;
       }
     }
@@ -138,16 +145,17 @@ void GlobalPlannerNode::GoalCallback(const messages::GlobalPlannerGoal::ConstPtr
       if(node_state == NodeState::SUCCESS){
         result.error_code = error_info.error_code();
         as_.setSucceeded(result,error_info.error_msg());
-        StopPlanning();
+        SetNodeState(NodeState::IDLE);
         break;
       }
       else if(node_state == NodeState::FAILURE){
         result.error_code = error_info.error_code();
         as_.setAborted(result,error_info.error_msg());
-        StopPlanning();
+        SetNodeState(NodeState::IDLE);
         break;
       }
     }
+    std::this_thread::sleep_for(std::chrono::microseconds(1));
   }
 
 }
@@ -183,73 +191,84 @@ void GlobalPlannerNode::SetGoal(geometry_msgs::PoseStamped goal) {
 }
 
 void GlobalPlannerNode::StartPlanning() {
-  SetNodeState(NodeState::RUNNING);
+  SetNodeState(NodeState::IDLE);
   plan_thread_ = std::thread(&GlobalPlannerNode::PlanThread, this);
 }
 
 void GlobalPlannerNode::StopPlanning() {
-  SetNodeState(NodeState::IDLE);
+  SetNodeState(NodeState::RUNNING);
   if (plan_thread_.joinable()) {
     plan_thread_.join();
   }
 }
 
 void GlobalPlannerNode::PlanThread() {
-
+  LOG_INFO<<"Plan thread start!";
   geometry_msgs::PoseStamped current_start;
   geometry_msgs::PoseStamped current_goal;
   std::vector<geometry_msgs::PoseStamped> current_path;
   std::chrono::microseconds sleep_time = std::chrono::microseconds(0);
   ErrorInfo error_info;
   int retries = 0;
-  while (GetNodeState() == NodeState::RUNNING) {
-
-//    if (GetNodeState() == NodeState::RUNNING) {
+  while (ros::ok()) {
+    LOG_INFO<<"Wait to plan!";
     std::unique_lock<std::mutex> plan_lock(plan_mutex_);
     plan_condition_.wait_for(plan_lock, sleep_time);
-//    }
-//    else{
-//      std::unique_lock<std::mutex> plan_lock(plan_mutex_);
-//      plan_condition_.wait(plan_lock);
-//    }
+    while (GetNodeState()!=NodeState::RUNNING){
+      std::this_thread::sleep_for(std::chrono::microseconds(1));
+    }
+    LOG_INFO<<"Go on planning!";
 
     std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
-    bool error_set = false;
-    while (!costmap_ptr_->GetRobotPose(current_start)) {
-      if (!error_set) {
-        LOG_ERROR<<"Get Robot Pose Error.";
-        SetErrorInfo(ErrorInfo(ErrorCode::GP_GET_POSE_ERROR, "Get Robot Pose Error."));
-        error_set = true;
+    {
+      std::unique_lock<rrts::perception::map::Costmap2D::mutex_t> lock(*(costmap_ptr_->GetCostMap()->GetMutex()));
+      bool error_set = false;
+      while (!costmap_ptr_->GetRobotPose(current_start)) {
+        if (!error_set) {
+          LOG_ERROR<<"Get Robot Pose Error.";
+          SetErrorInfo(ErrorInfo(ErrorCode::GP_GET_POSE_ERROR, "Get Robot Pose Error."));
+          error_set = true;
+        }
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
       }
-    }
 
-    current_goal = GetGoal();
+      current_goal = GetGoal();
 
-    if (current_goal.header.frame_id != costmap_ptr_->GetGlobalFrameID()) {
-      current_goal = costmap_ptr_->Pose2GlobalFrame(current_goal);
-    }
-
-
+      if (current_goal.header.frame_id != costmap_ptr_->GetGlobalFrameID()) {
+        current_goal = costmap_ptr_->Pose2GlobalFrame(current_goal);
+        SetGoal(current_goal);
+      }
 
       error_info = global_planner_ptr_->Plan(current_start, current_goal, current_path);
 
-      if (error_info.IsOK()) {
-        retries = 0;
-        PathVisualization(current_path);
-        if (GetDistance(current_start, current_goal) < goal_distance_tolerance_
-            && GetAngle(current_start, current_goal) < goal_angle_tolerance_
-            ) {
-          SetNodeState(NodeState::SUCCESS);
-        }
-      } else if (max_retries_ > 0 && retries > max_retries_) {
-        LOG_ERROR << "Can not get plan with max retries( " << max_retries_ << " )";
-        error_info = ErrorInfo(ErrorCode::GP_MAX_RETRIES_FAILURE, "Over max retries.");
-        SetNodeState(NodeState::FAILURE);
-      } else {
-        retries++;
-        LOG_ERROR << "Can not get plan for once. " << error_info.error_msg();
+    }
+
+    if (error_info.IsOK()) {
+      retries = 0;
+      PathVisualization(current_path);
+
+      current_goal = current_path.back();
+      SetGoal(current_goal);
+      if (GetDistance(current_start, current_goal) < goal_distance_tolerance_
+          && GetAngle(current_start, current_goal) < goal_angle_tolerance_
+          ) {
+        SetNodeState(NodeState::SUCCESS);
       }
+    } else if (max_retries_ > 0 && retries > max_retries_) {
+      LOG_ERROR << "Can not get plan with max retries( " << max_retries_ << " )";
+      error_info = ErrorInfo(ErrorCode::GP_MAX_RETRIES_FAILURE, "Over max retries.");
+      SetNodeState(NodeState::FAILURE);
+      retries=0;
+    } else if (error_info == ErrorInfo(ErrorCode::GP_GOAL_INVALID_ERROR)){
+      LOG_ERROR << "Current goal is not valid!";
+      SetNodeState(NodeState::FAILURE);
+      retries=0;
+    }
+    else {
+      retries++;
+      LOG_ERROR << "Can not get plan for once. " << error_info.error_msg();
+    }
 
     SetErrorInfo(error_info);
 

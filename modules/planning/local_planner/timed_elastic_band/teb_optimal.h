@@ -118,10 +118,10 @@ class TebOptimal : public OptimalBase {
                   LocalVisualizationPtr visual = LocalVisualizationPtr(),const ViaPointContainer* via_points = NULL);
 
   bool Optimal(std::vector<DataBase>& initial_plan, const geometry_msgs::Twist* start_vel = NULL,
-               bool free_goal_vel = false) override;
+               bool free_goal_vel = false, bool micro_control = false) override;
 
   bool Optimal(const DataBase& start, const DataBase& goal, const geometry_msgs::Twist* start_vel = NULL,
-               bool free_goal_vel=false) override;
+               bool free_goal_vel=false, bool micro_control = false) override;
 
   bool GetVelocity(rrts::common::ErrorInfo &error_info, double& vx, double& vy, double& omega) const override ;
 

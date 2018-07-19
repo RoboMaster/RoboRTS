@@ -23,6 +23,7 @@
 #include <memory>
 #include <mutex>
 #include <functional>
+#include <condition_variable>
 
 #include <nav_msgs/Path.h>
 #include <actionlib/server/simple_action_server.h>
@@ -88,6 +89,9 @@ class LocalPlannerNode : public rrts::common::RRTS {
   ros::Publisher vel_pub_;
   geometry_msgs::PoseStamped local_goal_;
   int max_error_;
+  std::condition_variable plan_condition_;
+  std::mutex plan_mutex_;
+  double frequency_;
 
 };
 

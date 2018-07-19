@@ -191,7 +191,8 @@ class TebVertexConsole {
                      double dt,
                      bool estimate_orient = false,
                      int min_samples = 3,
-                     bool guess_backwards_motion = false);
+                     bool guess_backwards_motion = false,
+                     bool micro_control = false);
 
   void UpdateAndPruneTEB(boost::optional<const DataBase &> new_start,
                          boost::optional<const DataBase &> new_goal,

@@ -52,7 +52,7 @@ ParticleFilterKDTree::~ParticleFilterKDTree() {
 	}
 	nodes_ptr_vec_.clear();
 	nodes_ptr_vec_.shrink_to_fit();
-	LOG_INFO << "Destroy kd tree";
+	DLOG_INFO << "Destroy kd tree";
 }
 
 void ParticleFilterKDTree::InitializeByMaxSize(int max_size) {
@@ -66,12 +66,16 @@ void ParticleFilterKDTree::InitializeByMaxSize(int max_size) {
 	leaf_count_ = 0;
 }
 
-int ParticleFilterKDTree::GetLeafCount() const {
+const int &ParticleFilterKDTree::GetLeafCount() const {
 	return leaf_count_;
 }
 
 void ParticleFilterKDTree::Clear() {
 	root_ptr_ = nullptr;
+	while (nodes_ptr_vec_.empty()) {
+		delete (nodes_ptr_vec_.back());
+		nodes_ptr_vec_.pop_back();
+	}
 	nodes_ptr_vec_.clear();
 	nodes_ptr_vec_.shrink_to_fit();
 	leaf_count_ = 0;
@@ -184,7 +188,7 @@ ParticleFilterKDTreeNode *ParticleFilterKDTree::FindNode(ParticleFilterKDTreeNod
 		else
 			return FindNode(node_ptr->right_ptr, key);
 	}
-	return nullptr;
+
 }
 
 inline bool ParticleFilterKDTree::IsEqualKey(const math::Vec3d &key_a, const math::Vec3d &key_b) {
@@ -196,10 +200,8 @@ void ParticleFilterKDTree::Cluster() {
 	int i = 0;
 	int queue_count = 0, cluster_count = 0;
 	ParticleFilterKDTreeNode *node_ptr;
-	ParticleFilterKDTreeNode **queue;
 
-	queue = new ParticleFilterKDTreeNode *[this->node_count_];
-	queue_count = 0;
+	std::unique_ptr<ParticleFilterKDTreeNode * []> queue(new ParticleFilterKDTreeNode *[this->node_count_]);
 
 	for (i = 0; i < this->node_count_; i++) {
 		node_ptr = this->nodes_ptr_vec_[i];
@@ -222,8 +224,9 @@ void ParticleFilterKDTree::Cluster() {
 		node_ptr->cluster = cluster_count++;
 		ClusterNode(node_ptr, 0);
 	}
-	delete (queue);
-	LOG_INFO << "Cluster count = " << cluster_count;
+	queue.reset();
+//	delete (queue);
+	DLOG_INFO << "Cluster count = " << cluster_count;
 }
 
 void ParticleFilterKDTree::ClusterNode(ParticleFilterKDTreeNode *node_ptr, int depth) {

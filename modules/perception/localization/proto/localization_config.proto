@@ -9,4 +9,18 @@ message LocalizationConfig {
     required string init_pose_topic_name = 6 [default = "initialpose"    ];
 
     required double transform_tolerance = 7 [default = 0.1];
+
+    required double initial_pose_x = 36[default=93.3249018949];
+    required double initial_pose_y = 37[default=112.965052875];
+    required double initial_pose_a = 38[default=0];
+    required double initial_cov_xx = 39[default=0.1];
+    required double initial_cov_yy = 40[default=0.1];
+    required double initial_cov_aa = 41[default=0.1];
+
+    required bool enable_uwb = 51[default = false];
+    optional string uwb_frame_id = 52[default = "uwb"];
+    optional string uwb_topic_name = 53[default = "uwb"];
+    optional bool use_sim_uwb = 56[default = false];
+    optional int32 uwb_correction_frequency = 57[default = 10];
+
 }

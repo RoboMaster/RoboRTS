@@ -41,9 +41,11 @@ typedef enum {
   GAME_INFO_ID = 0x0001,
   REAL_BLOOD_DATA_ID = 0x0002,
   REAL_SHOOT_DATA_ID = 0x0003,
+  REAL_POWER_DATA_ID  = 0x0004,
   REAL_RFID_DATA_ID = 0x0005,
   GAME_RESULT_ID = 0x0006,
   GAIN_BUFF_ID = 0x0007,
+  ROBOT_POS_DATA_ID   = 0x0008,
 
   CHASSIS_DATA_ID = 0x0010,
   GIMBAL_DATA_ID = 0x0011,
@@ -127,6 +129,7 @@ typedef enum {
   GIMBAL_PATROL_MODE = 5,
   GIMBAL_SHOOT_BUFF = 6,
   GIMBAL_POSITION_MODE = 7,
+  GIMBAL_RELATIVE_MODE = 8
 } GimbalMode;
 
 typedef enum {
@@ -187,8 +190,7 @@ typedef struct {
   uint8_t reserved;
   uint16_t remain_hp;
   uint16_t max_hp;
-  Position position;
-} __attribute__((packed)) GameInfo;
+} __attribute__((packed)) RobotGameState;
 
 /**
   * @brief  real time blood volume change data(0x0002)
@@ -207,17 +209,28 @@ typedef struct {
      0x01: module offline
      0x02: bullet over speed
      0x03: bullet over frequency */
-} __attribute__((packed)) HurtData;
+} __attribute__((packed)) RobotHurtData;
 
 /**
   * @brief  real time shooting data(0x0003)
   */
 typedef struct {
-  uint8_t reserved1;
+  uint8_t bullet_type;
   uint8_t bullet_freq;
   float bullet_speed;
-  float reserved2;
 } __attribute__((packed)) ShootData;
+
+/**
+ * @brief real time power data
+ */
+typedef struct {
+  float chassis_volt;
+  float chassis_current;
+  float chassis_power;
+  float chassis_pwr_buf;
+  uint16_t shooter1_heat;
+  uint16_t shooter2_heat;
+}__attribute__((packed)) PowerData;
 
 /**
   * @brief  rfid detect data(0x0005)
@@ -235,12 +248,21 @@ typedef struct {
 } __attribute__((packed)) GameResult;
 
 /**
-  * @brief  the data of get field buff(0x0007)
+  * @brief  info of field buff(0x0007)
   */
 typedef struct {
-  uint8_t buff_type;
-  uint8_t buff_addition;
+  uint16_t buff_info;
 } __attribute__((packed)) GameBuff;
+
+/**
+ * @brief position of robot
+ */
+typedef struct {
+  float x;
+  float y;
+  float z;
+  float yaw;
+}__attribute__((packed)) RobotPosition;
 
 /**
   * @brief  student custom data(0x0100)
@@ -405,9 +427,14 @@ typedef struct {
   * @brief  gimbal control information(0x00A1)
   */
 typedef struct {
+  uint32_t time;
   uint8_t ctrl_mode;    /* gimbal control mode */
   float pit_ref;      /* gimbal pitch reference angle(degree) */
   float yaw_ref;      /* gimbal yaw reference angle(degree) */
+  float distance;     /* enemy distance */
+  float x;
+  float y;
+  float z;
   uint8_t visual_valid; /* visual information valid or not */
 } __attribute__((packed)) GimbalControl;
 

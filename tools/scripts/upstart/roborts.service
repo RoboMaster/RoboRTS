@@ -1,0 +1,11 @@
+[Unit]
+Description=roborts startup
+After=network-online.target
+[Service]
+User=root
+Type=simple
+Restart=on-failure
+ExecStart=/home/dji/roborts-start.sh
+
+[Install]
+WantedBy=multi-user.target

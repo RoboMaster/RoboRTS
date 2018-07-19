@@ -54,7 +54,7 @@
 
 #include <vector>
 #include <queue>
-#include <boost/thread.hpp>
+#include <mutex>
 #include <geometry_msgs/Point.h>
 #include "common/log.h"
 
@@ -317,7 +317,7 @@ class Costmap2D {
    */
   unsigned int World2Cell(double world_dist);
 
-  typedef boost::recursive_mutex mutex_t;
+  typedef std::recursive_mutex mutex_t;
   mutex_t *GetMutex() {
     return access_;
   }

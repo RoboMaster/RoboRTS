@@ -1,0 +1,72 @@
+<launch>
+  <master auto="start"/>
+  <arg name="map" value="icra"/>
+
+  <node name="master_discovery" pkg="master_discovery_fkie" type="master_discovery">
+    <param name="mcast_group" value="224.0.0.1" />
+  </node>
+
+  <node name="master_sync" pkg="master_sync_fkie" type="master_sync">
+    <!-- Since version 0.7.4:
+      For all sync_* and ignore_* parameter you can use follow structure to define filter for specific hosts:
+      <rosparam param="sync_topics">
+          - hostname:
+            - filter
+      </rosparam>
+    -->
+
+    <!-- The list of topics, which are to be ignored while a synchroniation. The ~ignore_nodes list is processed first.
+    These are defaults and cannot be removed: ['/rosout', '/rosout_agg'] -->
+    <rosparam param="sync_topics">
+    [/master/goal_task,/wing/goal_task]
+    </rosparam>
+    <rosparam param="ignore_services">[/*]</rosparam>
+  </node>
+
+  <group ns="master">
+  <node name="uwb_tf_static_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 1 map uwb 100" />
+
+  <!-- Run the map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find roborts)/tools/maps/$(arg map).yaml" respawn="false" />
+  
+  <node name="rplidar_node" pkg="rplidar_ros" type="rplidarNode" output="screen">
+      <param name="serial_port" type="string" value="/dev/rplidar"/>
+      <param name="serial_baudrate" type="int" value="115200"/>
+      <param name="frame_id" type="string" value="base_laser_link"/>
+      <param name="inverted" type="bool" value="false"/>
+      <param name="angle_compensate" type="bool" value="true"/>
+  </node>
+    
+  <!-- Run the Serial Node -->
+  <node pkg="roborts" type="serial_com_node" name="serial_com_node" respawn="false" />
+
+  <!-- Run the Camera Node -->
+  <node pkg="roborts" type="camera_node" name="camera_node" respawn="false" />
+
+  <!-- Run the SelfCheck Node -->
+  <node pkg="roborts" type="self_check_node" name="self_check_node" respawn="false" />
+
+  <!-- Run the TF Node -->
+  <node pkg="roborts" type="tf_tree" name="tf_tree_node" respawn="false" />
+
+  <!-- Run the Armor Detection Node -->
+  <node pkg="roborts" type="armor_detection_node" name="armor_detection_node" respawn="false" />
+
+  <!-- Run the Color Detection Node -->
+  <node pkg="roborts" type="color_detection_node" name="color_detection_node" respawn="false" />
+
+  <!-- Run the Localization Node -->
+  <node pkg="roborts" type="localization_node" name="localization_node" respawn="false" />
+
+  <!-- Run the Global Planner Node -->
+  <node pkg="roborts" type="global_planner_node" name="global_planner_node" respawn="false" />
+
+  <!-- Run the Local Planner Node -->
+  <node pkg="roborts" type="local_planner_node" name="local_planner_node" respawn="false" />
+
+  <!-- Run the Decision Node -->
+  <node pkg="roborts" type="ICRA_decision_node" name="ICRA_decision_node" respawn="false" />
+
+  </group>
+</launch>
+

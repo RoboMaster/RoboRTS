@@ -25,15 +25,10 @@
 #include <tf/transform_broadcaster.h>
 #include <message_filters/subscriber.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/PoseArray.h>
 #include <sensor_msgs/LaserScan.h>
-
-#include "actionlib/server/simple_action_server.h"
-#include "messages/LocalizationAction.h"
-
-#include "modules/perception/localization/proto/localization_config.pb.h"
-#include "modules/perception/localization/amcl/amcl.h"
 
 #include "common/algorithm_factory.h"
 #include "common/io.h"
@@ -42,6 +37,9 @@
 #include "common/error_code.h"
 #include "common/main_interface.h"
 #include "common/rrts.h"
+
+#include "modules/perception/localization/proto/localization_config.pb.h"
+#include "modules/perception/localization/amcl/amcl.h"
 
 namespace rrts {
 namespace perception {
@@ -60,19 +58,13 @@ class LocalizationNode : public rrts::common::RRTS {
 
     /**
      * @brief Localization initialization
-     * @return Returns errorcode
+     * @return Returns true if initialize success
      */
-    ErrorInfo Init() ;
+    bool Init() ;
 
   ~LocalizationNode();
 
-  void ActionCallback(const messages::LocalizationGoal::ConstPtr &data);
-
  private:
-
-  void StartMsgCallback();
-
-  void StopMsgCallback();
 
   /**
    * @brief Static map msg callback function
@@ -85,6 +77,12 @@ class LocalizationNode : public rrts::common::RRTS {
    * @param init_pose_msg Initial pose estimation msg
    */
   void InitialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &init_pose_msg);
+
+  void UwbCallback(const geometry_msgs::PoseStamped::ConstPtr &uwb_msg);
+
+  void UwbAmclThread();
+
+  void GroudTruthCallback(const nav_msgs::Odometry::ConstPtr &msg);
 
   /**
    * @brief Laser scan msg callback funtion, now update amcl here.
@@ -117,6 +115,7 @@ class LocalizationNode : public rrts::common::RRTS {
  private:
 
   std::thread localization_thread_;
+  std::thread uwb_amcl_thread_;
 
   //Localization algorithm object
   std::unique_ptr<rrts::perception::localization::Amcl> amcl_ptr_ = nullptr;
@@ -128,6 +127,8 @@ class LocalizationNode : public rrts::common::RRTS {
   //ROS Subscriber
   ros::Subscriber initial_pose_sub_;
   ros::Subscriber map_sub_;
+  ros::Subscriber uwb_pose_sub_;
+  ros::Subscriber ground_truth_sub_;
   message_filters::Subscriber<sensor_msgs::LaserScan>* laser_scan_sub_  = nullptr;
   tf::MessageFilter<sensor_msgs::LaserScan>* laser_scan_filter_  = nullptr;
 
@@ -137,30 +138,39 @@ class LocalizationNode : public rrts::common::RRTS {
   //ROS Publisher
   ros::Publisher pose_pub_;
   ros::Publisher particlecloud_pub_;
+  ros::Publisher clean_laser_scan_pub_;
+  ros::Publisher fake_uwb_pose_pub_;
+  ros::Publisher uwb_after_kf_pub_;
 
   //Config param
   LocalizationConfig localization_config_;
   bool first_map_only_ = true;
   ros::Duration transform_tolerance_;
 
-  //Status control
-  actionlib::SimpleActionServer<messages::LocalizationAction> as_;
-  NodeState node_state_;
-  ErrorInfo error_info_;
-  bool running_ = false;
+  bool enable_uwb_ = false;
   bool initialized_ = false;
   bool first_map_received_ = false;
   bool sent_first_transform_ = false;
   bool laser_init_ = false;
   bool laser_update_flag_ = true;
   bool latest_tf_valid_ = false;
+  bool uwb_init_ = false;
+  bool update_uwb_ = false;
+  int uwb_thread_delay_ = 10;
 
   //Name Param
   std::string base_frame_;
   std::string global_frame_;
   std::string odom_frame_;
+  std::string uwb_frame_;
+  std::string uwb_topic_name_;
 
   //Data
+  math::Vec3d init_pose_;
+  math::Vec3d init_cov_;
+  ros::Time uwb_latest_time;
+  math::Vec3d uwb_latest_pose_;
+  math::Vec3d uwb_odom_vel_;
   tf::Stamped<tf::Pose> latest_odom_pose_;
   tf::Stamped<tf::Pose> odom_to_map_;
   geometry_msgs::PoseArray particle_cloud_poses_;

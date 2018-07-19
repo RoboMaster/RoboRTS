@@ -87,25 +87,6 @@ math::Vec3d math::CoordAdd(const math::Vec3d &a, const math::Vec3d &b) {
 	return c;
 }
 
-double math::Normalize(double z) {
-	return std::atan2(std::sin(z), std::cos(z));
-}
-
-double math::AngleDiff(double a, double b) {
-	a = Normalize(a);
-	b = Normalize(b);
-	double d1 = a - b;
-	double d2 = 2 * M_PI - std::fabs(d1);
-	if (d1 > 0) {
-		d2 *= -1.0;
-	}
-	if (std::fabs(d1) < std::fabs(d2)) {
-		return d1;
-	} else {
-		return d2;
-	}
-}
-
 }
 }
 }

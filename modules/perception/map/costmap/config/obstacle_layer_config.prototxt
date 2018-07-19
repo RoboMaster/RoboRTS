@@ -9,8 +9,8 @@ topic_string: "scan"
 sensor_frame: "base_laser_link"
 inf_is_valid: false
 clearing: true
-footprint_clearing_enabled: true
-marking: false
+footprint_clearing_enabled: false
+marking: true
 is_debug: true
 
 

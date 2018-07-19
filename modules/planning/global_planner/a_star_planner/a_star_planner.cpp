@@ -30,14 +30,15 @@ AStarPlanner::AStarPlanner(CostmapPtr costmap_ptr) :
     gridmap_height_(costmap_ptr_->GetCostMap()->GetSizeYCell()),
     cost_(costmap_ptr_->GetCostMap()->GetCharMap()) {
 
-    AStarPlannerConfig a_star_planner_config;
-    if (!rrts::common::ReadProtoFromTextFile("modules/planning/global_planner/a_star_planner/config/a_star_planner_config.prototxt",
-                                             &a_star_planner_config)) {
-      LOG_ERROR<<"Cannot load a star planner protobuf configuration file.";
-    }
+  AStarPlannerConfig a_star_planner_config;
+  if (!rrts::common::ReadProtoFromTextFile("/modules/planning/global_planner/a_star_planner/config/a_star_planner_config.prototxt",
+                                           &a_star_planner_config)) {
+    LOG_ERROR<<"Cannot load a star planner protobuf configuration file.";
+  }
   //  AStarPlanner param config
-    heuristic_factor_ = a_star_planner_config.heuristic_factor();
-    inaccessible_cost_ = a_star_planner_config.inaccessible_cost();
+  heuristic_factor_ = a_star_planner_config.heuristic_factor();
+  inaccessible_cost_ = a_star_planner_config.inaccessible_cost();
+  goal_search_tolerance_ = a_star_planner_config.goal_search_tolerance()/costmap_ptr->GetCostMap()->GetResolution();
 }
 
 AStarPlanner::~AStarPlanner(){
@@ -48,7 +49,10 @@ ErrorInfo AStarPlanner::Plan(const geometry_msgs::PoseStamped &start,
                              const geometry_msgs::PoseStamped &goal,
                              std::vector<geometry_msgs::PoseStamped> &path) {
 
-  unsigned int start_x, start_y, goal_x, goal_y;
+  unsigned int start_x, start_y, goal_x, goal_y, tmp_goal_x, tmp_goal_y;
+  unsigned int valid_goal[2];
+  unsigned  int shortest_dist = std::numeric_limits<unsigned int>::max();
+  bool goal_valid = false;
 
   if (!costmap_ptr_->GetCostMap()->World2Map(start.pose.position.x,
                                              start.pose.position.y,
@@ -66,23 +70,58 @@ ErrorInfo AStarPlanner::Plan(const geometry_msgs::PoseStamped &start,
     return ErrorInfo(ErrorCode::GP_POSE_TRANSFORM_ERROR,
                      "Goal pose can't be transformed to costmap frame.");
   }
-
-  unsigned int start_index, goal_index;
-  start_index = costmap_ptr_->GetCostMap()->GetIndex(start_x, start_y);
-  goal_index = costmap_ptr_->GetCostMap()->GetIndex(goal_x, goal_y);
+  if (costmap_ptr_->GetCostMap()->GetCost(goal_x,goal_y)<inaccessible_cost_){
+   valid_goal[0] = goal_x;
+   valid_goal[1] = goal_y;
+   goal_valid = true; 
+  }else{
+  tmp_goal_x = goal_x;
+  tmp_goal_y = goal_y - goal_search_tolerance_;
+  
+  while(tmp_goal_y <= goal_y + goal_search_tolerance_){
+    tmp_goal_x = goal_x - goal_search_tolerance_;
+    while(tmp_goal_x <= goal_x + goal_search_tolerance_){
+      unsigned char cost = costmap_ptr_->GetCostMap()->GetCost(tmp_goal_x, tmp_goal_y);
+      unsigned int dist = abs(goal_x - tmp_goal_x) + abs(goal_y - tmp_goal_y);
+      if (cost < inaccessible_cost_ && dist < shortest_dist ) {
+        shortest_dist = dist;
+        valid_goal[0] = tmp_goal_x;
+        valid_goal[1] = tmp_goal_y;
+        goal_valid = true;
+      }
+      tmp_goal_x += 1;
+    }
+    tmp_goal_y += 1;
+  }
+  }
   ErrorInfo error_info;
-  if(start_index == goal_index){
-    error_info=ErrorInfo::OK();
+  if (!goal_valid){
+    error_info=ErrorInfo(ErrorCode::GP_GOAL_INVALID_ERROR);
     path.clear();
-    path.push_back(start);
-    path.push_back(goal);
   }
   else{
-    error_info = SearchPath(start_index, goal_index, path);
-    if ( error_info.IsOK() ){
-        path.back() = goal;
+    unsigned int start_index, goal_index;
+    start_index = costmap_ptr_->GetCostMap()->GetIndex(start_x, start_y);
+    goal_index = costmap_ptr_->GetCostMap()->GetIndex(valid_goal[0], valid_goal[1]);
+
+    costmap_ptr_->GetCostMap()->SetCost(start_x, start_y,rrts::perception::map::FREE_SPACE);
+
+    if(start_index == goal_index){
+      error_info=ErrorInfo::OK();
+      path.clear();
+      path.push_back(start);
+      path.push_back(goal);
     }
+    else{
+      error_info = SearchPath(start_index, goal_index, path);
+      if ( error_info.IsOK() ){
+        path.back().pose.orientation = goal.pose.orientation;
+        path.back().pose.position.z = goal.pose.position.z;
+      }
+    }
+
   }
+
 
   return error_info;
 }
@@ -123,13 +162,11 @@ ErrorInfo AStarPlanner::SearchPath(const int &start_index,
 
       if (neighbor_index < 0 ||
           neighbor_index > gridmap_height_ * gridmap_width_) {
-//        std::cout<< static_cast<int>(cost_[neighbor_index])<<std::endl;
         continue;
       }
 
-      if (cost_[neighbor_index] > inaccessible_cost_ ||
+      if (cost_[neighbor_index] >= inaccessible_cost_ ||
           state_.at(neighbor_index) == SearchState::CLOSED) {
-//        std::cout<< static_cast<int>(cost_[neighbor_index])<<std::endl;
         continue;
       }
 
@@ -137,7 +174,6 @@ ErrorInfo AStarPlanner::SearchPath(const int &start_index,
 
       if (g_score_.at(neighbor_index) > g_score_.at(current_index) + move_cost + cost_[neighbor_index]) {
 
-//        std::cout<< static_cast<int>(cost_[neighbor_index])<<std::endl;
         g_score_.at(neighbor_index) = g_score_.at(current_index) + move_cost + cost_[neighbor_index];
         parent_.at(neighbor_index) = current_index;
 
@@ -163,9 +199,15 @@ ErrorInfo AStarPlanner::SearchPath(const int &start_index,
   iter_pos.pose.orientation.w = 1;
   iter_pos.header.frame_id = "map";
   path.clear();
+  costmap_ptr_->GetCostMap()->Index2Cells(iter_index, iter_x, iter_y);
+  costmap_ptr_->GetCostMap()->Map2World(iter_x, iter_y, iter_pos.pose.position.x, iter_pos.pose.position.y);
+  path.push_back(iter_pos);
 
   while (iter_index != start_index) {
     iter_index = parent_.at(iter_index);
+//    if(cost_[iter_index]>= inaccessible_cost_){
+//      LOG_INFO<<"Cost changes through planning for"<< static_cast<unsigned int>(cost_[iter_index]);
+//    }
     costmap_ptr_->GetCostMap()->Index2Cells(iter_index, iter_x, iter_y);
     costmap_ptr_->GetCostMap()->Map2World(iter_x, iter_y, iter_pos.pose.position.x, iter_pos.pose.position.y);
     path.push_back(iter_pos);

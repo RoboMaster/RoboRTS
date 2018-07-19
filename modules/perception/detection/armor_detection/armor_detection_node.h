@@ -85,6 +85,9 @@ class ArmorDetectionNode : public rrts::common::RRTS {
  private:
   std::shared_ptr<ArmorDetectionBase> armor_detector_;
   std::thread armor_detection_thread_;
+  unsigned int max_rotating_fps_;
+  unsigned int min_rotating_detected_count_;
+  unsigned int undetected_armor_delay_;
 
   //state and error
   NodeState node_state_;
@@ -93,16 +96,18 @@ class ArmorDetectionNode : public rrts::common::RRTS {
   bool running_;
   std::mutex mutex_;
   std::condition_variable condition_var_;
+  unsigned int undetected_count_;
 
   //enemy information
-  double distance_;
-  double pitch_;
-  double yaw_;
+  double x_;
+  double y_;
+  double z_;
   bool detected_enemy_;
   unsigned long demensions_;
 
   //ROS
   ros::NodeHandle nh_;
+  ros::NodeHandle enemy_nh_;
   ros::Publisher enemy_info_pub_;
   actionlib::SimpleActionServer<messages::ArmorDetectionAction> as_;
   messages::EnemyPos enemy_pos;

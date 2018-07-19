@@ -147,12 +147,19 @@ rrts::common::ErrorInfo TebLocalPlanner::ComputeVelocityCommands(geometry_msgs::
 
 
   robot_goal_ = transformed_plan_.back();
-  if (obst_vector_.empty()) {
+  while (obst_vector_.empty()) {
+    usleep(1);
     UpdateObstacleWithCostmap(robot_goal_.GetPosition());
   }
 
   UpdateViaPointsContainer();
-  bool success = optimal_->Optimal(transformed_plan_, &robot_current_vel_, free_goal_vel_);
+
+  bool micro_control = false;
+  if (global_plan_.poses.back().pose.position.z == 1) {
+    micro_control = true;
+  }
+
+  bool success = optimal_->Optimal(transformed_plan_, &robot_current_vel_, free_goal_vel_, micro_control);
 
   if (!success) {
     optimal_->ClearPlanner();
@@ -363,7 +370,7 @@ bool TebLocalPlanner::TransformGlobalPlan(int *current_goal_idx) {
 
   }
   catch(tf::LookupException& ex) {
-    LOG_ERROR << "transform error, " << ex.what();
+    //LOG_ERROR << "transform error, " << ex.what();
     return false;
   }
   catch(tf::ConnectivityException& ex) {
@@ -544,7 +551,7 @@ rrts::common::ErrorInfo TebLocalPlanner::Initialize (std::shared_ptr<rrts::perce
     oscillation_ = std::chrono::system_clock::now();
     tf_ = tf;
     local_cost_ = local_cost;
-    rrts::common::ReadProtoFromTextFile("modules/planning/local_planner/timed_elastic_band/config/timed_elastic_band.prototxt", &param_config_);
+    rrts::common::ReadProtoFromTextFile("/modules/planning/local_planner/timed_elastic_band/config/timed_elastic_band.prototxt", &param_config_);
     if (&param_config_ == nullptr) {
       LOG_ERROR << "error occur when loading config file";
       rrts::common::ErrorInfo read_file_error(rrts::common::ErrorCode::LP_ALGORITHM_INITILIZATION_ERROR,

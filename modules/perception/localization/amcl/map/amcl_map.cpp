@@ -42,10 +42,24 @@ namespace rrts {
 namespace perception {
 namespace localization {
 
-AmclMap::~AmclMap() {
-	for (int i = 0; i < cells_vec_.size(); i++) {
-		delete cells_vec_[i];
+CachedDistanceMap::CachedDistanceMap(double scale,
+									 double max_dist){
+	scale_ = scale;
+	max_dist_ = max_dist;
+	cell_radius_ = static_cast<int>(max_dist / scale);
+	distances_mat_.resize(cell_radius_ + 2);
+	for (auto it = distances_mat_.begin();it != distances_mat_.end(); ++it) {
+		it->resize(cell_radius_ + 2,0);
 	}
+
+	for (int i = 0; i < cell_radius_ + 2; i++) {
+		for (int j = 0; j < cell_radius_ + 2; j++) {
+			distances_mat_[i][j] = std::sqrt(i * i + j * j);
+		}
+	}
+}
+
+AmclMap::~AmclMap() {
 	cells_vec_.clear();
 	cells_vec_.shrink_to_fit();
 }
@@ -58,18 +72,26 @@ int AmclMap::GetSizeY() const {
 	return size_y_;
 }
 
+double AmclMap::GetDiagDistance() const {
+	return diag_distance_;
+}
+
 int AmclMap::ComputeCellIndexByMap(const int &i, const int &j) {
 	return i + j * this->size_x_;
 };
 
-void AmclMap::ConvertWorldCoordsToMapCoords(const double &x, const double &y,
-											int &mx, int &my) {
+void AmclMap::ConvertWorldCoordsToMapCoords(const double &x,
+											const double &y,
+											int &mx,
+											int &my) {
 	mx = (std::floor((x - this->origin_x_) / this->scale_ + 0.5) + this->size_x_ / 2);
 	my = (std::floor((y - this->origin_y_) / this->scale_ + 0.5) + this->size_y_ / 2);
 }
 
-void AmclMap::ConvertMapCoordsToWorldCoords(const int &x, const int &y,
-											double &wx, double &wy) {
+void AmclMap::ConvertMapCoordsToWorldCoords(const int &x,
+											const int &y,
+											double &wx,
+											double &wy) {
 	wx = (this->origin_x_ + ((x) - this->size_x_ / 2) * this->scale_);
 	wy = (this->origin_y_ + ((y) - this->size_y_ / 2) * this->scale_);
 }
@@ -85,43 +107,74 @@ void AmclMap::ConvertFromMsg(const nav_msgs::OccupancyGrid &map_msg) {
 	this->origin_x_ = map_msg.info.origin.position.x + (this->size_x_ / 2) * this->scale_;
 	this->origin_y_ = map_msg.info.origin.position.y + (this->size_y_ / 2) * this->scale_;
 	this->cells_vec_.resize(this->size_x_ * this->size_y_);
+	this->max_x_distance_ = static_cast<double>(this->size_x_) * scale_;
+	this->max_y_distance_ = static_cast<double>(this->size_y_) * scale_;
+	this->diag_distance_ = math::EuclideanDistance<double >(0,0,max_x_distance_,max_y_distance_);
+	LOG_INFO << "max x " << max_x_distance_ << " max y " << max_y_distance_;
 
 	for (int i = 0; i < this->size_x_ * this->size_y_; i++) {
-		this->cells_vec_[i] = new Cell();
 		auto tmp_msg = static_cast<int>(map_msg.data[i]);
 		if (tmp_msg == 0) {
-			this->cells_vec_[i]->occ_state = -1;
+			this->cells_vec_[i].occ_state = -1;
 		} else if (tmp_msg == 100) {
-			this->cells_vec_[i]->occ_state = +1;
+			this->cells_vec_[i].occ_state = +1;
 		} else {
-			this->cells_vec_[i]->occ_state = 0;
+			this->cells_vec_[i].occ_state = 0;
 		}
+	}
+}
+
+
+
+bool AmclMap::CheckIndexFree(int i, int j) {
+	if (this->cells_vec_[ComputeCellIndexByMap(i, j)].occ_state == -1) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+const double &AmclMap::GetMaxOccDist() const {
+	return max_occ_dist_;
+}
+
+const double &AmclMap::GetCellOccDistByIndex(int cell_index) {
+	return cells_vec_[cell_index].occ_dist;
+}
+
+
+
+void AmclMap::BuildDistanceMap(double scale, double max_dist) {
+	cached_distance_map_.reset();
+	if(cached_distance_map_== nullptr || cached_distance_map_->scale_ != scale || cached_distance_map_->max_dist_){
+		if(cached_distance_map_!= nullptr){
+			cached_distance_map_.reset();
+		}
+		cached_distance_map_ = std::make_unique<CachedDistanceMap>(scale,max_dist);
 	}
 }
 
 void AmclMap::UpdateCSpace(double max_occ_dist) {
 
-	auto marked = new unsigned char[this->size_x_ * this->size_y_]();
-	std::priority_queue<CellData, std::vector<CellData>, Comp> Q;
-
+	mark_vec_ = std::make_unique<std::vector<unsigned char>>();
+	mark_vec_->resize(this->size_x_ * this->size_y_);
+	CellDataPriorityQueue Q;
 	this->max_occ_dist_ = max_occ_dist;
-
-	auto cdm = BuildDistanceMap(this->scale_, this->max_occ_dist_);
+	BuildDistanceMap(this->scale_, this->max_occ_dist_);
 
 	// Enqueue all the obstacle cells
 	CellData cell;
-	cell.map_ptr_ = shared_from_this();
 	for (int i = 0; i < this->size_x_; i++) {
 		cell.src_i_ = cell.i_ = i;
 		for (int j = 0; j < size_y_; j++) {
 			auto map_index_tmp = ComputeCellIndexByMap(i, j);
-			if (this->cells_vec_[map_index_tmp]->occ_state == +1) {
-				this->cells_vec_[map_index_tmp]->occ_dist = 0.0;
+			if (this->cells_vec_[map_index_tmp].occ_state == +1) {
+				cell.occ_dist_ = this->cells_vec_[map_index_tmp].occ_dist = 0.0;
 				cell.src_j_ = cell.j_ = j;
-				marked[map_index_tmp] = 1;
+				mark_vec_->at(map_index_tmp) = 1;
 				Q.push(cell);
 			} else {
-				this->cells_vec_[map_index_tmp]->occ_dist = max_occ_dist;
+				cell.occ_dist_ = this->cells_vec_[map_index_tmp].occ_dist = max_occ_dist;
 			}
 		}
 	}
@@ -131,99 +184,57 @@ void AmclMap::UpdateCSpace(double max_occ_dist) {
 		if (current_cell_data.i_ > 0) {
 			Enqueue(current_cell_data.i_ - 1, current_cell_data.j_,
 					current_cell_data.src_i_, current_cell_data.src_j_,
-					Q, cdm, marked);
+					Q);
 		}
 		if (current_cell_data.j_ > 0) {
 			Enqueue(current_cell_data.i_, current_cell_data.j_ - 1,
 					current_cell_data.src_i_, current_cell_data.src_j_,
-					Q, cdm, marked);
+					Q);
 		}
 		if (current_cell_data.i_ < this->size_x_ - 1) {
 			Enqueue(current_cell_data.i_ + 1, current_cell_data.j_,
 					current_cell_data.src_i_, current_cell_data.src_j_,
-					Q, cdm, marked);
+					Q);
 		}
 		if (current_cell_data.j_ < this->size_y_ - 1) {
 			Enqueue(current_cell_data.i_, current_cell_data.j_ + 1,
 					current_cell_data.src_i_, current_cell_data.src_j_,
-					Q, cdm, marked);
+					Q);
 		}
 		Q.pop();
 	}
 
-	delete[] marked;
-	delete cdm;
-
+	cached_distance_map_.reset();
+	mark_vec_.reset();
 }
 
-void AmclMap::Enqueue(int i, int j, int src_i, int src_j, CellDataPriorityQueue &Q,
-					  CachedDistanceMap *cdm_ptr,
-					  unsigned char *marked) {
+void AmclMap::Enqueue(int i, int j, int src_i, int src_j, CellDataPriorityQueue &Q) {
 
 	auto index = ComputeCellIndexByMap(i, j);
-	if (marked[index]) {
+	if(mark_vec_->at(index)){
 		return;
 	}
 
 	int di = std::abs(i - src_i);
 	int dj = std::abs(j - src_j);
-	double distance = cdm_ptr->distances_mat_(di, dj);
+	double distance = cached_distance_map_->distances_mat_[di][dj];
 
-	if (distance > cdm_ptr->cell_radius_) {
+	if (distance > cached_distance_map_->cell_radius_) {
 		return;
 	}
 
-	this->cells_vec_[index]->occ_dist = distance * this->scale_;
+	this->cells_vec_[index].occ_dist = distance * this->scale_;
 
-	CellData cell_data(shared_from_this(),
-					   static_cast<unsigned int>(i),
+	CellData cell_data(static_cast<unsigned int>(i),
 					   static_cast<unsigned int>(j),
 					   static_cast<unsigned int>(src_i),
-					   static_cast<unsigned int>(src_j));
-
+					   static_cast<unsigned int>(src_j),
+					   this->cells_vec_[index].occ_dist);
 	Q.push(cell_data);
-	marked[index] = 1;
+	mark_vec_->at(index) = 1;
 
 }
 
-bool AmclMap::CheckIndexFree(int i, int j) {
-	if (this->cells_vec_[ComputeCellIndexByMap(i, j)]->occ_state == -1) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-CachedDistanceMap *AmclMap::BuildDistanceMap(double scale, double max_dist) {
-	static CachedDistanceMap *cdm = nullptr;
-	if (!cdm || (cdm->scale_ != scale) || (cdm->max_dist_ != max_dist)) {
-		if (cdm != nullptr)
-			delete cdm;
-		cdm = new CachedDistanceMap(scale, max_dist);
-	}
-	return cdm;
-}
-
-const std::vector<Cell *> &AmclMap::GetCellsVec() const {
-	return cells_vec_;
-}
-
-double AmclMap::GetMaxOccDist() const {
-	return max_occ_dist_;
-}
-
-CachedDistanceMap::CachedDistanceMap(double scale, double max_dist) : scale_(scale),
-																	  max_dist_(max_dist) {
-	cell_radius_ = static_cast<int>(max_dist / scale);
-	distances_mat_.setZero(cell_radius_ + 2, cell_radius_ + 2);
-	//TODO Optimize
-	for (int i = 0; i < cell_radius_ + 2; i++) {
-		for (int j = 0; j < cell_radius_ + 2; j++) {
-			distances_mat_(i, j) = std::sqrt(i * i + j * j);
-		}
-	}
-
-}
 
 }
 }

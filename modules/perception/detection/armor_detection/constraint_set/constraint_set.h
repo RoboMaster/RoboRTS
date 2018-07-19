@@ -20,6 +20,7 @@
 
 //system include
 #include <vector>
+#include <list>
 
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
@@ -80,7 +81,7 @@ class ConstraintSet : public ArmorDetectionBase {
    * @param translation Translation information of the armor relative to the camera.
    * @param rotation Rotation information of the armor relative to the camera.
    */
-  ErrorInfo DetectArmor(double &distance, double &pitch, double &yaw) override;
+  ErrorInfo DetectArmor(bool &detected, double &x, double &y, double &z, double &distance, double &pitch, double &yaw) override;
   /**
    * @brief Detecting lights on the armors.
    * @param src Input image
@@ -108,7 +109,18 @@ class ConstraintSet : public ArmorDetectionBase {
    * @param Input armors
    */
   ArmorInfo SlectFinalArmor(std::vector<ArmorInfo> &armors);
+  /**
+   *
+   * @param armor
+   * @param distance
+   * @param pitch
+   * @param yaw
+   * @param bullet_speed
+   */
   void CalcControlInfo(const ArmorInfo & armor,
+                       double &x,
+                       double &y,
+                       double &z,
                        double &distance,
                        double &pitch,
                        double &yaw,
@@ -119,7 +131,7 @@ class ConstraintSet : public ArmorDetectionBase {
    * @param left_light Rotated rect of left light
    * @param right_light Rotated rectangles of right light
    */
-  void CalArmorInfo(std::vector<cv::Point2f> &armor_points, cv::RotatedRect left_light, cv::RotatedRect right_light);
+  void CalcArmorInfo(std::vector<cv::Point2f> &armor_points, cv::RotatedRect left_light, cv::RotatedRect right_light);
   /**
    * @brief Calculating the coordinates of the armor by its width and height.
    * @param width Armor width
@@ -127,12 +139,22 @@ class ConstraintSet : public ArmorDetectionBase {
    */
   void SolveArmorCoordinate(const float width, const float height);
   /**
+   *
+   */
+  void SignalFilter(double &new_num, double &old_num,unsigned int &filter_count, double max_diff);
+  /**
    * @brief Destructor
    */
-  ~ConstraintSet();
+  ~ConstraintSet() final;
  private:
   ErrorCode error_code_;
   ErrorInfo error_info_;
+  unsigned int filter_x_count_;
+  unsigned int filter_y_count_;
+  unsigned int filter_z_count_;
+  unsigned int filter_distance_count_;
+  unsigned int filter_pitch_count_;
+  unsigned int filter_yaw_count_;
 
   rrts::driver::camera::CameraParam cameras_;
   int camera_id_;
@@ -144,7 +166,13 @@ class ConstraintSet : public ArmorDetectionBase {
   // Parameters come form .prototxt fileen
   bool enable_debug_;
   bool enable_neon_;
+  bool using_hsv_;
   unsigned int enemy_color_;
+  float gimbal_offset_z_;
+  float camera_and_armor_diff_;
+  float optical_axis_offset_;
+  float yaw_offset_;
+  float pitch_offset_;
 
   cv::Mat show_lights_before_filter_;
   cv::Mat show_lights_after_filter_;
@@ -153,6 +181,7 @@ class ConstraintSet : public ArmorDetectionBase {
 
   //armor info
   std::vector<cv::Point3f> armor_points_;
+  std::list<double> yaws_in_moment_;
 
   //Filter lights
   float light_max_aspect_ratio_;
@@ -165,11 +194,31 @@ class ConstraintSet : public ArmorDetectionBase {
   float armor_min_area_;
   float armor_max_aspect_ratio_;
   float armor_max_pixel_val_;
+  float armor_max_mean_;
   float armor_max_stddev_;
+
+  float color_thread_;
+  float blue_thread_;
+  float red_thread_;
+
+  unsigned int max_wait_fps_;
+  float min_pulse_angle_;
+  unsigned int min_num_;
+
+  double old_x_;
+  double old_y_;
+  double old_z_;
+
+  double old_distance_;
+  double old_pitch_;
+  double old_yaw_;
+  
+  bool old_updated_;
 
   //ros
   ros::NodeHandle nh;
   std::vector<image_transport::Publisher> subscribers_;
+  cv::VideoCapture cap_handle_;
 };
 
 rrts::common::REGISTER_ALGORITHM(ArmorDetectionBase, "constraint_set", ConstraintSet);

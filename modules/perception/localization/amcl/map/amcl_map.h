@@ -43,25 +43,33 @@
 #include <cmath>
 #include <queue>
 #include <memory>
+#include <nav_msgs/OccupancyGrid.h>
 
+#include "common/log.h"
 #include "modules/perception/localization/amcl/math/math.h"
 
 namespace rrts {
 namespace perception {
 namespace localization {
 
-class AmclMap;
+class CellData {
+ public:
+  CellData() = default;
+  CellData(unsigned int i, unsigned int j, unsigned int src_i, unsigned int src_j, double occ_dist) {
+    i_ = i;
+    j_ = j;
+    src_i_ = src_i;
+    src_j_ = src_j;
+    occ_dist_ = occ_dist;
+  }
 
-class CellData;
-
-class CachedDistanceMap;
-
-struct Comp;
-
-using AmclMapPtr = std::shared_ptr<AmclMap>;
-using CellDataPriorityQueue = std::priority_queue<CellData, std::vector<CellData>, Comp>;
-using CachedDistanceMapPtr = std::shared_ptr<CachedDistanceMap>;
-using UnsignedCharVecPtr = std::shared_ptr<std::vector<unsigned char>>;
+ public:
+  unsigned int i_ = 0;
+  unsigned int j_ = 0;
+  unsigned int src_i_ = 0;
+  unsigned int src_j_ = 0;
+  double occ_dist_ = 0;
+};
 
 class Cell {
  public:
@@ -73,8 +81,23 @@ class Cell {
 
 };
 
-class AmclMap : public std::enable_shared_from_this<AmclMap> {
+class CachedDistanceMap {
+ public:
+  CachedDistanceMap(double scale, double max_dist);
+ public:
+  double scale_ = 0, max_dist_ = 0;
+  int cell_radius_ = 0;
+  std::vector<std::vector<double>> distances_mat_;
+};
 
+struct CompareByOccDist {
+  bool operator()(const CellData &a, const CellData &b) {
+    return a.occ_dist_ > b.occ_dist_;
+  };
+};
+using CellDataPriorityQueue = std::priority_queue<CellData, std::vector<CellData>, CompareByOccDist>;
+
+class AmclMap {
  public:
 
   virtual ~AmclMap();
@@ -91,17 +114,15 @@ class AmclMap : public std::enable_shared_from_this<AmclMap> {
    */
   void UpdateCSpace(double max_occ_dist);
 
-  /**
-   * @brief Get cells vector
-   * @return Cells vector
-   */
-  const std::vector<Cell *> &GetCellsVec() const;
+
 
   /**
    * @brief Get max distance at which we care about obstacles
    * @return Max distance at which we care about obstacles
    */
-  double GetMaxOccDist() const;
+  const double &GetMaxOccDist() const;
+
+  const double &GetCellOccDistByIndex(int cell_index);
 
   /**
    * @brief Compute cell index by map coords
@@ -158,19 +179,31 @@ class AmclMap : public std::enable_shared_from_this<AmclMap> {
   */
   int GetSizeY() const;
 
- private:
-
-  void Enqueue(int i, int j, int src_i, int src_j, CellDataPriorityQueue &Q,
-               CachedDistanceMap *cdm_ptr,
-               unsigned char *marked);
-
-  CachedDistanceMap *BuildDistanceMap(double scale, double max_dist);
+  double GetDiagDistance() const;
 
  private:
+
+  void Enqueue(int i, int j, int src_i, int src_j, CellDataPriorityQueue &Q);
+
+  void BuildDistanceMap(double scale, double max_dist);
+
+
+ private:
+
+  /**
+   * @brief The map data, stored as a grid
+   */
+  std::vector<Cell> cells_vec_;
+
+  std::unique_ptr<CachedDistanceMap> cached_distance_map_;
+  std::unique_ptr<std::vector<unsigned char>> mark_vec_;
+
   /**
    * @brief Map origin; the map is a viewport onto a conceptual larger map.
    */
   double origin_x_ = 0, origin_y_ = 0;
+
+  double max_x_distance_, max_y_distance_ = 0, diag_distance_ = 0;
 
   /**
    * @brief Map scale (m/cell)
@@ -183,52 +216,13 @@ class AmclMap : public std::enable_shared_from_this<AmclMap> {
   int size_x_ = 0, size_y_ = 0;
 
   /**
-   * @brief The map data, stored as a grid
-   */
-  std::vector<Cell *> cells_vec_;
-
-  /**
    * @brief Max distance at which we care about obstacles, for constructing likelihood field.
    */
   double max_occ_dist_ = 0;
 
 };
 
-class CellData {
- public:
-  CellData() = default;
-  CellData(const AmclMapPtr &map_ptr, unsigned int i, unsigned int j, unsigned int src_i, unsigned int src_j) {
-    map_ptr_ = map_ptr;
-    i_ = i;
-    j_ = j;
-    src_i_ = src_i;
-    src_j_ = src_j;
-  }
- public:
-  std::weak_ptr<AmclMap> map_ptr_;
-  unsigned int i_ = 0;
-  unsigned int j_ = 0;
-  unsigned int src_i_ = 0;
-  unsigned int src_j_ = 0;
-};
-
-class CachedDistanceMap {
- public:
-  CachedDistanceMap(double scale, double max_dist);
- public:
-  double scale_ = 0, max_dist_ = 0;
-  int cell_radius_ = 0;
-  Eigen::MatrixXd distances_mat_;
-};
-
-struct Comp {
-  bool operator()(const CellData &a, const CellData &b) {
-    auto cell_data_a_map_ptr = a.map_ptr_.lock();
-    auto cell_data_b_map_ptr = b.map_ptr_.lock();
-    return cell_data_a_map_ptr->GetCellsVec()[cell_data_a_map_ptr->ComputeCellIndexByMap(a.i_, a.j_)]->occ_dist
-        > cell_data_a_map_ptr->GetCellsVec()[cell_data_b_map_ptr->ComputeCellIndexByMap(b.i_, b.j_)]->occ_dist;
-  };
-};
+using AmclMapPtr = std::shared_ptr<AmclMap>;
 
 }
 }

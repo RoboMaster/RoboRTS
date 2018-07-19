@@ -65,7 +65,7 @@ void SensorOdom::SetModelOmni(double alpha1, double alpha2, double alpha3, doubl
 bool SensorOdom::UpdateAction(ParticleFilterPtr pf_ptr, SensorData *sensor_data_ptr) {
 
   auto ndata_ptr = (SensorOdomData *) sensor_data_ptr;
-  LOG_INFO << "Compute the new sample poses";
+  DLOG_INFO << "Compute the new sample poses";
   auto pf_sample_set = pf_ptr->sample_set_ptr_array_[pf_ptr->current_set_];
 
   math::Vec3d old_pose = (ndata_ptr->pose) - (ndata_ptr->delta);
@@ -85,16 +85,16 @@ bool SensorOdom::UpdateAction(ParticleFilterPtr pf_ptr, SensorData *sensor_data_
 
   for (int i = 0; i < pf_sample_set->sample_count; i++) {
 
-    delta_bearing = math::AngleDiff(std::atan2(ndata_ptr->delta(1),
+    delta_bearing = math::AngleDiff<double>(std::atan2(ndata_ptr->delta(1),
                                                ndata_ptr->delta(0)),
                                     old_pose(2)) + pf_sample_set->samples_vec[i].pose(2);
 
     double cs_bearing = std::cos(delta_bearing);
     double sn_bearing = std::sin(delta_bearing);
 
-    delta_trans_hat = delta_trans + pf_gauss_pdf.RandomGaussianNum(trans_hat_stddev);
-    delta_rot_hat = delta_rot + pf_gauss_pdf.RandomGaussianNum(rot_hat_stddev);
-    delta_strafe_hat = 0 + pf_gauss_pdf.RandomGaussianNum(strafe_hat_stddev);
+    delta_trans_hat = delta_trans + math::RandomGaussianNumByStdDev<double>(trans_hat_stddev);
+    delta_rot_hat = delta_rot + math::RandomGaussianNumByStdDev<double>(rot_hat_stddev);
+    delta_strafe_hat = 0 + math::RandomGaussianNumByStdDev<double>(strafe_hat_stddev);
 
     pf_sample_set->samples_vec[i].pose[0] += (delta_trans_hat * cs_bearing + delta_strafe_hat * sn_bearing);
     pf_sample_set->samples_vec[i].pose[1] += (delta_trans_hat * sn_bearing - delta_strafe_hat * cs_bearing);

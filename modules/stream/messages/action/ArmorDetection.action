@@ -7,11 +7,7 @@ int32 command
 float32 result
 ---
 #feedback
-bool  detected_enemy
+bool detected
 int32  error_code
 string error_msg
-
-float64 enemy_d
-
-float64 enemy_pitch
-float64 enemy_yaw
+geometry_msgs/PoseStamped enemy_pos

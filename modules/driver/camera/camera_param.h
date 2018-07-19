@@ -37,6 +37,9 @@ struct CameraInfo {
   unsigned int resolution_width;
   unsigned int resolution_height;
 
+  unsigned int width_offset;
+  unsigned int height_offset;
+
   unsigned int fps;
   bool auto_exposure;
   unsigned int exposure_value;

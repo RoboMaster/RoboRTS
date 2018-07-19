@@ -10,6 +10,7 @@
 #include "box.h"
 #include "image.h"
 #include "demo.h"
+#include "layer.h"
 
 #define DEMO 1
 
@@ -24,6 +25,7 @@ static image buff;
 static image buff_letter;
 static CvCapture * cap;
 static IplImage  * ipl;
+static bool Initialized = false;
 static double fps = 0;
 static float demo_thresh = 0;
 static float demo_hier = .5;
@@ -111,6 +113,7 @@ void detect_in_thread(int **x_offset, int *object_num)
   image display = buff;
 
   *object_num = nboxes;
+  *x_offset = NULL;
   *x_offset = calloc(nboxes, sizeof(int));
   draw_detections(display, dets, nboxes, demo_thresh, demo_names, demo_alphabet, demo_classes, x_offset);
   free_detections(dets, nboxes);
@@ -159,9 +162,6 @@ void demo_init(char *cfgfile, char *weightfile, float thresh, char **names, int 
     predictions[i] = calloc(demo_total, sizeof(float));
   }
   avg = calloc(demo_total, sizeof(float));
-
-  ipl = GetNextImage(0);
-
 }
 
 void demo(bool enable, int camera_id, int **x_offset, int *object_num)
@@ -171,21 +171,28 @@ void demo(bool enable, int camera_id, int **x_offset, int *object_num)
     static char start_message[] = "YOLO started!";
     Notice(start_message);
     demo_time = what_time_is_it_now();
+    if(!Initialized){
+      buff = ipl_to_image(ipl);
+      buff_letter = letterbox_image(buff, net->w, net->h);
+      Initialized = true;
+    }
 
-    buff = ipl_to_image(ipl);
-    buff_letter = letterbox_image(buff, net->w, net->h);
     ipl_into_image(ipl, buff);
     rgbgr_image(buff);
     letterbox_image_into(buff, net->w, net->h, buff_letter);
+    //free_image(buff);
+    //free_image(buff_letter);
     camera_index %= 1;
     detect_in_thread(x_offset, object_num);
     fps = 1. / (what_time_is_it_now() - demo_time);
     if(enable)
       display_in_thread();
+    cvRelease(&ipl);
   } else {
     char message[] = "Waiting for camera driver...";
     Notice(message);
   }
+  //cvRelease(ipl);
 }
 #else
 void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const char *filename, char **names, int classes, int delay, char *prefix, int avg, float hier, int w, int h, int frames, int fullscreen)

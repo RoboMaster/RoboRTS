@@ -35,7 +35,7 @@ class BehaviorTree {
   void Execute() {
     running_ = true;
     unsigned int frame = 0;
-    while (running_) {
+    while (ros::ok() && running_) {
 
       std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
       ros::spinOnce();
@@ -49,7 +49,7 @@ class BehaviorTree {
 
       if (sleep_time > std::chrono::microseconds(0)) {
         std::this_thread::sleep_for(sleep_time);
-        LOG_WARNING << "sleep: " << sleep_time.count() << "us";
+        LOG_INFO << "sleep: " << sleep_time.count() << "us";
       } else {
         LOG_WARNING << "The time planning once is " << execution_duration.count() << " beyond the expected time "
                   << cycle_duration_.count();
@@ -61,7 +61,7 @@ class BehaviorTree {
   }
  private:
   BehaviorNode::Ptr root_node_;
-  std::chrono::microseconds cycle_duration_;
+  std::chrono::milliseconds cycle_duration_;
   bool running_;
 };
 

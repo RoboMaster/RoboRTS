@@ -32,18 +32,33 @@
 #include <string>
 #include <mutex>
 #include <thread>
+
 #include <ros/ros.h>
 #include <nav_msgs/Odometry.h>
 #include <tf/transform_broadcaster.h>
+#include <std_srvs/Trigger.h>
+
 #include "common/io.h"
 #include "common/rrts.h"
 #include "common/log.h"
 #include "common/error_code.h"
 #include "common/node_state.h"
 #include "common/main_interface.h"
+
 #include "messages/GimbalAngle.h"
-#include "messages/PositionUWB.h"
+#include "messages/GameInfo.h"
+#include "messages/RobotHurtData.h"
+#include "messages/RfidInfo.h"
 #include "messages/EnemyPos.h"
+#include "messages/ShootState.h"
+#include "messages/ShootInfo.h"
+
+#include "messages/GameBuffStatus.h"
+#include "messages/ChassisMode.h"
+#include "messages/GimbalMode.h"
+#include "messages/ShootModeControl.h"
+#include "messages/CheckStatus.h"
+
 #include "modules/driver/serial/infantry_info.h"
 #include "modules/driver/serial/proto/serial_com_config.pb.h"
 
@@ -219,45 +234,78 @@ class SerialComNode : public rrts::common::RRTS {
   int SendData(int data_len);
 
   /**
-   * @brief Keyboard input to debug
-   */
-  void ListenClick();
-
-  /**
    * @brief Callback of enemy position message
    */
-  void GimbalControlCallback(const messages::EnemyPosConstPtr &msg);
+  void GimbalRelativeControlCallback(const messages::EnemyPosConstPtr &msg);
 
   /**
    * @brief Callback of chassis control(cmd_vel) message
    */
   void ChassisControlCallback(const geometry_msgs::Twist::ConstPtr &vel);
 
+  void SendChassisControl(const ChassisControl &chassis_control);
+
+  void SendGimbalControl(const GimbalControl &gimbal_control);
+
+  bool SetChassisMode(messages::ChassisMode::Request &req,
+                      messages::ChassisMode::Response &res);
+
+  bool SetGimbalMode(messages::GimbalMode::Request &req,
+                      messages::GimbalMode::Response &res);
+
+  bool ShootModeControl(messages::ShootModeControl::Request &req,
+                    messages::ShootModeControl::Response &res);
+
   /**
    * @brief The thread function for sending data.
    */
   void SendPack();
 
+  bool CheckStatusCallback(messages::CheckStatus::Request  &req,
+                         messages::CheckStatus::Response &res);
+
   FILE * fp_;
   int fd_, baudrate_, length_, pack_length_, total_length_, free_length_, key_, valid_key_;
-  double length_column_, length_beam_;
+  double length_column_, length_row_, length_beam_;
   struct termios termios_options_, termios_options_original_;
   std::string port_;
+  double time_start_;
   std::thread *receive_loop_thread_, *send_loop_thread_, *keyboard_in_;
   std::mutex mutex_receive_, mutex_send_, mutex_pack_;
   bool is_open_, stop_receive_, stop_send_, is_sim_, is_debug_, is_debug_tx_;
   ros::NodeHandle nh_;
   //TODO(krik): use actionlib and add more subscribers, more publishers.
-  ros::Subscriber sub_cmd_vel_, sub_cmd_gim_;
-  ros::Publisher odom_pub_, gim_pub_, uwb_pose_pub_;
+  ros::Subscriber sub_cmd_vel_, sub_cmd_gim_, sub_cmd_shoot_;
+  ros::Publisher odom_pub_,
+      gim_pub_,
+      uwb_pose_pub_,
+      game_info_pub_,
+      robot_hurt_data_pub_,
+      rfid_info_pub_,
+      game_buff_info_pub_,
+      shoot_info_pub_;
+
+  ros::ServiceClient game_buff_status_srv_;
+  ros::ServiceServer chassis_mode_srv_,
+                     gimbal_mode_srv_,
+                     shoot_mode_srv_,
+                     check_status_srv_;
+
+  messages::GameInfo  game_info_msg_;
+  messages::RobotHurtData robot_hurt_data_msg_;
+  messages::RfidInfo rfid_info_msg_;
   messages::GimbalAngle gim_angle_;
+  messages::ShootInfo shoot_info_msg_;
+  messages::GameBuffStatus game_buff_status_;
+  geometry_msgs::PoseStamped uwb_position_msg_;
   geometry_msgs::TransformStamped arm_tf_;
   tf::TransformBroadcaster tf_broadcaster_;
-  messages::PositionUWB uwb_position_;
+
+  ChassisMode chassis_mode_;
+  GimbalMode gimbal_mode_;
+  ShootControl shoot_control_;
+
   //TODO(krik): add the error code and node state
-  rrts::common::ErrorCode error_code_;
-  rrts::common::NodeState node_state_;
-  rrts::common::ErrorInfo error_info_;
   UnpackStep unpack_step_e_;
   uint8_t byte_, rx_buf_[UART_BUFF_SIZE], tx_buf_[UART_BUFF_SIZE],
       protocol_packet_[PROTOCAL_FRAME_MAX_SIZE];
@@ -266,11 +314,12 @@ class SerialComNode : public rrts::common::RRTS {
   GimbalControl gimbal_control_data_;
   ChassisControl chassis_control_data_;
   FrameHeader computer_frame_header_;
-  GameInfo game_information_;
-  HurtData robot_hurt_data_;
+  RobotGameState robot_game_state_;
+  RobotHurtData robot_hurt_data_;
   ShootData real_shoot_data_;
   RfidData rfid_data_;
   GameResult game_result_data_;
+  RobotPosition robot_position_;
   ChassisInfo chassis_information_;
   GimbalInfo gimbal_information_;
   ShootInfo shoot_task_data_;

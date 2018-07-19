@@ -64,6 +64,7 @@ enum ErrorCode{
     GP_INITILIZATION_ERROR = 14000,
     GP_GET_POSE_ERROR,
     GP_POSE_TRANSFORM_ERROR,
+    GP_GOAL_INVALID_ERROR,
     GP_PATH_SEARCH_ERROR,
     GP_MOVE_COST_ERROR,
     GP_MAX_RETRIES_FAILURE,
@@ -107,8 +108,8 @@ class ErrorInfo {
   ErrorCode error_code() const { return error_code_;};
   const std::string &error_msg() const { return error_msg_; }
 
-  void SetErrorCode () {
-
+  bool operator==(const ErrorInfo& rhs){
+    return error_code_==rhs.error_code();
   }
 
   bool IsOK() const{

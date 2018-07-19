@@ -81,6 +81,9 @@ class SensorLaserData : public SensorData {
    * @brief Laser ranges data
    */
   Eigen::MatrixX2d ranges_mat;
+
+  Eigen::MatrixX2d ranges_clean_mask;
+
 };
 
 /**
@@ -115,7 +118,8 @@ class SensorLaser : public SensorBase {
                                    bool do_beamskip,
                                    double beam_skip_distance,
                                    double beam_skip_threshold,
-                                   double beam_skip_error_threshold);
+                                   double beam_skip_error_threshold,
+                                   double laser_filter_weight);
 
   /**
    * @brief Update the filter based on the sensor model.
@@ -173,6 +177,8 @@ class SensorLaser : public SensorBase {
   double z_short_;
   double z_max_;
   double z_rand_;
+
+  double laser_filter_weight_;
 
   /**
    * @brief Stddev of Gaussian model for laser hits.

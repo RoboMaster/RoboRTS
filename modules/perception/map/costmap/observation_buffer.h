@@ -55,7 +55,7 @@
 #include <vector>
 #include <list>
 #include <string>
-#include <boost/thread.hpp>
+#include <mutex>
 #include <ros/time.h>
 #include <tf/transform_listener.h>
 #include <tf/transform_datatypes.h>
@@ -164,7 +164,7 @@ class ObservationBuffer {
   std::list<Observation> observation_list_;
   std::string topic_name_;
   double min_obstacle_height_, max_obstacle_height_;
-  boost::recursive_mutex lock_;
+  std::recursive_mutex lock_;
   double obstacle_range_, raytrace_range_;
   double tf_tolerance_;
 };

@@ -6,7 +6,7 @@ laser_min_range           : 0.15
 laser_max_range           : 8.0
 laser_max_beams           : 30
 
-min_particles             : 30
+min_particles             : 50
 max_particles             : 2000
 
 kld_err                   : 0.05
@@ -39,11 +39,10 @@ transform_tolerance : 0.1
 recovery_alpha_slow : 0.001
 recovery_alpha_fast : 0.1
 
-initial_pose_x :1 #8.40 #1.0
-initial_pose_y :1 #14.35 #1.0
-initial_pose_a :0
-initial_cov_xx :0.1
-initial_cov_yy :0.1
-initial_cov_aa :0.1
-
 use_global_localization : false
+laser_filter_weight : 0.4
+
+max_uwb_particles : 10
+uwb_cov_x : 0.06
+uwb_cov_y : 0.06
+resample_uwb_factor : 4.0

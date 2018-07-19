@@ -1,0 +1,9 @@
+[Unit]
+Description=Turn up performance
+After=multi-user.target
+[Service]
+Type=oneshot
+ExecStart=/bin/sh /home/dji/max_performance.sh
+
+[Install]
+WantedBy=multi-user.target

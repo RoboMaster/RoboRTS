@@ -30,6 +30,9 @@
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/text_format.h>
 
+#include <ros/package.h>
+#include <ros/ros.h>
+
 #include "log.h"
 
 namespace rrts {
@@ -45,8 +48,11 @@ bool ReadProtoFromTextFile(const char *file_name, T *proto) {
   using google::protobuf::io::ZeroCopyOutputStream;
   using google::protobuf::io::CodedOutputStream;
   using google::protobuf::Message;
-  
-  int fd = open(file_name, O_RDONLY);
+
+  std::string full_path = ros::package::getPath("roborts") + std::string(file_name);
+  LOG_INFO << "Load prototxt: " << full_path;
+
+  int fd = open(full_path.c_str(), O_RDONLY);
   if (fd == -1) {
     LOG_ERROR << "File not found: " << file_name;
     return false;

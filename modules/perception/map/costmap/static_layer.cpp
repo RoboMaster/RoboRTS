@@ -60,7 +60,7 @@ void StaticLayer::OnInitialize() {
   ros::NodeHandle nh;
   is_current_ = true;
   ParaStaticLayer para_static_layer;
-  rrts::common::ReadProtoFromTextFile("modules/perception/map/costmap/config/static_layer_config.prototxt", &para_static_layer);
+  rrts::common::ReadProtoFromTextFile("/modules/perception/map/costmap/config/static_layer_config.prototxt", &para_static_layer);
   global_frame_ = layered_costmap_-> GetGlobalFrameID();
   first_map_only_ = para_static_layer.first_map_only();
   subscribe_to_updates_ = para_static_layer.subscribe_to_updates();

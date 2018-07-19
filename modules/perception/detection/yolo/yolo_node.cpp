@@ -28,7 +28,8 @@ YOLO::YOLO(std::string name): rrts::common::RRTS::RRTS(name),
                               initialized_(false),
                               updated_(false),
                               object_num_(0),
-                              as_(nh_, name+"_action", boost::bind(&YOLO::ActionCB, this, _1), false){
+                              x_offset_(NULL),
+as_(nh_, name+"_action", boost::bind(&YOLO::ActionCB, this, _1), false){
   tf_listener_ = std::make_shared<tf::TransformListener>(ros::Duration(1));
   if (Init().IsOK()) {
     initialized_ = true;
@@ -49,7 +50,7 @@ void YOLO::LoadParam() {
   //read parameters
   YOLOConfig yolo_config_;
   std::string file_name =
-      "modules/perception/detection/yolo/config/yolo.prototxt";
+      "/modules/perception/detection/yolo/config/yolo.prototxt";
   bool read_state = rrts::common::ReadProtoFromTextFile(file_name, &yolo_config_);
   CHECK(read_state) << "Cannot open " << file_name;
   datacfg_      = yolo_config_.datacfg();
@@ -129,6 +130,10 @@ void YOLO::ExecuteLoop() {
           updated_ = true;
         }
       }
+      if(x_offset_){
+        free(x_offset_);
+        x_offset_ = NULL;
+      }
       object_num_ = 0;
     } else if (node_state_ == NodeState::PAUSE) {
       std::unique_lock<std::mutex> lock(mutex_);
@@ -150,7 +155,6 @@ void YOLO::PauseThread() {
 }
 void YOLO::StopThread() {
   node_state_ = NodeState::IDLE;
-  free(x_offset_);
   running_ = false;
   if (yolo_thread_.joinable()) {
     yolo_thread_.join();

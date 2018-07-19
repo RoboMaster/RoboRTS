@@ -22,7 +22,7 @@ void InitYOLO(const char* datacfg, const char* cfg, const char* weights, float t
 #endif
   list *options = read_data_cfg(datacfg);
   int classes = option_find_int(options, "classes", 20);
-  char *name_list = option_find_str(options, "names", "modules/perception/detection/yolo/config/yolov3-rm.names");
+  char *name_list = option_find_str(options, "names", "modules/perception/detection/yolo/config/mobilenet.names");
   char **names = get_labels(name_list);
   demo_init(cfg, weights, thresh, names, classes, enable_debug);
 }

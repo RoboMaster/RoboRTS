@@ -52,12 +52,12 @@ namespace localization {
 class ParticleFilterSample {
  public:
   ParticleFilterSample(){
-    Init();
+    Reset();
   }
   /**
    * @brief Particle filter sample initialize
    */
-  void Init() {
+  void Reset() {
     pose.setZero();
     weight = 0;
   };
@@ -75,9 +75,9 @@ class ParticleFilterSample {
 class ParticleFilterCluster {
  public:
   ParticleFilterCluster(){
-    Init();
+    Reset();
   }
-  void Init() {
+  void Reset() {
     count = 0;
     weight = 0;
     mean.setZero();
@@ -116,7 +116,7 @@ class ParticleFilterSampleSet {
   //! Vector of clusters
   std::vector<ParticleFilterCluster> clusters_vec;
   //! A kdtree encoding the histogram
-  ParticleFilterKDTree *kd_tree_ptr;
+  std::unique_ptr<ParticleFilterKDTree> kd_tree_ptr;
   //! Filter statistics mean
   math::Vec3d mean;
   //! Filter statistics covariant

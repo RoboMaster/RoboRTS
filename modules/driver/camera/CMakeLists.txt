@@ -1,5 +1,12 @@
 project(camera_node)
 
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64" )
+    add_subdirectory(mercure)
+    ADD_DEFINITIONS(-DAARCH64)
+else()
+    message("Warning: The mercure driver only support arm64")
+endif()
+
 add_subdirectory(uvc)
 
 #camera parameter
@@ -33,11 +40,17 @@ add_executable(${PROJECT_NAME}
   camera_node.cpp
 )
 
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64" )
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE
+  driver::mercure
+)
+endif()
+
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
   driver::uvc_driver
   driver::camera_param
-
   common::main_interface
   common::log
   common::rrts
@@ -45,6 +58,13 @@ target_link_libraries(${PROJECT_NAME}
   ${GLOG_LIBRARY}
   ${OpenCV_LIBRARIES}
 )
+
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64" )
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE
+  driver::mercure
+)
+endif()
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE

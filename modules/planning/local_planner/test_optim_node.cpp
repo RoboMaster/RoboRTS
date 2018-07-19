@@ -43,7 +43,7 @@ int main( int argc, char** argv ) {
   ros::NodeHandle nh;
 
   rrts::planning::local_planner::Config param_config_;
-  rrts::common::ReadProtoFromTextFile("modules/planning/local_planner/timed_elastic_band/config/timed_elastic_band.prototxt", &param_config_);
+  rrts::common::ReadProtoFromTextFile("/modules/planning/local_planner/timed_elastic_band/config/timed_elastic_band.prototxt", &param_config_);
   ros::Timer cycle_timer = nh.createTimer(ros::Duration(0.025), CB_mainCycle);
   ros::Timer publish_timer = nh.createTimer(ros::Duration(0.1), CB_publishCycle);
   
@@ -134,9 +134,9 @@ void CreateInteractiveMarker(const double& init_x, const double& init_y, unsigne
   visualization_msgs::Marker box_marker;
   box_marker.type = visualization_msgs::Marker::CUBE;
   box_marker.id = id;
-  box_marker.scale.x = 1;
-  box_marker.scale.y = 1;
-  box_marker.scale.z = 1;
+  box_marker.scale.x = 0.2;
+  box_marker.scale.y = 0.2;
+  box_marker.scale.z = 0.2;
   box_marker.color.r = 0.5;
   box_marker.color.g = 0.5;
   box_marker.color.b = 0.5;

@@ -95,7 +95,7 @@ void CostmapLayers::ResizeMap(unsigned int size_x,
 
 void CostmapLayers::UpdateMap(double robot_x, double robot_y, double robot_yaw) {
   static int count = 0;
-  boost::unique_lock<Costmap2D::mutex_t> lock(*(costmap_.GetMutex()));
+  std::unique_lock<Costmap2D::mutex_t> lock(*(costmap_.GetMutex()));
   if (is_rolling_window_) {
     double new_origin_x = robot_x - costmap_.GetSizeXWorld() / 2;
     double new_origin_y = robot_y - costmap_.GetSizeYWorld() / 2;
