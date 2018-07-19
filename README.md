@@ -36,6 +36,7 @@ You can build a mobile robot described in [hardware_setup](docs/hardware_setup.m
 
 Please follow this [guide](docs/roborts_setup_guide.md) step by step. 
 
+On Nvidia Jetson TX2, please follow this [tutorial(Chinese)](docs/setup_on_tx2.md) for more details.
 
 ## Documents
 
