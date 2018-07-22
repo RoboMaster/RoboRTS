@@ -27,6 +27,10 @@
 #include <image_transport/image_transport.h>
 
 #include "modules/driver/camera/uvc/uvc_driver.h"
+#ifdef AARCH64
+#include "modules/driver/camera/mercure/mercure_driver.h"
+#endif
+
 #include "modules/driver/camera/camera_param.h"
 #include "modules/driver/camera/camera_base.h"
 #include "common/algorithm_factory.h"

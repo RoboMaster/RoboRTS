@@ -1,16 +1,58 @@
 camera: {
-  camera_type: "uvc"
+  camera_type: "mercure"
 
   mode: VIDEO
   camera_id: 0
-  video_path: "/rmai/data/dl_armor_detection/dataset/armor_0003.avi"
+  video_path: "/dev/video0"
+
+  camera_matrix {
+    data: 864.130689
+    data: 0.0
+    data: 652.100575
+    data: 0.0
+    data: 865.896866
+    data: 200.048885
+    data: 0.0
+    data: 0.0
+    data: 1.0
+  }
+
+  camera_distortion {
+    data: -0.091517
+    data: 0.079762
+    data: 0.000830
+    data: -0.000103
+    data: 0.0
+  }
+
+  resolution {
+    width: 1280
+    height: 574
+
+    width_offset: 0
+    height_offset: 450
+  }
+
+  fps: 100
+  auto_exposure: 0
+  exposure_time: 20000
+  auto_white_balance: 1
+  auto_gain: 0
+}
+
+camera: {
+  camera_type: "uvc"
+
+  mode: VIDEO
+  camera_id: 1
+  video_path: "/dev/video0"
 
   camera_matrix {
     data: 839.923052
     data: 0.0
     data: 340.780730
     data: 0.0
-    data: 837.671081
+     data: 837.671081
     data: 261.766523
     data: 0.0
     data: 0.0
@@ -27,12 +69,15 @@ camera: {
 
   resolution {
     width: 640
-    height: 480
+    height: 260
+
+    width_offset: 0
+    height_offset: 220
   }
 
   fps: 100
   auto_exposure: 1
-  exposure_value: 50
+  exposure_value: 30
   exposure_time: 60
   auto_white_balance: 1
   auto_gain: 0

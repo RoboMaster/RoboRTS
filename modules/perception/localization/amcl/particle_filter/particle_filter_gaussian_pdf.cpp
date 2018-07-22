@@ -56,7 +56,7 @@ math::Vec3d ParticleFilterGaussianPdf::GenerateSample() {
 
   for (i = 0; i < this->covariance_diagonal_.size(); i++) {
     double sigma = this->covariance_diagonal_(i);
-    random_vec(i) = RandomGaussianNum(sigma);
+    random_vec(i) = math::RandomGaussianNumByStdDev<double>(sigma);
   }
 
   for (i = 0; i < this->mean_.size(); i++) {
@@ -69,22 +69,7 @@ math::Vec3d ParticleFilterGaussianPdf::GenerateSample() {
   return mean_vec;
 }
 
-// Draw randomly from a zero-mean Gaussian distribution, with standard
-// deviation sigma.
-// We use the polar form of the Box-Muller transformation, explained here:
-//   http://www.taygeta.com/random/gaussian.html
-double ParticleFilterGaussianPdf::RandomGaussianNum(double sigma) {
-  double x1, x2, w, r;
-  do {
-    do { r = drand48(); } while (r == 0.0);
-    x1 = 2.0 * r - 1.0;
-    do { r = drand48(); } while (r == 0.0);
-    x2 = 2.0 * r - 1.0;
-    w = x1 * x1 + x2 * x2;
-  } while (w > 1.0 || w == 0.0);
 
-  return (sigma * x2 * std::sqrt(-2.0 * std::log(w) / w));
-}
 
 }
 }

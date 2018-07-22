@@ -59,7 +59,7 @@ namespace map {
 void ObstacleLayer::OnInitialize() {
   ros::NodeHandle nh;
   ParaObstacleLayer para_obstacle;
-  common::ReadProtoFromTextFile("modules/perception/map/costmap/config/obstacle_layer_config.prototxt", &para_obstacle);
+  common::ReadProtoFromTextFile("/modules/perception/map/costmap/config/obstacle_layer_config.prototxt", &para_obstacle);
   double observation_keep_time = 0.1, expected_update_rate = 10.0, min_obstacle_height = 0.2, \
  max_obstacle_height = 0.6, obstacle_range = 2.5, raytrace_range = 3.0, transform_tolerance = 0.2;
   observation_keep_time = para_obstacle.observation_keep_time();
@@ -89,7 +89,7 @@ void ObstacleLayer::OnInitialize() {
   is_current_ = true;
   global_frame_ = layered_costmap_->GetGlobalFrameID();
   ObstacleLayer::MatchSize();
-  observation_buffers_.push_back(boost::shared_ptr<ObservationBuffer>(new ObservationBuffer(topic_string,
+  observation_buffers_.push_back(std::shared_ptr<ObservationBuffer>(new ObservationBuffer(topic_string,
                                                                                             observation_keep_time,
                                                                                             expected_update_rate,
                                                                                             min_obstacle_height,
@@ -105,10 +105,11 @@ void ObstacleLayer::OnInitialize() {
   }
   if (clearing) {
     clearing_buffers_.push_back(observation_buffers_.back());
-  }
-  boost::shared_ptr<message_filters::Subscriber<sensor_msgs::LaserScan>
+  } 
+  reset_time_ = std::chrono::system_clock::now();
+  std::shared_ptr<message_filters::Subscriber<sensor_msgs::LaserScan>
   > sub(new message_filters::Subscriber<sensor_msgs::LaserScan>(nh, topic_string, 50));
-  boost::shared_ptr<tf::MessageFilter<sensor_msgs::LaserScan>
+  std::shared_ptr<tf::MessageFilter<sensor_msgs::LaserScan>
   > filter(new tf::MessageFilter<sensor_msgs::LaserScan>(*sub, *tf_, global_frame_, 50));
   if (inf_is_valid) {
     filter->registerCallback(
@@ -128,7 +129,7 @@ void ObstacleLayer::OnInitialize() {
 }
 
 void ObstacleLayer::LaserScanCallback(const sensor_msgs::LaserScanConstPtr &message,
-                                      const boost::shared_ptr<ObservationBuffer> &buffer) {
+                                      const std::shared_ptr<ObservationBuffer> &buffer) {
   sensor_msgs::PointCloud2 temp_cloud;
   temp_cloud.header = message->header;
   try {
@@ -143,7 +144,7 @@ void ObstacleLayer::LaserScanCallback(const sensor_msgs::LaserScanConstPtr &mess
 }
 
 void ObstacleLayer::LaserScanValidInfoCallback(const sensor_msgs::LaserScanConstPtr &raw_message,
-                                               const boost::shared_ptr<ObservationBuffer> &buffer) {
+                                               const std::shared_ptr<ObservationBuffer> &buffer) {
   float epsilon = 0.0001, range;
   sensor_msgs::LaserScan message = *raw_message;
   for (size_t i = 0; i < message.ranges.size(); i++) {
@@ -176,6 +177,9 @@ void ObstacleLayer::UpdateBounds(double robot_x,
                                  double *max_y) {
   if (rolling_window_) {
     UpdateOrigin(robot_x - GetSizeXWorld() / 2, robot_y - GetSizeYWorld() / 2);
+  } else if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - reset_time_) > std::chrono::seconds(2)){
+    reset_time_ = std::chrono::system_clock::now();
+    ResetMaps();
   }
   if (!is_enabled_) {
     LOG_ERROR << "Obstacle layer is not enabled.";
@@ -185,8 +189,13 @@ void ObstacleLayer::UpdateBounds(double robot_x,
   bool temp_is_current = true;
   std::vector<Observation> observations, clearing_observations;
   temp_is_current = temp_is_current && GetMarkingObservations(observations);
-  temp_is_current = temp_is_current && GetClearingObservations(observations);
+  temp_is_current = temp_is_current && GetClearingObservations(clearing_observations);
   is_current_ = temp_is_current;
+
+  // raytrace freespace
+  for (unsigned int i = 0; i < clearing_observations.size(); ++i) {
+    RaytraceFreespace(clearing_observations[i], min_x, min_y, max_x, max_y);
+  }
 
   for (std::vector<Observation>::const_iterator it = observations.begin(); it != observations.end(); it++) {
     const Observation obs = *it;
@@ -216,6 +225,7 @@ void ObstacleLayer::UpdateBounds(double robot_x,
       }
       unsigned int index = GetIndex(mx, my);
       costmap_[index] = LETHAL_OBSTACLE;
+
       Touch(px, py, min_x, min_y, max_x, max_y);
     }
   }
@@ -231,7 +241,7 @@ void ObstacleLayer::UpdateCosts(Costmap2D &master_grid, int min_i, int min_j, in
   if (footprint_clearing_enabled_) {
     SetConvexRegionCost(transformed_footprint_, FREE_SPACE);
   }
-  combination_method_ = 0;
+  combination_method_ = 1;
   switch (combination_method_) {
     case 0:  // Overwrite
       UpdateOverwriteByValid(master_grid, min_i, min_j, max_i, max_j);

@@ -50,7 +50,7 @@
  *
  *********************************************************************/
 #include <algorithm>
-#include <boost/thread.hpp>
+#include <mutex>
 #include "modules/perception/map/costmap/costmap_math.h"
 #include "modules/perception/map/costmap/footprint.h"
 #include "modules/perception/map/costmap/inflation_layer.h"
@@ -72,12 +72,12 @@ InflationLayer::InflationLayer()
       last_min_y_(-std::numeric_limits<float>::max()),
       last_max_x_(std::numeric_limits<float>::max()),
       last_max_y_(std::numeric_limits<float>::max()) {
-  inflation_access_ = new boost::recursive_mutex();
+  inflation_access_ = new std::recursive_mutex();
 }
 
 void InflationLayer::OnInitialize() {
 
-  boost::unique_lock<boost::recursive_mutex> lock(*inflation_access_);
+  std::unique_lock<std::recursive_mutex> lock(*inflation_access_);
   ros::NodeHandle nh("~/" + name_), g_nh;
   is_current_ = true;
   if (seen_)
@@ -99,7 +99,7 @@ void InflationLayer::OnInitialize() {
 }
 
 void InflationLayer::MatchSize() {
-  boost::unique_lock<boost::recursive_mutex> lock(*inflation_access_);
+  std::unique_lock<std::recursive_mutex> lock(*inflation_access_);
   Costmap2D *costmap = layered_costmap_->GetCostMap();
   resolution_ = costmap->GetResolution();
   cell_inflation_radius_ = CellDistance(inflation_radius_);
@@ -151,7 +151,7 @@ void InflationLayer::OnFootprintChanged() {
 }
 
 void InflationLayer::UpdateCosts(Costmap2D &master_grid, int min_i, int min_j, int max_i, int max_j) {
-  boost::unique_lock<boost::recursive_mutex> lock(*inflation_access_);
+  std::unique_lock<std::recursive_mutex> lock(*inflation_access_);
   if (!is_enabled_ || (cell_inflation_radius_ == 0)) {
     LOG_ERROR<<"Layer is not enabled or inflation radius is zero";
     return;
@@ -316,7 +316,7 @@ void InflationLayer::DeleteKernels() {
 
 void InflationLayer::SetInflationParameters(double inflation_radius, double cost_scaling_factor) {
   if (weight_ != cost_scaling_factor || inflation_radius_ != inflation_radius) {
-    boost::unique_lock<boost::recursive_mutex> lock(*inflation_access_);
+    std::unique_lock<std::recursive_mutex> lock(*inflation_access_);
     inflation_radius_ = inflation_radius;
     cell_inflation_radius_ = CellDistance(inflation_radius_);
     weight_ = cost_scaling_factor;

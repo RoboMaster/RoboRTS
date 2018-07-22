@@ -54,6 +54,8 @@
 
 #include <Eigen/Core>
 #include <Eigen/StdVector>
+#include <thread>
+
 #include <geometry_msgs/PolygonStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 #include "modules/perception/map/costmap/map_common.h"
@@ -250,7 +252,7 @@ class CostmapInterface {
   bool map_update_thread_shutdown_, stop_updates_, initialized_, stopped_, robot_stopped_, got_footprint_, is_debug_, \
        is_track_unknown_, is_rolling_window_, has_static_layer_, has_obstacle_layer_;
   double map_update_frequency_, map_width_, map_height_, map_origin_x_, map_origin_y_, map_resolution_;
-  boost::thread* map_update_thread_;
+  std::thread* map_update_thread_;
   ros::Timer timer_;
   ros::Time last_publish_;
   tf::Stamped<tf::Pose> old_pose_;

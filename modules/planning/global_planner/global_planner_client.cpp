@@ -22,6 +22,7 @@
 
 #include "messages/GlobalPlannerAction.h"
 #include "common/error_code.h"
+#include "common/log.h"
 
 using rrts::common::ErrorCode;
 using rrts::common::ErrorInfo;
@@ -62,17 +63,17 @@ class GlobalPlannerClient{
 
   }
   void DoneCallback(const actionlib::SimpleClientGoalState& state,  const messages::GlobalPlannerResultConstPtr& result){
-    std::cout<<state.toString().c_str()<<"!"<<std::endl;
+    LOG_INFO<<state.toString().c_str()<<"!";
   }
   void ActiveCallback() {
-    std::cout << "Server has recived the goal!" << std::endl;
+    LOG_INFO << "Server has recived the goal!";
   }
   void FeedbackCallback(const messages::GlobalPlannerFeedbackConstPtr& feedback){
     if (feedback->error_code != ErrorCode::OK) {
-      std::cout<<feedback->error_msg<<std::endl;
+      LOG_INFO<<feedback->error_msg;
     }
     if (!feedback->path.poses.empty()) {
-      std::cout<<"Get Path!"<<std::endl;
+      LOG_INFO<<"Get Path!";
     }
   }
  private:

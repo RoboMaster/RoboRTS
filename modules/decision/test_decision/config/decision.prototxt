@@ -1,0 +1,138 @@
+simulate: true
+
+# icra map 
+point {
+  x: 1.0 
+  y: 1.0
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+point {
+  x: 4.0 
+  y: 2.5
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+
+point {
+  x: 7.1
+  y: 4.6
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+point {
+  x: 7
+  y: 0.85
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+point {
+  x: 4.0 
+  y: 2.5
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+point {
+  x: 1
+  y: 4.6
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   0
+}
+
+escape {
+  left_x_limit: 2.5
+  right_x_limit: 5.5
+  robot_x_limit: 4
+  left_random_min_x: 0
+  left_random_max_x: 2.5
+  right_random_min_x: 5.5
+  right_random_max_x: 8
+}
+
+buff_point {
+
+  x: 4.15
+  y: 2.85
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   2.62
+}
+
+buff_point {
+
+  x: 4.35
+  y: 2.65
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   2.62
+}
+
+buff_point {
+
+  x: 4.15
+  y: 2.85
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   2.62
+}
+
+buff_point {
+
+  x: 4.35
+  y: 2.65
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   2.62
+}
+
+search_limit {
+  x_limit: 4
+  y_limit: 2.5
+}
+
+whirl_vel {
+  angle_x_vel: 0
+  angle_y_vel: 0
+  angle_z_vel: 1
+}
+
+start_position {
+  x: 7.5
+  y: 4.5
+  z: 0
+
+  roll:  0
+  pitch: 0
+  yaw:   3.14
+}

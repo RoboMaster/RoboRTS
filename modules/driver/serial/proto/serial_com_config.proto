@@ -9,8 +9,10 @@ message SerialPortConfig {
     optional string parity = 6 [default = 'N'];
     optional bool is_debug = 7 [default = true];
     optional bool is_simulator = 8 [default = false];
-    optional double link_column = 9 [default = 50];
-    optional double link_beam = 10 [default = 90];
+    optional double link_row = 9 [default = 40 ];
+    optional double link_column = 10 [default = 130];
+    optional double link_beam = 11 [default = 100];
+    optional string uwb_frame_id = 12 [default = "uwb"];
 }
 
 

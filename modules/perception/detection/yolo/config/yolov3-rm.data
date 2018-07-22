@@ -1,5 +1,5 @@
 classes= 1
-train  = /home/yanan.guo/project/RoboRTS/modules/perception/detection/yolo/data/infantry/train.txt
-valid  = /home/yanan.guo/project/RoboRTS/modules/perception/detection/yolo/data/infantry/test.txt
-names  = /home/yanan.guo/project/RoboRTS/modules/perception/detection/yolo/data/yolov3-rm.names
+train  = modules/perception/detection/yolo/data/infantry/train.txt
+valid  = modules/perception/detection/yolo/data/infantry/test.txt
+names  = modules/perception/detection/yolo/config/yolov3-rm.names
 backup = backup

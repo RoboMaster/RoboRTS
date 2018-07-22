@@ -32,45 +32,11 @@ You can build a mobile robot described in [hardware_setup](docs/hardware_setup.m
 - Google Glog
 - CMake 3.1
 
-### Install dependencies for Ubuntu 16.04 kinetic
+### Setup Software 
 
-**Install ROS**
+Please follow this [guide](docs/roborts_setup_guide.md) step by step. 
 
-Please follow [the installing and configuring ROS environment tutorial](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment) on ROS Wiki.
-
-**Thirdparty Library**
-
-```shell
-sudo apt-get install ros-kinetic-opencv3 ros-kinetic-cv-bridge ros-kinetic-image-transport ros-kinetic-stage-ros ros-kinetic-map-server ros-kinetic-laser-geometry ros-kinetic-interactive-markers ros-kinetic-tf ros-kinetic-pcl-* ros-kinetic-libg2o protobuf-compiler libprotobuf-dev libsuitesparse-dev libgoogle-glog-dev ros-kinetic-rviz
-```
-
-### Build and Install
-
-```shell
-git clone https://github.com/RoboMaster/RoboRTS.git
-cd RoboRTS/
-mkdir build
-cd build
-cmake ..
-make messages_generate_messages
-make
-```
-
-Setting the RoboRTS environment variable
-
-```bash
-cd path/to/RoboRTS
-echo "export ROBORTS_PATH=${PWD}" >> ~/.bashrc
-source ~/.bashrc
-```
-
-### Run Examples
-
-```shell
-./tools/script/run.sh -s 
-```
-
-<img src="docs/images/run_example.gif" style="zoom:80%"/>
+On Nvidia Jetson TX2, please follow this [tutorial(Chinese)](docs/setup_on_tx2.md) for more details.
 
 ## Documents
 

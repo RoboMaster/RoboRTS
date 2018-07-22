@@ -43,19 +43,29 @@ namespace localization {
 
 std::vector<std::pair<int,int> > Amcl::free_space_indices;
 
-void Amcl::Init() {
+void Amcl::Init(const math::Vec3d &init_pose, const math::Vec3d &init_cov) {
 
   CHECK(common::ReadProtoFromTextFile(proto_path, &amcl_param_))
   << "Error when loading amcl.prototxt";
 
   d_thresh_ = amcl_param_.update_min_d();
   a_thresh_ = amcl_param_.update_min_a();
+  max_uwb_particles_ = amcl_param_.max_uwb_particles();
+  resample_uwb_factor_ = amcl_param_.resample_uwb_factor();
+
+  CHECK_GT(amcl_param_.max_particles(),amcl_param_.max_uwb_particles())
+  << "UWB max correcting particles number must be less than max sample particles";
+  uwb_cov_x_ = amcl_param_.uwb_cov_x();
+  uwb_cov_y_ = amcl_param_.uwb_cov_y();
+
 
   use_global_localization_ = amcl_param_.use_global_localization();
 
-  UpdatePoseFromProto();
+  UpdatePoseFromProto(init_pose,init_cov);
 
   cloud_pub_interval_.fromSec(1.0);
+
+  LOG_INFO << "Amcl Init!";
 
 }
 
@@ -75,7 +85,7 @@ void Amcl::FreeMapDependentMemory() {
   laser_ptr_.reset();
 }
 
-void Amcl::HandleMapMessage(const nav_msgs::OccupancyGrid &map_msg) {
+void Amcl::HandleMapMessage(const nav_msgs::OccupancyGrid &map_msg,const math::Vec3d &init_pose, const math::Vec3d &init_cov) {
 
   FreeMapDependentMemory();
   map_ptr_.reset(new AmclMap());
@@ -99,7 +109,8 @@ void Amcl::HandleMapMessage(const nav_msgs::OccupancyGrid &map_msg) {
                                    map_ptr_));
 
   pf_ptr_->SetKldParam(amcl_param_.kld_err(),amcl_param_.kld_z());
-  UpdatePoseFromProto();
+
+  UpdatePoseFromProto(init_pose, init_cov);
 
   math::Vec3d  pf_init_pose_mean;
   math::Mat3d  pf_init_pose_cov;
@@ -131,7 +142,9 @@ void Amcl::HandleMapMessage(const nav_msgs::OccupancyGrid &map_msg) {
        amcl_param_.do_beamskip(),
        amcl_param_.beam_skip_distance(),
        amcl_param_.beam_skip_threshold(),
-       amcl_param_.beam_skip_error_threshold());
+       amcl_param_.beam_skip_error_threshold(),
+       amcl_param_.laser_filter_weight()
+      );
   LOG_INFO << "Done initializing likelihood field model.";
 
   if(use_global_localization_) {
@@ -143,44 +156,47 @@ void Amcl::HandleMapMessage(const nav_msgs::OccupancyGrid &map_msg) {
 }
 
 
-void Amcl::UpdatePoseFromProto() {
+void Amcl::UpdatePoseFromProto(const math::Vec3d &init_pose,const math::Vec3d &init_cov) {
   init_pose_[0] = 0.0;
   init_pose_[1] = 0.0;
   init_pose_[2] = 0.0;
   init_cov_[0] = 0.5 * 0.5;
   init_cov_[1] = 0.5 * 0.5;
   init_cov_[2] = (M_PI/12.0) * (M_PI/12.0);
-  if(!std::isnan(amcl_param_.initial_pose_x())){
-    init_pose_[0] = amcl_param_.initial_pose_x();
+
+  if(!std::isnan(init_pose[0])){
+    init_pose_[0] = init_pose[0];
   } else{
     LOG_WARNING << "ignoring NAN in initial pose X position";
   }
-  if(!std::isnan(amcl_param_.initial_pose_y())){
-    init_pose_[1] = amcl_param_.initial_pose_y();
+  if(!std::isnan(init_pose[1])){
+    init_pose_[1] = init_pose[1];
   } else
   {
     LOG_WARNING << "ignoring NAN in initial pose Y position";
   }
-  if(!std::isnan(amcl_param_.initial_pose_a())){
-    init_pose_[2] = amcl_param_.initial_pose_a();
+  if(!std::isnan(init_pose[2])){
+    init_pose_[2] = init_pose[2];
   } else{
     LOG_WARNING << "ignoring NAN in initial pose Yaw";
   }
-  if(!std::isnan(amcl_param_.initial_cov_xx())){
-    init_cov_[0] = amcl_param_.initial_cov_xx();
+  if(!std::isnan(init_cov[0])){
+    init_cov_[0] = init_cov[0];
   } else{
     LOG_WARNING << "ignoring NAN in initial covariance XX";
   }
-  if(!std::isnan(amcl_param_.initial_cov_yy())){
-    init_cov_[1] = amcl_param_.initial_cov_yy();
+  if(!std::isnan(init_cov[1])){
+    init_cov_[1] = init_cov[1];
   } else{
     LOG_WARNING << "ignoring NAN in initial covariance YY";
   }
-  if(!std::isnan(amcl_param_.initial_cov_aa())){
-    init_cov_[1] = amcl_param_.initial_cov_aa();
+  if(!std::isnan(init_cov[2])){
+    init_cov_[1] = init_cov[2];
   } else{
     LOG_WARNING << "ignoring NAN in initial covariance AA";
   }
+
+  DLOG_INFO << "Updated init pose " << init_pose_;
 }
 
 void Amcl::HandleInitialPoseMessage(math::Vec3d pf_init_pose_mean,
@@ -203,6 +219,10 @@ void Amcl::ApplyInitPose() {
 void Amcl::SetLaserSensorPose(math::Vec3d laser_pose) {
   laser_update_ = true;
   laser_ptr_->SetLaserPose(laser_pose);
+}
+
+sensor_msgs::LaserScan Amcl::GetCleanLaserScan() {
+  return clean_laser_scan_;
 }
 
 math::Vec3d Amcl::UniformPoseGenerator(const std::shared_ptr<AmclMap> &map_ptr) {
@@ -229,7 +249,64 @@ bool Amcl::GlobalLocalization(){
   return true;
 }
 
+void Amcl::UpdateUwb(const math::Vec3d &uwb_pose, const math::Vec3d &uwb_cov){
+  uwb_cov_x_ = uwb_cov[0];
+  uwb_cov_y_ = uwb_cov[1];
+  UpdateUwb(uwb_pose);
+}
 
+void Amcl::UpdateUwb(const math::Vec3d &uwb_pose) {
+
+  std::lock_guard<std::mutex> sample_lock(mutex_);
+
+  auto set_ptr = pf_ptr_->GetCurrentSet();
+  double total = 0;
+  std::vector<double> distance;
+  distance.resize(set_ptr->sample_count,0);
+
+  for(int i = 0; i< set_ptr->sample_count; i++  ) {
+    distance[i] = math::EuclideanDistance(uwb_pose[0],
+                                          uwb_pose[1],
+                                          set_ptr->samples_vec[i].pose[0],
+                                          set_ptr->samples_vec[i].pose[1]);
+    if(distance[i] > (map_ptr_->GetDiagDistance() / resample_uwb_factor_)){
+      set_ptr->samples_vec[i].pose[0] = uwb_pose[0] + math::RandomGaussianNumByStdDev(uwb_cov_x_);
+      set_ptr->samples_vec[i].pose[1] = uwb_pose[1] + math::RandomGaussianNumByStdDev(uwb_cov_y_);
+      set_ptr->samples_vec[i].pose[2] = uwb_pose[2] + math::RandomGaussianNumByStdDev((M_PI/3.0) * (M_PI/3.0));
+      distance[i] = math::EuclideanDistance(uwb_pose[0],
+                                            uwb_pose[1],
+                                            set_ptr->samples_vec[i].pose[0],
+                                            set_ptr->samples_vec[i].pose[1]);
+    }
+    total += distance[i];
+  }
+
+  CHECK_GT(total, 0);
+  for(int j = 0; j < set_ptr->sample_count;j++){
+    set_ptr->samples_vec[j].weight *= (total - distance[j]) / total;
+  }
+
+  std::sort(set_ptr->samples_vec.begin(),
+            set_ptr->samples_vec.begin()+set_ptr->sample_count,
+            [](const ParticleFilterSample &sample1,const ParticleFilterSample &sample2){
+              if(sample1.weight < sample2.weight){
+                return true;
+              } else{
+                return false;
+              }
+            });
+
+  auto least_weight_particle_num = static_cast<int>(max_uwb_particles_);
+  if(least_weight_particle_num <= 0){
+    least_weight_particle_num = 1;
+  }
+  for(int i = 0; i < least_weight_particle_num; i++){
+    set_ptr->samples_vec[i].pose[0] = uwb_pose[0] + math::RandomGaussianNumByStdDev(uwb_cov_x_);
+    set_ptr->samples_vec[i].pose[1] = uwb_pose[1] + math::RandomGaussianNumByStdDev(uwb_cov_y_);
+    set_ptr->samples_vec[i].pose[2] = set_ptr->samples_vec[i].pose[2] + math::RandomGaussianNumByStdDev((M_PI/12.0) * (M_PI/12.0));
+  }
+
+}
 
 
 int Amcl::Update(const math::Vec3d &pose,
@@ -238,6 +315,8 @@ int Amcl::Update(const math::Vec3d &pose,
                  const double &angle_increment,
                  geometry_msgs::PoseArray &particle_cloud_pose_msg,
                  HypPose &hyp_pose){
+
+  std::lock_guard<std::mutex> sample_lock(mutex_);
 
   publish_pose_ = false;
   publish_particle_pose_cloud_ = false;
@@ -263,7 +342,7 @@ void Amcl::UpdateOdomPoseData(math::Vec3d pose)  {
     // Compute change in pose
     delta[0] = pose[0] - pf_odom_pose_[0];
     delta[1] = pose[1] - pf_odom_pose_[1];
-    delta[2] = math::AngleDiff(pose[2], pf_odom_pose_[2]);
+    delta[2] = math::AngleDiff<double>(pose[2], pf_odom_pose_[2]);
 
     // See if we should update the filter
     bool update = std::fabs(delta[0]) > d_thresh_ ||
@@ -288,7 +367,7 @@ void Amcl::UpdateOdomPoseData(math::Vec3d pose)  {
     resample_count_ = 0;
   }     // If the robot has moved, update the filter
   else if(pf_init_ && laser_update_){
-    LOG_INFO << "Robot has moved, update the filter";
+    DLOG_INFO << "Robot has moved, update the filter";
     SensorOdomData odom_data;
     odom_data.pose = pose;
     odom_data.delta = delta;
@@ -324,6 +403,9 @@ void Amcl::UpdateLaser(const sensor_msgs::LaserScan &laser_scan,
 
   laser_data.ranges_mat.resize(laser_data.range_count,2);
   laser_data.ranges_mat.setZero();
+  laser_data.ranges_clean_mask.resize(laser_data.range_count,2);
+  laser_data.ranges_clean_mask.setZero();
+  clean_laser_scan_.ranges.resize(laser_data.range_count);
 
   for(int i=0;i<laser_data.range_count;i++)
   {
@@ -340,6 +422,14 @@ void Amcl::UpdateLaser(const sensor_msgs::LaserScan &laser_scan,
   }
 
   laser_ptr_->UpdateSensor(pf_ptr_,(SensorData*)(&laser_data));
+  //TODO: Output clean laser_scan to node level
+  clean_laser_scan_ = laser_scan;
+  for(int i=0;i<laser_data.range_count;i++){
+    if(laser_data.ranges_clean_mask(i,0) != 1){
+      clean_laser_scan_.ranges[i] = 0;
+    }
+  }
+
   laser_update_ = false;
 
   pf_odom_pose_ = pose;
@@ -353,13 +443,13 @@ geometry_msgs::PoseArray Amcl::ResampleParticles() {
   geometry_msgs::PoseArray particle_cloud_pose_msg;
 
   if (!(++resample_count_ % resample_interval_)) {
-    LOG_INFO << "Resample the particles";
+    DLOG_INFO << "Resample the particles";
     pf_ptr_->UpdateResample();
     resampled_ = true;
   }
 
   auto set_ptr = pf_ptr_->GetCurrentSet();
-  LOG_INFO << "Number of samples : " << set_ptr->sample_count;
+  DLOG_INFO << "Number of samples : " << set_ptr->sample_count;
 
   // Publish the resulting particle cloud
   particle_cloud_pose_msg.poses.resize(set_ptr->sample_count);
@@ -379,7 +469,7 @@ void Amcl::UpdateFilter(HypPose &hyp_pose,
 
   if(resampled_ || force_publication_) {
     if (!resampled_) {
-      LOG_INFO << "Recompute particle filter cluster statistics";
+      DLOG_INFO << "Recompute particle filter cluster statistics";
       pf_ptr_->ClusterStatistics();
     }
     // Read out the current hypotheses
@@ -415,7 +505,8 @@ void Amcl::UpdateFilter(HypPose &hyp_pose,
 
     if (max_weight > 0.0) {
 
-      LOG_INFO << "Max weight pose: "
+      DLOG_INFO << "Max weight: " << max_weight
+                <<", Pose: "
                << hyps[max_weight_hyp].pf_pose_mean[0]<< ", "
                << hyps[max_weight_hyp].pf_pose_mean[1]<< ", "
                << hyps[max_weight_hyp].pf_pose_mean[2];
@@ -429,7 +520,7 @@ void Amcl::UpdateFilter(HypPose &hyp_pose,
       update_tf_ = true;
     }
     else {
-      LOG_ERROR << "No pose!";
+      LOG_ERROR << "Max weight of clusters less than 0!";
       publish_pose_ = false;
       update_tf_ = false;
     }

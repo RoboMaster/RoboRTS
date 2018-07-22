@@ -16,24 +16,30 @@
  ***************************************************************************/
 
 #include "modules/driver/serial/serial_com_node.h"
+#include "infantry_info.h"
 
 namespace rrts {
 namespace driver {
 namespace serial {
 SerialComNode::SerialComNode(std::string module_name)
     : rrts::common::RRTS::RRTS(module_name), fd_(0), is_open_(false), stop_receive_(true), stop_send_(true) {
+  struct timespec now;
+  clock_gettime(CLOCK_REALTIME, &now);
+  time_start_ = now.tv_sec + now.tv_nsec*1e-9;
   SerialPortConfig serial_port_config;
-  CHECK(rrts::common::ReadProtoFromTextFile("modules/driver/serial/config/serial_com_config.prototxt",
+  CHECK(rrts::common::ReadProtoFromTextFile("/modules/driver/serial/config/serial_com_config.prototxt",
                                             &serial_port_config))
   << "Error loading proto file for serial.";
   CHECK(serial_port_config.has_serial_port()) << "Port not set.";
   CHECK(serial_port_config.has_serial_boudrate()) << "Baudrate not set.";
   length_beam_ = serial_port_config.link_beam();
   length_column_ = serial_port_config.link_column();
+  length_row_ = serial_port_config.link_row();
   baudrate_ = serial_port_config.serial_boudrate();
   port_ = serial_port_config.serial_port();
-  uwb_position_.header.frame_id = "uwb";
-  uwb_position_.header.seq = 0;
+  uwb_position_msg_.header.frame_id = serial_port_config.uwb_frame_id();
+  uwb_position_msg_.header.seq = 0;
+  game_buff_status_.request.buff_info = 0;
   CHECK(Initialization()) << "Initialization error.";
   is_open_ = true;
   stop_receive_ = false;
@@ -45,10 +51,21 @@ SerialComNode::SerialComNode(std::string module_name)
   free_length_ = UART_BUFF_SIZE;
   odom_pub_ = nh_.advertise<nav_msgs::Odometry>("odom", 30);
   gim_pub_ = nh_.advertise<messages::GimbalAngle>("gimbal", 30);
-  uwb_pose_pub_ = nh_.advertise<messages::PositionUWB>("uwb_pose", 30);
-  if (is_debug_) {
-    fp_ = fopen("debug_com.txt", "w+");
-  }
+  uwb_pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("uwb", 30);
+  game_info_pub_ = nh_.advertise<messages::GameInfo>("referee_system/game_info", 30);
+  robot_hurt_data_pub_ = nh_.advertise<messages::RobotHurtData>("referee_system/robot_hurt_data", 30);
+  rfid_info_pub_ = nh_.advertise<messages::RfidInfo>("referee_system/rfid_info", 30);
+  shoot_info_pub_ = nh_.advertise<messages::ShootInfo>("referee_system/shoot_info", 30);
+
+  game_buff_status_srv_ = nh_.serviceClient<messages::GameBuffStatus>("referee_system/set_buff_status");
+  chassis_mode_srv_ = nh_.advertiseService("set_chassis_mode", &SerialComNode::SetChassisMode, this);
+  gimbal_mode_srv_ = nh_.advertiseService("set_gimbal_mode", &SerialComNode::SetGimbalMode, this);
+  shoot_mode_srv_ = nh_.advertiseService("shoot_mode_control", &SerialComNode::ShootModeControl, this);
+  check_status_srv_ = nh_.advertiseService("check_status", &SerialComNode::CheckStatusCallback, this);
+
+  chassis_mode_ = AUTO_SEPARATE_GIMBAL;
+  gimbal_mode_ = GIMBAL_RELAX;
+
 }
 
 bool SerialComNode::Initialization() {
@@ -153,33 +170,15 @@ bool SerialComNode::ConfigBaudrate(int baudrate) {
 
 void SerialComNode::Run() {
   receive_loop_thread_ = new std::thread(boost::bind(&SerialComNode::ReceiveLoop, this));
-  if (is_debug_) {
-    keyboard_in_ = new std::thread(boost::bind(&SerialComNode::ListenClick, this));
-  }
-  sub_cmd_gim_ = nh_.subscribe("enemy_pos", 1, &SerialComNode::GimbalControlCallback, this);
+  sub_cmd_gim_ = nh_.subscribe("/constraint_set/enemy_pos", 1, &SerialComNode::GimbalRelativeControlCallback, this);
   sub_cmd_vel_ = nh_.subscribe("cmd_vel", 1, &SerialComNode::ChassisControlCallback, this);
   send_loop_thread_ = new std::thread(boost::bind(&SerialComNode::SendPack, this));
   ros::spin();
 }
 
-void SerialComNode::ListenClick() {
-  static struct termios oldt, newt;
-  while (is_sim_ && ros::ok()) {
-    usleep(1000);
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    key_ = getchar();
-    if (key_ != 10) {
-      valid_key_ = key_;
-    }
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-  }
-}
-
 void SerialComNode::ReceiveLoop() {
   while (is_open_ && !stop_receive_ && ros::ok()) {
+    usleep(1);
     read_buff_index_ = 0;
     read_len_ = ReceiveData(fd_, UART_BUFF_SIZE);
     if (read_len_ > 0) {
@@ -310,21 +309,23 @@ void SerialComNode::DataHandle() {
   uint16_t cmd_id = *(uint16_t *) (protocol_packet_ + HEADER_LEN);
   uint8_t *data_addr = protocol_packet_ + HEADER_LEN + CMD_LEN;
   switch (cmd_id) {
-    case GAME_INFO_ID: memcpy(&game_information_, data_addr, data_length);
-      uwb_position_.header.stamp = current_time;
-      uwb_position_.header.seq++;
-      uwb_position_.valid_flag = game_information_.position.valid_flag;
-      uwb_position_.x = game_information_.position.x;
-      uwb_position_.y = game_information_.position.y;
-      uwb_position_.z = game_information_.position.z;
-      uwb_position_.yaw = game_information_.position.yaw;
-      uwb_pose_pub_.publish(uwb_position_);
-      LOG_INFO << "Game info OK";
+    case GAME_INFO_ID: memcpy(&robot_game_state_, data_addr, data_length);
+      LOG_INFO << "Game info received";
+      game_info_msg_.header.stamp = current_time;
+      game_info_msg_.game_process = robot_game_state_.game_process;
+      game_info_msg_.remain_time = robot_game_state_.stage_remain_time;
+      game_info_msg_.remain_hp = robot_game_state_.remain_hp;
+      game_info_msg_.max_hp = robot_game_state_.max_hp;
+      game_info_pub_.publish(game_info_msg_);
       if (is_debug_) {
-        LOG_INFO << "Game remaining blood: " << game_information_.remain_hp;
+        LOG_INFO << "Game remaining blood: " << robot_game_state_.remain_hp;
       }
       break;
     case REAL_BLOOD_DATA_ID: memcpy(&robot_hurt_data_, data_addr, data_length);
+      robot_hurt_data_msg_.header.stamp = current_time;
+      robot_hurt_data_msg_.armor_type = robot_hurt_data_.armor_type;
+      robot_hurt_data_msg_.hurt_type = robot_hurt_data_.hurt_type;
+      robot_hurt_data_pub_.publish(robot_hurt_data_msg_);
       if (is_debug_) {
         LOG_INFO << "Blood change: " << "Which armor is hurt: " << robot_hurt_data_.armor_type << " and the hurt type: "
                  << robot_hurt_data_.hurt_type << std::endl;
@@ -333,10 +334,35 @@ void SerialComNode::DataHandle() {
     case REAL_SHOOT_DATA_ID: memcpy(&real_shoot_data_, data_addr, data_length);
       break;
     case REAL_RFID_DATA_ID: memcpy(&rfid_data_, data_addr, data_length);
+      rfid_info_msg_.header.stamp = current_time;
+      rfid_info_msg_.card_type = rfid_data_.card_type;
+      rfid_info_msg_.card_type = rfid_data_.card_idx;
+      rfid_info_pub_.publish(rfid_info_msg_);
       break;
     case GAME_RESULT_ID: memcpy(&game_result_data_, data_addr, data_length);
       break;
     case GAIN_BUFF_ID: memcpy(&get_buff_data_, data_addr, data_length);
+      if(get_buff_data_.buff_info == 0x2000){
+        game_buff_status_.request.header.stamp = current_time;
+        game_buff_status_.request.buff_info = 1;
+        game_buff_status_srv_.call(game_buff_status_);
+        LOG_INFO << "Game buff Self received! ";
+      }else if(get_buff_data_.buff_info == 0x4000){
+        game_buff_status_.request.header.stamp = current_time;
+        game_buff_status_.request.buff_info = 2;
+        game_buff_status_srv_.call(game_buff_status_);
+        LOG_INFO << "Game buff Enemy received! ";
+      }else{
+        LOG_INFO << "Game buff received! data = " << get_buff_data_.buff_info;
+      }
+      break;
+    case ROBOT_POS_DATA_ID: memcpy(&robot_position_, data_addr, data_length);
+      uwb_position_msg_.header.stamp = current_time;
+      uwb_position_msg_.pose.position.x = ((double)robot_position_.y)/100.0;
+      uwb_position_msg_.pose.position.y = ((double)robot_position_.x)/100.0;
+      uwb_position_msg_.pose.position.z = 0;
+      uwb_position_msg_.pose.orientation = tf::createQuaternionMsgFromYaw(robot_position_.yaw);
+      uwb_pose_pub_.publish(uwb_position_msg_);
       break;
     case SERVER_TO_USER_ID: memcpy(&student_download_data_, data_addr, data_length);
       break;
@@ -374,23 +400,25 @@ void SerialComNode::DataHandle() {
       gim_angle_.pitch = gimbal_information_.pit_relative_angle / 180 * M_PI;
       gim_angle_.yaw = gimbal_information_.yaw_relative_angle / 180 * M_PI;
       gim_pub_.publish(gim_angle_);
-      q = tf::createQuaternionMsgFromRollPitchYaw(0.0, gim_angle_.pitch, gim_angle_.yaw);
+      q = tf::createQuaternionMsgFromRollPitchYaw(0.0, 0.0, gim_angle_.yaw);
       arm_tf_.header.frame_id = "base_link";
-      arm_tf_.child_frame_id = "tool0";
+      arm_tf_.child_frame_id = "camera0";
       arm_tf_.header.stamp = current_time;
       arm_tf_.transform.rotation = q;
-      arm_tf_.transform.translation.x = length_beam_ * cos(gim_angle_.pitch) * cos(gim_angle_.yaw) / 1000;
-      arm_tf_.transform.translation.y = length_beam_ * cos(gim_angle_.pitch) * sin(gim_angle_.yaw) / 1000;
-      arm_tf_.transform.translation.z = (length_column_ + length_beam_ * sin(gim_angle_.pitch)) / 1000;
+      arm_tf_.transform.translation.x = (length_row_ + length_beam_ *  cos(gim_angle_.yaw)) / 1000;
+      arm_tf_.transform.translation.y = length_beam_ * sin(gim_angle_.yaw) / 1000;
+      arm_tf_.transform.translation.z = (length_column_) / 1000;
       tf_broadcaster_.sendTransform(arm_tf_);
       if (is_debug_) {
         LOG_INFO << "Gimbal info-->" << gimbal_information_.pit_relative_angle;
       }
       break;
     case SHOOT_TASK_DATA_ID: memcpy(&shoot_task_data_, data_addr, data_length);
-      if (is_debug_) {
-        LOG_INFO << "Shoot task-->" << shoot_task_data_.fric_wheel_run;
-      }
+      shoot_info_msg_.header.stamp = current_time;
+      shoot_info_msg_.remain_bullet = shoot_task_data_.remain_bullet;
+      shoot_info_msg_.sent_bullet = shoot_task_data_.sent_bullet;
+      shoot_info_msg_.fric_wheel_run = shoot_task_data_.fric_wheel_run;
+      shoot_info_pub_.publish(shoot_info_msg_);
       break;
     case INFANTRY_ERR_ID: memcpy(&global_error_data_, data_addr, data_length);
       if (is_debug_) {
@@ -427,43 +455,43 @@ void SerialComNode::DataHandle() {
   }
 }
 
-void SerialComNode::GimbalControlCallback(const messages::EnemyPosConstPtr &msg) {
+void SerialComNode::GimbalRelativeControlCallback(const messages::EnemyPosConstPtr &msg) {
   static int count = 0, time_ms = 0, compress = 0;
   static double frequency = 0;
   static struct timeval time_last, time_current;
-  gettimeofday(&time_current, nullptr);
-  if (count == 0) {
-    count++;
-  } else {
-    time_ms = (time_current.tv_sec - time_last.tv_sec) * 1000 + (time_current.tv_usec - time_last.tv_usec) / 1000;
-    frequency = 1000.0 / time_ms;
+  if (gimbal_mode_ == GimbalMode::GIMBAL_RELATIVE_MODE) {
+    gettimeofday(&time_current, nullptr);
+    if (count == 0) {
+      count++;
+    } else {
+      time_ms = (time_current.tv_sec - time_last.tv_sec) * 1000 + (time_current.tv_usec - time_last.tv_usec) / 1000;
+      frequency = 1000.0 / time_ms;
+    }
+    time_last = time_current;
+    GimbalControl gimbal_control_data;
+    gimbal_control_data.ctrl_mode = GimbalMode::GIMBAL_RELATIVE_MODE;
+    struct timespec now;
+    clock_gettime(CLOCK_REALTIME, &now);
+    gimbal_control_data.time = (uint32_t)((now.tv_sec + now.tv_nsec*1e-9 - time_start_)*1000);
+
+    gimbal_control_data.distance = msg->dis*1000;
+    gimbal_control_data.pit_ref  = msg->pitch*180/M_PI;
+    gimbal_control_data.yaw_ref  = msg->yaw*180/M_PI;
+
+    gimbal_control_data.x = msg->enemy_pos.pose.position.x*1000;
+    gimbal_control_data.y = msg->enemy_pos.pose.position.y*1000;
+    gimbal_control_data.z = msg->enemy_pos.pose.position.z*1000;
+
+    gimbal_control_data.visual_valid = 1;
+    SendGimbalControl(gimbal_control_data);
   }
-  time_last = time_current;
+  
+}
+
+void SerialComNode::SendGimbalControl( const GimbalControl &gimbal_control){
   std::unique_lock<std::mutex> lock(mutex_pack_);
   uint8_t pack[PACK_MAX_SIZE];
-  GimbalControl gimbal_control_data;
-  //TODO(krik): choose the mode by command
-  gimbal_control_data.ctrl_mode = GIMBAL_POSITION_MODE;
-  if (is_debug_) {
-    if (valid_key_ == 'h') {
-      gimbal_control_data.ctrl_mode = GIMBAL_POSITION_MODE;
-    } else if (valid_key_ == 'i') {
-      gimbal_control_data.ctrl_mode = GIMBAL_SHOOT_BUFF;
-    } else if (valid_key_ == 'j') {
-      gimbal_control_data.ctrl_mode = GIMBAL_PATROL_MODE;
-    } else if (valid_key_ == 'k') {
-      gimbal_control_data.ctrl_mode = GIMBAL_TRACK_ARMOR;
-    } else if (valid_key_ == 'l') {
-      gimbal_control_data.ctrl_mode = GIMBAL_FOLLOW_ZGYRO;
-    } else if (valid_key_ == 'm') {
-      gimbal_control_data.ctrl_mode = GIMBAL_INIT;
-    } else if (valid_key_ == 'n') {
-      gimbal_control_data.ctrl_mode = GIMBAL_RELAX;
-    }
-  }
-  gimbal_control_data.pit_ref = msg->enemy_pitch * 180 / M_PI;
-  gimbal_control_data.yaw_ref = msg->enemy_yaw * 180 / M_PI;
-  gimbal_control_data.visual_valid = 1;
+  GimbalControl gimbal_control_data = gimbal_control;
   int length = sizeof(GimbalControl), total_length = length + HEADER_LEN + CMD_LEN + CRC_LEN;
   SendDataHandle(GIMBAL_CTRL_ID, (uint8_t *) &gimbal_control_data, pack, length);
   if (total_length <= free_length_) {
@@ -475,33 +503,11 @@ void SerialComNode::GimbalControlCallback(const messages::EnemyPosConstPtr &msg)
   }
 }
 
-void SerialComNode::ChassisControlCallback(const geometry_msgs::Twist::ConstPtr &vel) {
-  static int count = 0, time_ms = 0, compress = 0;
-  static double frequency = 0;
-  static struct timeval time_last, time_current;
-  gettimeofday(&time_current, nullptr);
-  if (count == 0) {
-    count++;
-  } else {
-    time_ms = (time_current.tv_sec - time_last.tv_sec) * 1000 + (time_current.tv_usec - time_last.tv_usec) / 1000;
-    frequency = 1000.0 / time_ms;
-  }
-  time_last = time_current;
-  compress++;
-  if (compress == COMPRESS_TIME) {
-    std::unique_lock<std::mutex> lock(mutex_pack_);
-    compress = 0;
-    uint8_t pack[PACK_MAX_SIZE];
-    ChassisControl chassis_control_data;
-//TODO(Krik): get the effective command from the decision module
-    chassis_control_data.ctrl_mode = AUTO_SEPARATE_GIMBAL;    //AUTO_FOLLOW_GIMBAL
-
-    chassis_control_data.x_speed = vel->linear.x * 1000.0;
-    chassis_control_data.y_speed = vel->linear.y * 1000.0;
-    chassis_control_data.w_info.x_offset = 0;
-    chassis_control_data.w_info.y_offset = 0;
-    chassis_control_data.w_info.w_speed = vel->angular.z * 180.0 / M_PI;
-    int length = sizeof(ChassisControl), pack_length = length + HEADER_LEN + CMD_LEN + CRC_LEN;
+void SerialComNode::SendChassisControl(const ChassisControl &chassis_control){
+  std::unique_lock<std::mutex> lock(mutex_pack_);
+  uint8_t pack[PACK_MAX_SIZE];
+  ChassisControl chassis_control_data = chassis_control;
+  int length = sizeof(ChassisControl), pack_length = length + HEADER_LEN + CMD_LEN + CRC_LEN;
     SendDataHandle(CHASSIS_CTRL_ID, (uint8_t *) &chassis_control_data, pack, length);
     if (pack_length <= free_length_) {
       memcpy(tx_buf_ + total_length_, pack, pack_length);
@@ -510,7 +516,46 @@ void SerialComNode::ChassisControlCallback(const geometry_msgs::Twist::ConstPtr 
     } else {
       LOG_WARNING << "Overflow in Chassis CB";
     }
+}
+
+void SerialComNode::ChassisControlCallback(const geometry_msgs::Twist::ConstPtr &vel) {
+ if (chassis_mode_ == ChassisMode::AUTO_SEPARATE_GIMBAL) {
+    uint8_t pack[PACK_MAX_SIZE];
+    ChassisControl chassis_control_data;
+    chassis_control_data.ctrl_mode = AUTO_SEPARATE_GIMBAL;
+
+    chassis_control_data.x_speed = vel->linear.x * 1000.0;
+    chassis_control_data.y_speed = vel->linear.y * 1000.0;
+    chassis_control_data.w_info.x_offset = 0;
+    chassis_control_data.w_info.y_offset = 0;
+    chassis_control_data.w_info.w_speed = vel->angular.z * 180.0 / M_PI;
+
+    SendChassisControl(chassis_control_data);
   }
+}
+
+bool SerialComNode::CheckStatusCallback(messages::CheckStatus::Request  &req,
+                                      messages::CheckStatus::Response &res) {
+  std::unique_lock<std::mutex> lock(mutex_pack_);
+  for(int i = 0; i < 10; i++) {
+    uint8_t pack[PACK_MAX_SIZE];
+    GlobalErrorLevel error_level_data;
+    if(req.self_check_passed)
+      error_level_data.err_level = GLOBAL_NORMAL;
+    else
+      error_level_data.err_level = SOFTWARE_ERROR;
+    int length = sizeof(GlobalErrorLevel), total_length = length + HEADER_LEN + CMD_LEN + CRC_LEN;
+    SendDataHandle(ERROR_LEVEL_ID, (uint8_t *) &error_level_data, pack, length);
+    if (total_length <= free_length_) {
+      memcpy(tx_buf_ + total_length_, pack, total_length);
+      free_length_ -= total_length;
+      total_length_ += total_length;
+    } else {
+      LOG_WARNING << "Overflow in SerialCheck CB";
+    }
+  }
+  res.received = true;
+  return true;
 }
 
 void SerialComNode::SendDataHandle(uint16_t cmd_id,
@@ -525,6 +570,101 @@ void SerialComNode::SendDataHandle(uint16_t cmd_id,
   AppendCrcOctCheckSum(packed_data, HEADER_LEN);
   memcpy(packed_data + HEADER_LEN + CMD_LEN, topack_data, len);
   AppendCrcHexCheckSum(packed_data, HEADER_LEN + CMD_LEN + CRC_LEN + len);
+}
+
+bool SerialComNode::SetChassisMode(messages::ChassisMode::Request  &req,
+                                   messages::ChassisMode::Response  &res)
+{
+
+  if(req.chassis_mode > 6 || req.chassis_mode < 0){
+    LOG_ERROR << "Invalid chassis mode, num = " << req.chassis_mode;
+    res.received = false;
+    return false;
+  }
+
+  LOG_INFO << "Set chassis mode to " << static_cast<int>(req.chassis_mode);
+  chassis_mode_ = static_cast<ChassisMode>(req.chassis_mode);
+  ChassisControl chassis_control;
+  chassis_control.ctrl_mode = chassis_mode_;
+  chassis_control.x_speed = 0;
+  chassis_control.y_speed = 0;
+  chassis_control.w_info.x_offset = 0;
+  chassis_control.w_info.y_offset = 0;
+  chassis_control.w_info.w_speed = 0;
+
+
+  if(req.chassis_mode == ChassisMode::DODGE_MODE) {
+    SendChassisControl(chassis_control);
+  }
+
+  res.received = true;
+  return true;
+}
+
+bool SerialComNode::SetGimbalMode(messages::GimbalMode::Request &req,
+                                  messages::GimbalMode::Response &res) {
+  if(req.gimbal_mode > 8 || req.gimbal_mode < 0){
+    LOG_ERROR << "Invalid gimbal mode, num = " << req.gimbal_mode;
+    res.received = false;
+    return false;
+  }
+  LOG_INFO << "Set gimbal mode to " << static_cast<int>(req.gimbal_mode);
+  gimbal_mode_ = static_cast<GimbalMode>(req.gimbal_mode);
+  GimbalControl gimbal_control;
+  gimbal_control.ctrl_mode = gimbal_mode_;
+  gimbal_control.time = 0;
+
+  gimbal_control.distance = 0;
+  gimbal_control.pit_ref  = 0;
+  gimbal_control.yaw_ref  = 0;
+
+  gimbal_control.x = 0;
+  gimbal_control.y = 0;
+  gimbal_control.z = 0;
+
+  gimbal_control.visual_valid = 0;
+
+  if(req.gimbal_mode == GimbalMode::GIMBAL_PATROL_MODE ||
+      req.gimbal_mode == GimbalMode::GIMBAL_RELAX) {
+    SendGimbalControl(gimbal_control);
+  }
+
+  res.received = true;
+  return true;
+}
+
+bool SerialComNode::ShootModeControl(messages::ShootModeControl::Request &req,
+                                 messages::ShootModeControl::Response &res) {
+
+  uint8_t pack[PACK_MAX_SIZE];
+
+  shoot_control_.shoot_cmd = 0;
+
+  if(req.c_shoot_cmd){
+    shoot_control_.c_shoot_cmd = 1;
+  } else {
+    shoot_control_.c_shoot_cmd = 0;
+  }
+
+  if(req.fric_wheel_run){
+    shoot_control_.fric_wheel_run = 1;
+  } else{
+    shoot_control_.fric_wheel_run = 0;
+  }
+
+  int length = sizeof(ShootControl), pack_length = length + HEADER_LEN + CMD_LEN + CRC_LEN;
+  SendDataHandle(SHOOT_CTRL_ID, (uint8_t *) &shoot_control_, pack, length);
+  if (pack_length_ <= free_length_) {
+    memcpy(tx_buf_ + total_length_, pack, pack_length);
+    free_length_ -= pack_length;
+    total_length_ += pack_length;
+    res.received = true;
+  } else {
+    LOG_WARNING << "Overflow in ShootControl";
+    res.received = false;
+    return false;
+  }
+  return true;
 }
 
 void SerialComNode::SendPack() {

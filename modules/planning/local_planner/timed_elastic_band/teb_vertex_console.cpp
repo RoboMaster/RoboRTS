@@ -246,7 +246,9 @@ bool TebVertexConsole::InitTEBtoGoal(const DataBase &start,
           break;
         }
 
-        auto temp_data = DataConverter::LocalConvertCData(start.GetPosition().coeffRef(0) + i*dx, start.GetPosition().coeffRef(1) + i*dy, orient_init);
+        auto temp_data = DataConverter::LocalConvertCData(start.GetPosition().coeffRef(0) + i*dx,
+                                                          start.GetPosition().coeffRef(1) + i*dy,
+                                                          orient_init);
         AddPoseAndTimeDiff(temp_data.first, temp_data.second, timestep);
       }
 
@@ -283,7 +285,8 @@ bool TebVertexConsole::InitTEBtoGoal(std::vector<DataBase> &plan,
                                      double dt,
                                      bool estimate_orient,
                                      int min_samples,
-                                     bool guess_backwards_motion) {
+                                     bool guess_backwards_motion,
+                                     bool micro_control) {
 
   if (!IsInit()) {
     DataBase start = plan.front();
@@ -300,13 +303,16 @@ bool TebVertexConsole::InitTEBtoGoal(std::vector<DataBase> &plan,
 
     for (int i = 1; i < (int) plan.size() - 1; ++i) {
       double yaw;
-      if (estimate_orient) {
+      if (estimate_orient && !micro_control) {
         double dx = plan[i + 1].GetPosition().coeffRef(0) - plan[i].GetPosition().coeffRef(0);
         double dy = plan[i + 1].GetPosition().coeffRef(1) - plan[i].GetPosition().coeffRef(1);
-        plan[i].SetTheta(std::atan2(dy, dx));
         /*if (backwards) {
-          plan[i].GetTheta() = g2o::normalize_theta(yaw + M_PI);
-        } */
+          yaw = g2o::normalize_theta(std::atan2(dy, dx) + M_PI);
+          plan[i].SetTheta(yaw);
+        } else*/ {
+          plan[i].SetTheta(std::atan2(dy, dx));
+        }
+
       }
       AddPoseAndTimeDiff(plan[i], dt);
     }

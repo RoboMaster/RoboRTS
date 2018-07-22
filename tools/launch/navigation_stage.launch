@@ -1,0 +1,36 @@
+<launch>
+  <arg name="map" value="icra"/>
+  <master auto="start"/>
+  
+  <param name="/use_sim_time" value="true"/>
+
+
+  <!-- Run the map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find roborts)/tools/maps/$(arg map).yaml" respawn="false" />
+  
+  <!-- Run the Stage Simulator -->
+  <node pkg="stage_ros" type="stageros" name="stageros" args="$(find roborts)/tools/worlds/$(arg map).world" respawn="false" >
+    <remap from="base_scan" to="scan"/> 
+    <param name="base_watchdog_timeout" value="0.01"/>
+  </node>
+  
+  <!-- Run the rviz -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find roborts)/tools/rviz/rm.rviz" />
+
+  <!-- Run the SelfCheck Node -->
+  <node pkg="roborts" type="self_check_node" name="self_check_node" respawn="false" />
+
+  <!-- Run the Localization Node -->
+  <node pkg="roborts" type="localization_node" name="localization_node" respawn="false" />
+
+  <!-- Run the Global Planner Node -->
+  <node pkg="roborts" type="global_planner_node" name="global_planner_node" respawn="false" />
+
+  <!-- Run the Local Planner Node -->
+  <node pkg="roborts" type="local_planner_node" name="local_planner_node" respawn="false" />
+
+  <!-- Run the Decision Node -->
+  <node pkg="roborts" type="test_decision_node" name="test_decision_node" respawn="false" />
+
+
+</launch>

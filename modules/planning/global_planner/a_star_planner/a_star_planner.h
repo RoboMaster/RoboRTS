@@ -111,6 +111,8 @@ class AStarPlanner : public GlobalPlannerBase {
   float heuristic_factor_;
   //! inaccessible_cost
   unsigned int inaccessible_cost_;
+  //! goal_search_tolerance
+  unsigned int goal_search_tolerance_;
   //! gridmap height size
   unsigned int gridmap_height_;
   //! gridmap height width

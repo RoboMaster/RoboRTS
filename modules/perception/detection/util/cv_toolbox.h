@@ -1,14 +1,11 @@
 /****************************************************************************
  *  Copyright (C) 2018 RoboMaster.
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ *  This program is free software: you can redistribute it and/or modify *  it under the terms of the GNU General Public License as published by *  the Free Software Foundation, either version 3 of the License, or *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
@@ -94,17 +91,44 @@ class CVToolbox {
    * @param image Input image ref
    * @return Single channel image
    */
-  cv::Mat DistillationColor(const cv::Mat &src_img, unsigned int color) {
-    std::vector<cv::Mat> bgr;
-    cv::split(src_img, bgr);
-    if (color == RED) {
-      cv::Mat result_img;
-      cv::subtract(bgr[2], bgr[1], result_img);
-      return result_img;
-    } else if (color == BLUE) {
-      cv::Mat result_img;
-      cv::subtract(bgr[0], bgr[2], result_img);
-      return result_img;
+  cv::Mat DistillationColor(const cv::Mat &src_img, unsigned int color, bool using_hsv) {
+    if(using_hsv) {
+      cv::Mat img_hsv;
+      cv::cvtColor(src_img, img_hsv, CV_BGR2HSV);
+      if (color == BLUE) {
+        cv::Mat img_hsv_blue, img_threshold_blue;
+        img_hsv_blue = img_hsv.clone();
+        cv::Mat blue_low(cv::Scalar(90, 150, 46));
+        cv::Mat blue_higher(cv::Scalar(140, 255, 255));
+        cv::inRange(img_hsv_blue, blue_low, blue_higher, img_threshold_blue);
+        return img_threshold_blue;
+      } else {
+        cv::Mat img_hsv_red1, img_hsv_red2, img_threshold_red, img_threshold_red1, img_threshold_red2;
+        img_hsv_red1 = img_hsv.clone();
+        img_hsv_red2 = img_hsv.clone();
+        cv::Mat red1_low(cv::Scalar(0, 43, 46));
+        cv::Mat red1_higher(cv::Scalar(3, 255, 255));
+
+        cv::Mat red2_low(cv::Scalar(170, 43, 46));
+        cv::Mat red2_higher(cv::Scalar(180, 255, 255));
+        cv::inRange(img_hsv_red1, red1_low, red1_higher, img_threshold_red1);
+        cv::inRange(img_hsv_red2, red2_low, red2_higher, img_threshold_red2);
+        img_threshold_red = img_threshold_red1 | img_threshold_red2;
+        //cv::imshow("img_threshold_red", img_threshold_red);
+        return img_threshold_red;
+      }
+    } else {
+      std::vector<cv::Mat> bgr;
+      cv::split(src_img, bgr);
+      if (color == RED) {
+        cv::Mat result_img;
+        cv::subtract(bgr[2], bgr[1], result_img);
+        return result_img;
+      } else if (color == BLUE) {
+        cv::Mat result_img;
+        cv::subtract(bgr[0], bgr[2], result_img);
+        return result_img;
+      }
     }
   }
   /**

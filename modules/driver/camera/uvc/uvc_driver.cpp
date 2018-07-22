@@ -55,8 +55,13 @@ void UVCDriver::Init(unsigned int camera_num) {
 void UVCDriver::StartReadCamera(unsigned int camera_num, cv::Mat &img) {
   if(!read_camera_initialized_)
     Init(camera_num);
-  else
+  else {
     cameras_[camera_num].cap_handle >> img;
+    img = img(cv::Rect(cameras_[camera_num].width_offset, 
+                       cameras_[camera_num].height_offset,
+                       cameras_[camera_num].resolution_width, 
+                       cameras_[camera_num].resolution_height));
+  }
 }
 /**
  * @brief Stop to read image.

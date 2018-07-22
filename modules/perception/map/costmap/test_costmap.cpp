@@ -61,10 +61,10 @@ int main(int argc, char** argv) {
   tf::TransformListener tf(ros::Duration(10));
   rrts::perception::map::CostmapInterface costmap_interface("map",
                                                             tf,
-                                                            "modules/perception/map/costmap/config/costmap_parameter_config_for_local_plan.prototxt");
+                                                            "/modules/perception/map/costmap/config/costmap_parameter_config_for_local_plan.prototxt");
 //  rrts::perception::map::CostmapInterface costmap_interface("map",
 //                                                            tf,
-//                                                            "modules/perception/map/costmap/config/costmap_parameter_config_for_global_plan.prototxt");
+//                                                            "/modules/perception/map/costmap/config/costmap_parameter_config_for_global_plan.prototxt");
   ros::spin();
   return 0;
 }

@@ -1,0 +1,27 @@
+<launch>
+  <master auto="start"/>
+  <arg name="map" value="icra"/>
+  <param name="/use_sim_time" value="true"/>
+
+  <!-- Run the Stage Simulator -->
+  <node pkg="stage_ros" type="stageros" name="stageros" args="$(find roborts)/tools/worlds/$(arg map).world" respawn="false" >
+    <remap from="base_scan" to="scan"/> 
+    <param name="base_watchdog_timeout" value="0.01"/>
+  </node>
+
+  <!-- Run the slam -->
+  <include file="$(find roborts)/tools/launch/slam_gmapping.xml"/>
+
+  <!-- Run the rviz -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find roborts)/tools/rviz/rm.rviz" />
+  
+  <!-- Run the Global Planner Node -->
+  <node pkg="roborts" type="global_planner_node" name="global_planner_node" respawn="false" />
+
+  <!-- Run the Local Planner Node -->
+  <node pkg="roborts" type="local_planner_node" name="local_planner_node" respawn="false" />
+
+  <!-- Run the Decision Node -->
+  <node pkg="roborts" type="test_decision_node" name="test_decision_node" respawn="false" />
+</launch>
+

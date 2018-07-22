@@ -1,0 +1,7 @@
+#uint8 shoot_cmd
+bool c_shoot_cmd
+bool fric_wheel_run
+
+---
+
+bool received

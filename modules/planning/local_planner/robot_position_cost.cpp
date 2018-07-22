@@ -68,7 +68,7 @@ double RobotPositionCost::FootprintCost (const Eigen::Vector2d& position, const 
   if (footprint.size() < 3) {
     unsigned char cost = costmap_.GetCost(cell_x, cell_y);
 
-    if (cost == LETHAL_OBSTACLE  || cost == NO_INFORMATION) {
+    if (cost == LETHAL_OBSTACLE  || cost == NO_INFORMATION /*|| cost == INSCRIBED_INFLATED_OBSTACLE*/) {
       return -1.0;
     }
     return cost;

@@ -1,5 +1,6 @@
 project(localization)
 add_subdirectory(amcl)
+
 file(GLOB LocalizationProtoFiles "${CMAKE_CURRENT_SOURCE_DIR}/proto/*.proto")
 
 rrts_protobuf_generate_cpp(
@@ -38,6 +39,5 @@ target_link_libraries(localization_client
   ${catkin_LIBRARIES}
   ${GLOG_LIBRARY}
   )
-#add_library(localization_config SHARED ${LocalizationProtoSrcs} ${LocalizationProtoHeaders})
-#add_library(auto_pilot::localization::localization_config ALIAS localization_config)
+
 

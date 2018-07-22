@@ -121,7 +121,7 @@ CostmapInterface::CostmapInterface(std::string map_name,
     }
   }
   costmap_pub_ = private_nh.advertise<nav_msgs::OccupancyGrid>(name_ + "/costmap", 10);
-  map_update_thread_ = new boost::thread(boost::bind(&CostmapInterface::MapUpdateLoop, this, map_update_frequency_));
+  map_update_thread_ = new std::thread(std::bind(&CostmapInterface::MapUpdateLoop, this, map_update_frequency_));
   if (is_rolling_window_) {
     layered_costmap_->ResizeMap((unsigned int) map_width_ / map_resolution_,
                                 (unsigned int) map_height_ / map_resolution_,
@@ -337,11 +337,11 @@ bool CostmapInterface::GetRobotPose(tf::Stamped<tf::Pose> &global_pose) const {
     return false;
   }
   // check global_pose timeout
-  if (current_time.toSec() - global_pose.stamp_.toSec() > transform_tolerance_) {
-    LOG_WARNING << "Interface transform timeout. Current time: " << current_time.toSec() << ", global_pose stamp: "
-                << global_pose.stamp_.toSec() << ", tolerance: " << transform_tolerance_;
-    return false;
-  }
+  //if (current_time.toSec() - global_pose.stamp_.toSec() > transform_tolerance_) {
+  //  LOG_WARNING << "Interface transform timeout. Current time: " << current_time.toSec() << ", global_pose stamp: "
+  //              << global_pose.stamp_.toSec() << ", tolerance: " << transform_tolerance_;
+  //  return false;
+  //}
   return true;
 }
 
@@ -437,7 +437,7 @@ void CostmapInterface::ClearCostMap() {
 }
 
 void CostmapInterface::ClearLayer(CostmapLayer *costmap_layer_ptr, double pose_x, double pose_y) {
-  boost::unique_lock<Costmap2D::mutex_t> lock(*(costmap_layer_ptr->GetMutex()));
+  std::unique_lock<Costmap2D::mutex_t> lock(*(costmap_layer_ptr->GetMutex()));
   double reset_distance = 0.1;
   double start_point_x = pose_x - reset_distance / 2;
   double start_point_y = pose_y - reset_distance / 2;

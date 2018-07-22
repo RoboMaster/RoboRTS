@@ -1,0 +1,5 @@
+classes= 2
+train  = modules/perception/detection/yolo/data/infantry/train.txt
+valid  = modules/perception/detection/yolo/data/infantry/test.txt
+names  = modules/perception/detection/yolo/config/mobilenet.names
+backup = backup

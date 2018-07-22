@@ -1,6 +1,7 @@
 project(armor_detection)
 
 add_subdirectory(constraint_set)
+add_subdirectory(clustering)
 
 file(GLOB ProtoFiles "${CMAKE_CURRENT_SOURCE_DIR}/proto/*.proto")
 rrts_protobuf_generate_cpp(${CMAKE_CURRENT_SOURCE_DIR}/proto ArmorDetectionProtoSrc ArmorDetectionProtoHds ${ProtoFiles})
@@ -30,8 +31,6 @@ target_include_directories(${PROJECT_NAME}_node
   PRIVATE
   ${OpenCV_INCLUDE_DIRECTORIES}
 )
-
-
 #armor_detection_client_test
 add_executable(${PROJECT_NAME}_client
   armor_detection_client.cpp

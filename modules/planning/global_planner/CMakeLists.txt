@@ -27,6 +27,7 @@ add_executable(${PROJECT_NAME}_client
   global_planner_client.cpp)
 target_link_libraries(${PROJECT_NAME}_client
   PRIVATE
+  common::log
   ${catkin_LIBRARIES}
 )
 

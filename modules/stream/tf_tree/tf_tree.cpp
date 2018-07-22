@@ -24,7 +24,7 @@ namespace tf_tree {
 
 TFTree::TFTree(std::string name): rrts::common::RRTS::RRTS(name) {
   running_ = false;
-  std::string file_name = "modules/stream/tf_tree/config/tf_tree.prototxt";
+  std::string file_name = "/modules/stream/tf_tree/config/tf_tree.prototxt";
   coordinate_trans_ = new CoordinateTrans;
   bool read_status = rrts::common::ReadProtoFromTextFile<CoordinateTrans>(file_name, coordinate_trans_);
   CHECK(read_status) << "Cannot open " << file_name;
@@ -59,7 +59,7 @@ void TFTree::AddLeaf(const T *coordinate_trans) {
 }
 
 void TFTree::PubStaticTF(unsigned int tf_num) {
-  ros::Rate rate(20);
+  ros::Rate rate(50);
   while (running_) {
     for (unsigned int i = 0; i < tf_num; i++) {
       tf::StampedTransform stamped_transform(tf_nodes_[i].transform_,

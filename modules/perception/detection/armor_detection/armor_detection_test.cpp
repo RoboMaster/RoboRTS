@@ -31,7 +31,7 @@ using namespace rrts::perception::detection;
 int main(int argc, char **argv) {
   ros::init(argc, argv, "test");
   ArmorDetectionAlgorithms armor_detection_algorithms;
-  bool read_state = rrts::common::ReadProtoFromTextFile("modules/perception/detection/armor_detection/config/armor_detection.prototxt",
+  bool read_state = rrts::common::ReadProtoFromTextFile("/modules/perception/detection/armor_detection/config/armor_detection.prototxt",
                                                         &armor_detection_algorithms);
   if (!read_state) {
     LOG_ERROR << "Cannot open .prototxt file!";

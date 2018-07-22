@@ -76,10 +76,10 @@ class OptimalBase {
 
   }
   virtual bool Optimal(std::vector<DataBase>& initial_plan, const geometry_msgs::Twist* start_vel = NULL,
-                    bool free_goal_vel = false) = 0;
+                    bool free_goal_vel = false, bool micro_control = false) = 0;
 
   virtual bool Optimal(const DataBase& start, const DataBase& goal, const geometry_msgs::Twist* start_vel = NULL,
-                    bool free_goal_vel = false) = 0;
+                    bool free_goal_vel = false, bool micro_control = false) = 0;
 
   virtual bool GetVelocity(rrts::common::ErrorInfo &error_info, double& vx, double& vy, double& omega) const = 0;
   virtual void ClearPlanner() = 0;

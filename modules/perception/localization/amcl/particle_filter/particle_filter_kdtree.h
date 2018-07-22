@@ -106,7 +106,7 @@ class ParticleFilterKDTree {
    * @brief Get number of leaves
    * @return Returns number of leaves.
    */
-  int GetLeafCount() const;
+  const int &GetLeafCount() const;
   /**
    * @brief Destuctor
    */

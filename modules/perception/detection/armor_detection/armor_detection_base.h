@@ -31,7 +31,7 @@ class ArmorDetectionBase {
  public:
   ArmorDetectionBase();
   virtual void LoadParam();
-  virtual ErrorInfo DetectArmor(double &distance, double &pitch, double &yaw) = 0;
+  virtual ErrorInfo DetectArmor(bool &detected, double &x, double &y, double &z, double &distance, double &pitch, double &yaw) = 0;
   virtual ~ArmorDetectionBase() = default;
 };
 } //namespace detection

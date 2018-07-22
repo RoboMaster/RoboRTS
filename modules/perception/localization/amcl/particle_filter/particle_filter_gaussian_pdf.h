@@ -42,6 +42,7 @@
 #include <stdlib.h>
 #include <random>
 #include "modules/perception/localization/amcl/math/math.h"
+#include "common/log.h"
 
 namespace rrts {
 namespace perception {
@@ -70,12 +71,7 @@ class ParticleFilterGaussianPdf {
    */
   math::Vec3d GenerateSample();
 
-  /**
-   * @brief Generate random number from a zero-mean Gaussian distribution, with standard deviation sigma
-   * @param sigma Standard deviation of gaussian distribution
-   * @return Random double number from the gaussian distribution
-   */
-  double RandomGaussianNum(double sigma);
+
  private:
 
   math::Vec3d mean_;

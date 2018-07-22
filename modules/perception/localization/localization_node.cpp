@@ -22,24 +22,20 @@ namespace perception {
 namespace localization {
 
 LocalizationNode::LocalizationNode(std::string name) :
-    rrts::common::RRTS::RRTS(name,4),
-    as_(nh_, "localization_node_action", boost::bind(&LocalizationNode::ActionCallback, this, _1), false) {
-  if(Init().IsOK()){
-    initialized_ = true;
-    node_state_ = rrts::common::IDLE;
-  } else{
-    LOG_ERROR << "Module localization_node initalized failed!";
-  }
-  as_.start();
+    rrts::common::RRTS::RRTS(name,4) {
+
+  CHECK(Init()) << "Module localization_node initalized failed!";
+  initialized_ = true;
+
 }
 
-ErrorInfo LocalizationNode::Init() {
+bool LocalizationNode::Init() {
 
-  std::string prototxt_file_name = "modules/perception/localization/config/localization.prototxt";
+  std::string prototxt_file_name = "/modules/perception/localization/config/localization.prototxt";
   bool read_state = rrts::common::ReadProtoFromTextFile(prototxt_file_name,&localization_config_);
   if(!read_state){
     LOG_ERROR << "Cannot open " << prototxt_file_name;
-    return ErrorInfo(ErrorInfo(rrts::common::ErrorCode::LOCALIZATION_INIT_ERROR));
+    return false;
   }
 
   tf_broadcaster_ptr_ = new tf::TransformBroadcaster();
@@ -48,6 +44,14 @@ ErrorInfo LocalizationNode::Init() {
   odom_frame_ = localization_config_.odom_frame_id();
   global_frame_ = localization_config_.global_frame_id();
   base_frame_ = localization_config_.base_frame_id();
+
+  init_pose_ << localization_config_.initial_pose_x(),
+      localization_config_.initial_pose_y(),
+      localization_config_.initial_pose_a();
+
+  init_cov_ << localization_config_.initial_cov_xx(),
+      localization_config_.initial_cov_yy(),
+      localization_config_.initial_cov_aa();
 
   particlecloud_pub_ = nh_.advertise<geometry_msgs::PoseArray>("particlecloud", 2, true);
 
@@ -68,70 +72,46 @@ ErrorInfo LocalizationNode::Init() {
 
   pose_pub_ = nh_.advertise<geometry_msgs::PoseWithCovarianceStamped>("amcl_pose", 2, true);
 
-  amcl_ptr_.reset(new Amcl());
-  amcl_ptr_->Init();
+  clean_laser_scan_pub_ = nh_.advertise<sensor_msgs::LaserScan>("clean_laser_scan", 100, true);
+
+  amcl_ptr_= std::make_unique<Amcl>();
+  amcl_ptr_->Init(init_pose_, init_cov_);
+
+  enable_uwb_ = localization_config_.enable_uwb();
+  if(enable_uwb_) {
+    LOG_INFO << "Enable uwb correction!";
+    uwb_frame_ = localization_config_.uwb_frame_id();
+    uwb_topic_name_ = localization_config_.uwb_topic_name();
+    if(localization_config_.uwb_correction_frequency() > 0) {
+      uwb_thread_delay_ = static_cast<int>(1 / localization_config_.uwb_correction_frequency() * 1000);
+    } else
+    {
+      uwb_thread_delay_ = 50.0;
+    }
+    if(localization_config_.use_sim_uwb()) {
+      ground_truth_sub_ = nh_.subscribe("base_pose_ground_truth", 100, &LocalizationNode::GroudTruthCallback, this);
+      fake_uwb_pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>("uwb", 100, true);
+    }
+
+    uwb_pose_sub_ = nh_.subscribe("uwb", 10, &LocalizationNode::UwbCallback, this);
+    uwb_amcl_thread_ = std::thread(std::bind(&LocalizationNode::UwbAmclThread, this));
+  }
 
   transform_tolerance_.fromSec(localization_config_.transform_tolerance());
   LOG_INFO << "Localization Init!";
 
-  return ErrorInfo(rrts::common::ErrorCode::OK);
+  return true;
 
 }
 
 
 LocalizationNode::~LocalizationNode() {
+  uwb_amcl_thread_.join();
   delete laser_scan_filter_;
   delete laser_scan_sub_;
 }
 
-void LocalizationNode::ActionCallback(const messages::LocalizationGoal::ConstPtr &data){
-  messages::LocalizationFeedback feedback;
-  messages::LocalizationResult result;
-
-  if(!initialized_) {
-    feedback.error_code = error_info_.error_code();
-    feedback.error_msg  = error_info_.error_msg();
-    as_.publishFeedback(feedback);
-    as_.setAborted(result, feedback.error_msg);
-  }
-
-//  std::cout<<data->command<<std::endl;
-
-  switch (data->command) {
-    case 1:
-      StartMsgCallback();
-      break;
-    case 3:
-      StopMsgCallback();
-      break;
-    default:break;
-  }
-
-  while(ros::ok()) {
-    if (as_.isPreemptRequested()) {
-      as_.setPreempted();
-      return;
-    }
-  }
-
-}
-
-void LocalizationNode::StartMsgCallback() {
-  LOG_INFO << "Localization node started!";
-  running_ = true;
-  node_state_ = NodeState::RUNNING;
-}
-
-void LocalizationNode::StopMsgCallback() {
-  LOG_INFO << "Localization node stoped!";
-  running_ = false;
-  node_state_ = NodeState::IDLE;
-}
-
 void LocalizationNode::MapCallback(const nav_msgs::OccupancyGrid::ConstPtr &map_msg) {
-
-  while (!running_&&ros::ok()){
-  }
 
   if (first_map_only_ && first_map_received_) {
     return;
@@ -139,21 +119,91 @@ void LocalizationNode::MapCallback(const nav_msgs::OccupancyGrid::ConstPtr &map_
 
   LOG_INFO << "Receive First Map";
 
-  amcl_ptr_->HandleMapMessage(*map_msg);
+  amcl_ptr_->HandleMapMessage(*map_msg, init_pose_, init_cov_);
   first_map_received_ = true;
 
 }
 
-void LocalizationNode::InitialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &msg) {
+void LocalizationNode::UwbCallback(const geometry_msgs::PoseStamped::ConstPtr &uwb_msg) {
 
-  while (!running_&&ros::ok()){
+  if(!first_map_received_ || !amcl_ptr_->CheckTfUpdate()){
+    return;
   }
+
+  ros::Time current_time = ros::Time::now();
+  tf::Stamped<tf::Pose> uwb_pose_in_uwb,uwb_pose_in_map;
+  tf::poseStampedMsgToTF(*uwb_msg,uwb_pose_in_uwb);
+  uwb_pose_in_uwb.stamp_ = ros::Time(0);
+  bool error = false;
+  try {
+    tf_listener_ptr_->transformPose("map",uwb_pose_in_uwb,uwb_pose_in_map);
+  } catch (tf::TransformException e) {
+    error = true;
+    update_uwb_ = false;
+    LOG_ERROR << "Uwb Callback TF error: " << e.what();
+  }
+  if(uwb_init_) {
+
+    math::Vec3d uwb_pose_now;
+    uwb_pose_now << uwb_pose_in_map.getOrigin().x(),
+        uwb_pose_in_map.getOrigin().y(),
+        0;
+
+    auto dt = (current_time - uwb_latest_time);
+    if(dt.toSec() > 0) {
+      uwb_latest_time = current_time;
+      uwb_odom_vel_(0) = (uwb_pose_now(0) - uwb_latest_pose_(0)) / dt.toSec();
+      uwb_odom_vel_(1) = (uwb_pose_now(1) - uwb_latest_pose_(1)) / dt.toSec();
+
+      uwb_latest_pose_ = uwb_pose_now;
+      update_uwb_ = true;
+
+    }
+  } else if(!error){
+    LOG_INFO << "UWB Callback Init";
+    uwb_latest_pose_  << uwb_pose_in_map.getOrigin().x(),
+        uwb_pose_in_map.getOrigin().y(),
+        0;
+    uwb_latest_time = current_time;
+    uwb_init_ = true;
+  }
+}
+
+void LocalizationNode::UwbAmclThread(){
+  while (ros::ok()) {
+    while (!first_map_received_ && !uwb_init_ || !amcl_ptr_->CheckTfUpdate()) {
+      if(!ros::ok()){
+        DLOG_INFO << "Uwb Amcl Thread End";
+        return;
+      }
+      usleep(1);
+    }
+    if(update_uwb_) {
+      amcl_ptr_->UpdateUwb(uwb_latest_pose_ );
+      update_uwb_ = false;
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(uwb_thread_delay_));
+  }
+
+}
+
+void LocalizationNode::GroudTruthCallback(const nav_msgs::Odometry::ConstPtr &msg){
+  geometry_msgs::PoseStamped fake_uwb_pose;
+  fake_uwb_pose.header.stamp = ros::Time::now();
+  fake_uwb_pose.header.frame_id = "uwb";
+  fake_uwb_pose.pose.position.x = msg->pose.pose.position.x + math::RandomGaussianNum<double>(0.1 * 0.2);
+  fake_uwb_pose.pose.position.y = msg->pose.pose.position.y + math::RandomGaussianNum<double>(0.1 * 0.2);
+  fake_uwb_pose.pose.orientation = msg->pose.pose.orientation;
+  fake_uwb_pose_pub_.publish(fake_uwb_pose);
+}
+
+void LocalizationNode::InitialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &msg) {
 
   tf::Pose pose_new;
   TransformInitialPose(pose_new, msg);
   // Transform into the global frame
-  LOG_INFO << "Setting pose " << ros::Time::now().toSec() << ", "
-           << pose_new.getOrigin().x() << ", " << pose_new.getOrigin().y();
+  DLOG_INFO << "Setting pose " << ros::Time::now().toSec() << ", "
+            << pose_new.getOrigin().x() << ", " << pose_new.getOrigin().y();
 
   math::Vec3d init_pose_mean;
   math::Mat3d init_pose_cov;
@@ -175,11 +225,7 @@ void LocalizationNode::InitialPoseCallback(const geometry_msgs::PoseWithCovarian
 
 }
 
-
 void LocalizationNode::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr &laser_scan_ptr) {
-
-  while (!running_&&ros::ok()){
-  }
 
   if (!first_map_received_) {
     return;
@@ -219,11 +265,12 @@ void LocalizationNode::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr 
                     particle_cloud_poses_,
                     hyp_pose_);
 
+  sensor_msgs::LaserScan clean_laser_scan_msg = amcl_ptr_->GetCleanLaserScan();
+  clean_laser_scan_pub_.publish(clean_laser_scan_msg);
+
   if (amcl_ptr_->CheckTfUpdate()) {
-//	std::cout << "Updated TF" << std::endl;
     PublishUpdatedTF();
   } else if (latest_tf_valid_) {
-//	std::cout << "Latest TF" << std::endl;
     PublishLatestValidTF();
   }
 
@@ -330,10 +377,10 @@ bool LocalizationNode::TransformLaserpose(const sensor_msgs::LaserScan &laser_sc
   laser_pose.setZero();
   laser_pose[0] = laser_pose_stamp.getOrigin().x();
   laser_pose[1] = laser_pose_stamp.getOrigin().y();
-  LOG_INFO << ("Received laser's pose wrt robot: %.3f %.3f %.3f",
-      laser_pose[0],
-      laser_pose[1],
-      laser_pose[2]);
+  DLOG_INFO << "Received laser's pose wrt robot: "<<
+      laser_pose[0] << ", " <<
+      laser_pose[1] << ", " <<
+      laser_pose[2];
   return true;
 
 }

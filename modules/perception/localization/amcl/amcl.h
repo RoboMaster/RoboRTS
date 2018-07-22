@@ -39,15 +39,18 @@
 #ifndef MODULE_PERCEPTION_LOCALIZATION_AMCL_AMCL_H
 #define MODULE_PERCEPTION_LOCALIZATION_AMCL_AMCL_H
 
-#include <tf/tf.h>
+#include <mutex>
 
+#include <tf/tf.h>
 #include <geometry_msgs/PoseArray.h>
 #include <sensor_msgs/LaserScan.h>
 #include <nav_msgs/OccupancyGrid.h>
 
+
 #include "common/rrts.h"
 #include "common/io.h"
 #include "common/log.h"
+#include "common/timer.h"
 
 #include "modules/perception/localization/amcl/proto/amcl.pb.h"
 #include "modules/perception/localization/amcl/math/math.h"
@@ -60,7 +63,7 @@ namespace rrts {
 namespace perception {
 namespace localization {
 
-const std::string proto_path = "modules/perception/localization/amcl/config/amcl.prototxt";
+const std::string proto_path = "/modules/perception/localization/amcl/config/amcl.prototxt";
 
 //TODO(kevin.li): This class could be a common type in localization module.
 /**
@@ -96,7 +99,7 @@ class Amcl {
   /**
    * @brief Amcl initialization function
    */
-  void Init();
+  void Init(const math::Vec3d &init_pose, const math::Vec3d &init_cov);
 
   /**
    * @brief Amcl destructor.
@@ -107,7 +110,7 @@ class Amcl {
    * @brief Map message handler
    * @param map_msg Static Map message
    */
-  void HandleMapMessage(const nav_msgs::OccupancyGrid &map_msg);
+  void HandleMapMessage(const nav_msgs::OccupancyGrid &map_msg, const math::Vec3d &init_pose, const math::Vec3d &init_cov);
 
   /**
    * @brief Initial pose estimation message handler
@@ -122,6 +125,8 @@ class Amcl {
    * @param laser_pose Laser pose in base frame
    */
   void SetLaserSensorPose(math::Vec3d laser_pose);
+
+  sensor_msgs::LaserScan GetCleanLaserScan();
 
   /**
    * @brief Update AMCL algorithm
@@ -140,6 +145,10 @@ class Amcl {
              geometry_msgs::PoseArray &particle_cloud_pose_msg,
              HypPose &hyp_pose
   );
+
+  void UpdateUwb(const math::Vec3d &uwb_pose, const math::Vec3d &uwb_cov);
+
+  void UpdateUwb(const math::Vec3d &uwb_pose);
 
   /**
    * @brief Check amcl pose publish state
@@ -162,7 +171,7 @@ class Amcl {
  private:
   void FreeMapDependentMemory();
   bool GlobalLocalization();
-  void UpdatePoseFromProto();
+  void UpdatePoseFromProto(const math::Vec3d &init_pose,const math::Vec3d &init_cov);
   void ApplyInitPose();
 
   void UpdateOdomPoseData(math::Vec3d pose);
@@ -181,6 +190,12 @@ class Amcl {
  private:
 
   AmclParam amcl_param_;
+  std::mutex mutex_;
+
+  int max_uwb_particles_ = 1;
+  double uwb_cov_x_ = 0.01;
+  double uwb_cov_y_ = 0.01;
+  double resample_uwb_factor_ = 3.0;
 
   double d_thresh_ = 0.2;
   double a_thresh_ = M_PI/6.0;
@@ -209,6 +224,8 @@ class Amcl {
   ros::Duration cloud_pub_interval_;
 
   static std::vector<std::pair<int,int> > free_space_indices;
+
+  sensor_msgs::LaserScan clean_laser_scan_;
 
   bool laser_update_ = true;
   bool resampled_ = false;

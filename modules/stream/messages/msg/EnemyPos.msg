@@ -1,3 +1,4 @@
-float64 enemy_dist
-float64 enemy_yaw
-float64 enemy_pitch
+geometry_msgs/PoseStamped enemy_pos
+float64 dis
+float64 pitch
+float64 yaw

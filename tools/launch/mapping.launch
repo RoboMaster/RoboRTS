@@ -1,0 +1,23 @@
+<launch>
+  <master auto="start"/>
+   <node name="rplidar_node" pkg="rplidar_ros" type="rplidarNode" output="screen">
+      <param name="serial_port" type="string" value="/dev/rplidar"/>
+      <param name="serial_baudrate" type="int" value="115200"/>
+      <param name="frame_id" type="string" value="base_laser_link"/>
+      <param name="inverted" type="bool" value="false"/>
+      <param name="angle_compensate" type="bool" value="true"/>
+   </node>
+
+  <!-- Run the slam -->
+  <include file="$(find roborts)/tools/launch/slam_gmapping.xml"/>
+  <!-- Run the Global Planner Node -->
+  <node pkg="roborts" type="global_planner_node" name="global_planner_node" respawn="false" />
+
+  <!-- Run the Local Planner Node -->
+  <node pkg="roborts" type="local_planner_node" name="local_planner_node" respawn="false" />
+
+  <!-- Run the Decision Node -->
+  <node pkg="roborts" type="test_decision_node" name="test_decision_node" respawn="false" />
+
+</launch>
+

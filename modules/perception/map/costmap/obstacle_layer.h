@@ -52,6 +52,8 @@
 #ifndef MODULES_PERCEPTION_MAP_COSTMAP_OBSTACLE_LAYER_H
 #define MODULES_PERCEPTION_MAP_COSTMAP_OBSTACLE_LAYER_H
 
+#include <chrono>
+
 #include <nav_msgs/OccupancyGrid.h>
 #include <sensor_msgs/LaserScan.h>
 #include <laser_geometry/laser_geometry.h>
@@ -86,9 +88,9 @@ class ObstacleLayer : public CostmapLayer {
   virtual void UpdateBounds(double robot_x, double robot_y, double robot_yaw, double *min_x, double *min_y,
                             double *max_x, double *max_y) override;
   void LaserScanCallback(const sensor_msgs::LaserScanConstPtr &message,
-                         const boost::shared_ptr<ObservationBuffer> &buffer);
+                         const std::shared_ptr<ObservationBuffer> &buffer);
   void LaserScanValidInfoCallback(const sensor_msgs::LaserScanConstPtr &message,
-                                  const boost::shared_ptr<ObservationBuffer> &buffer);
+                                  const std::shared_ptr<ObservationBuffer> &buffer);
 
  protected:
   bool GetMarkingObservations(std::vector<Observation> &marking_observations) const;
@@ -106,13 +108,14 @@ class ObstacleLayer : public CostmapLayer {
   std::vector<geometry_msgs::Point> transformed_footprint_;
   laser_geometry::LaserProjection projector_;
 
-  std::vector<boost::shared_ptr<message_filters::SubscriberBase> > observation_subscribers_;
-  std::vector<boost::shared_ptr<tf::MessageFilterBase> > observation_notifiers_;
-  std::vector<boost::shared_ptr<ObservationBuffer> > observation_buffers_;
-  std::vector<boost::shared_ptr<ObservationBuffer> > marking_buffers_;
-  std::vector<boost::shared_ptr<ObservationBuffer> > clearing_buffers_;
+  std::vector<std::shared_ptr<message_filters::SubscriberBase> > observation_subscribers_;
+  std::vector<std::shared_ptr<tf::MessageFilterBase> > observation_notifiers_;
+  std::vector<std::shared_ptr<ObservationBuffer> > observation_buffers_;
+  std::vector<std::shared_ptr<ObservationBuffer> > marking_buffers_;
+  std::vector<std::shared_ptr<ObservationBuffer> > clearing_buffers_;
 
   std::vector<Observation> static_clearing_observations_, static_marking_observations_;
+  std::chrono::system_clock::time_point reset_time_;
 };
 
 } //namespace map

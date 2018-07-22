@@ -31,7 +31,7 @@ CameraParam::CameraParam() {
 
 void CameraParam::LoadCameraParam() {
   Cameras camera_info;
-  std::string file_name = "modules/driver/camera/config/camera_param.prototxt";
+  std::string file_name = "/modules/driver/camera/config/camera_param.prototxt";
   bool read_state = rrts::common::ReadProtoFromTextFile(file_name, &camera_info);
   CHECK(read_state) << "Cannot open " << file_name;
 
@@ -49,6 +49,8 @@ void CameraParam::LoadCameraParam() {
     //camera resolution
     cameras_param_[index].resolution_width = camera_info.camera(index).resolution().width();
     cameras_param_[index].resolution_height = camera_info.camera(index).resolution().height();
+    cameras_param_[index].width_offset = camera_info.camera(index).resolution().width_offset();
+    cameras_param_[index].height_offset = camera_info.camera(index).resolution().height_offset();
 
     //fps
     cameras_param_[index].fps = camera_info.camera(index).fps();

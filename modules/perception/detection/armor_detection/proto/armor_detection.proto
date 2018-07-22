@@ -4,5 +4,7 @@ syntax = "proto2";
 message ArmorDetectionAlgorithms {
     repeated string name = 1;
     optional string selected_algorithm = 2;
+    optional uint32 max_rotating_fps = 3;
+    optional uint32 min_rotating_detected_count = 4;
+    optional uint32 undetected_armor_delay = 5;
 }
-

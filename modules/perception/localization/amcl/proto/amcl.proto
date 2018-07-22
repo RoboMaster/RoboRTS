@@ -52,15 +52,13 @@ message AmclParam {
     required double recovery_alpha_slow = 34 [default = 0.001];
     required double recovery_alpha_fast = 35 [default = 0.1];
 
-    required double initial_pose_x = 36[default=93.3249018949];
-    required double initial_pose_y = 37[default=112.965052875];
-    required double initial_pose_a = 38[default=0];
-    required double initial_cov_xx = 39[default=0.1];
-    required double initial_cov_yy = 40[default=0.1];
-    required double initial_cov_aa = 41[default=0.1];
-
     required bool use_global_localization = 42[default=true];
+    required double laser_filter_weight = 43[default=0.05];
 
+    optional int32 max_uwb_particles = 51[default = 10];
+    optional double uwb_cov_x = 52[default = 0.09];
+    optional double uwb_cov_y = 53[default = 0.09];
+    optional double resample_uwb_factor = 54[default = 3.0];
 
 }
 

@@ -27,7 +27,7 @@ void ArmorDetectionBase::LoadParam() {
 
 }
 
-ErrorInfo ArmorDetectionBase::DetectArmor(double &distance, double &pitch, double &yaw) {
+ErrorInfo ArmorDetectionBase::DetectArmor(bool &detected, double &x, double &y, double &z, double &distance, double &pitch, double &yaw) {
 
 }
 } //namespace detection

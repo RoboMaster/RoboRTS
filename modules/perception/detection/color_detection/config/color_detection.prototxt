@@ -1,0 +1,6 @@
+#0: blue, 1: red
+enemy_color: 0
+using_hsv: false
+enable_debug: false
+threshold: 100
+min_pixel_number: 1300

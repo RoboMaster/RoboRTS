@@ -1,3 +1,7 @@
-serial_port: "/dev/rmserial"
+serial_port: "/dev/rm/serial"
 serial_boudrate: 921600
 is_debug: false
+uwb_frame_id: "uwb"
+link_row: 40
+link_column: 130
+link_beam: 100

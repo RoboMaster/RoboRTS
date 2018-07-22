@@ -1,0 +1,10 @@
+syntax = "proto2";
+//package rrts.detection;
+
+message ColorDetectionParams {
+    optional uint32 enemy_color = 1;
+    optional bool using_hsv = 2;
+    optional bool enable_debug = 3;
+    optional uint32 threshold = 4;
+    optional uint32 min_pixel_number = 5;
+}

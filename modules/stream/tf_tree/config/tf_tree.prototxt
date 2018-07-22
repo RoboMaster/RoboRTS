@@ -15,21 +15,6 @@ transformation {
 }
 
 transformation {
-  sensor: "camera0"
-  base: "base_link"
-  rotation{
-    pitch: 0.0
-    yaw  : 0.0
-    roll : 0.0
-  }
-  translation{
-    x: 0.15
-    y: 0.0
-    z: 0.0
-  }
-}
-
-transformation {
   sensor: "camera1"
   base: "base_link"
   rotation{
