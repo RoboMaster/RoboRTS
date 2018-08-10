@@ -1,4 +1,4 @@
-serial_port: "/dev/rm/serial"
+serial_port: "/rm/serial"
 serial_boudrate: 921600
 is_debug: false
 uwb_frame_id: "uwb"

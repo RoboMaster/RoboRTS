@@ -16,11 +16,11 @@ target_link_libraries(ICRA_decision_node
   )
 
 
-add_executable(decision_test
+add_executable(test_decision_node
   decision_test.cpp
   )
 
-target_link_libraries(decision_test
+target_link_libraries(test_decision_node
   PRIVATE
   common::io
   common::log
