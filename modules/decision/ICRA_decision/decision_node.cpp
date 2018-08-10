@@ -21,11 +21,7 @@
 #include "common/log.h"
 
 int main(int argc, char **argv){
-  google::InitGoogleLogging(argv[0]);
-  FLAGS_stderrthreshold = google::WARNING;
-  FLAGS_colorlogtostderr = true;
-  FLAGS_v = 3;
-  google::InstallFailureSignalHandler();
+  rrts::common::GLogWrapper glog_wrapper(argv[0]);
 
   ros::init(argc, argv, "decision_node");
   /*
@@ -54,13 +50,13 @@ int main(int argc, char **argv){
    *                                                                                                                                  CH        TWA
    *
    */
-  auto blackboard_ptr_ = std::make_shared<rrts::decision::Blackboard>("/modules/decision/vic_decision/config/decision.prototxt");
+  auto blackboard_ptr_ = std::make_shared<rrts::decision::Blackboard>("/modules/decision/ICRA_decision/config/decision.prototxt");
 
   auto goal_factory_ = std::make_shared<rrts::decision::GoalFactory>(blackboard_ptr_,
-                                                                     "/modules/decision/vic_decision/config/decision.prototxt");
+                                                                     "/modules/decision/ICRA_decision/config/decision.prototxt");
 
   rrts::decision::DecisionConfig robot_config;
-  rrts::common::ReadProtoFromTextFile("/modules/decision/vic_decision/config/decision.prototxt", &robot_config);
+  rrts::common::ReadProtoFromTextFile("/modules/decision/ICRA_decision/config/decision.prototxt", &robot_config);
 
   //action
   auto shoot_action_ = std::make_shared<rrts::decision::ShootAction>(blackboard_ptr_, goal_factory_);

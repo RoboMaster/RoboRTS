@@ -15,12 +15,14 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
+#include <thread>
+
 #include <ros/ros.h>
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
-#include <thread>
+
 #include "messages/GlobalPlannerAction.h"
 #include "messages/LocalPlannerAction.h"
 
@@ -50,21 +52,10 @@ class DecisionNode {
 
 
     global_planner_actionlib_client_.waitForServer();
-    std::cout << "Global planner module has been connected!" << std::endl;
+    LOG_INFO << "Global planner module has been connected!";
 
     local_planner_actionlib_client_.waitForServer();
-    std::cout << "Local planner module has been connected!" << std::endl;
-
-    tf_ptr_ = std::make_shared<tf::TransformListener>(ros::Duration(10));
-
-    costmap_ptr_ = std::make_shared<rrts::perception::map::CostmapInterface>("decision_costmap",
-                                                                             *tf_ptr_,
-                                                                             "/modules/perception/map/costmap/config/costmap_parameter_config_for_global_plan.prototxt");
-
-    gridmap_width_ = costmap_ptr_->GetCostMap()->GetSizeXCell();
-    gridmap_height_ = costmap_ptr_->GetCostMap()->GetSizeYCell();
-    size_ = gridmap_height_ * gridmap_width_;
-    charmap_ = costmap_ptr_->GetCostMap()->GetCharMap();
+    LOG_INFO << "Local planner module has been connected!";
 
     thread_ = std::thread(&DecisionNode::Execution, this);
   }
@@ -125,7 +116,6 @@ class DecisionNode {
   // Local Planner
   void LocalPlannerDoneCallback(const actionlib::SimpleClientGoalState& state,  const messages::LocalPlannerResultConstPtr& result){
     LOG_INFO<<"Local planner "<<state.toString().c_str()<<"!";
-    //decision_state_ = rrts::common::IDLE;
   }
 
   ~DecisionNode(){
@@ -171,8 +161,9 @@ class DecisionNode {
 }// namespace rrts
 
 int main(int argc, char **argv) {
+  rrts::common::GLogWrapper glog_wrapper(argv[0]);
   ros::init(argc, argv, "decision_node");
-  rrts::decision::DecisionNode global_planner_client;
+  rrts::decision::DecisionNode decision_test_node;
   ros::spin();
   return 0;
 }

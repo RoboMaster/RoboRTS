@@ -84,17 +84,18 @@ void GlobalPlannerNode::GoalCallback(const messages::GlobalPlannerGoal::ConstPtr
   ErrorInfo error_info = GetErrorInfo();
   NodeState node_state = GetNodeState();
 
-//  if (node_state == NodeState::FAILURE) {
-//    messages::GlobalPlannerFeedback feedback;
-//    messages::GlobalPlannerResult result;
-//    feedback.error_code = error_info.error_code();
-//    feedback.error_msg = error_info.error_msg();
-//    result.error_code = feedback.error_code;
-//    as_.publishFeedback(feedback);
-//    as_.setAborted(result,feedback.error_msg);
-//    LOG_ERROR << "Initialization Failed, Failed to execute action!";
-//    return;
-//  }
+  //  TODO: If initialized failed, the progress should be shutdown at once.
+  //  if (node_state == NodeState::FAILURE) {
+  //    messages::GlobalPlannerFeedback feedback;
+  //    messages::GlobalPlannerResult result;
+  //    feedback.error_code = error_info.error_code();
+  //    feedback.error_msg = error_info.error_msg();
+  //    result.error_code = feedback.error_code;
+  //    as_.publishFeedback(feedback);
+  //    as_.setAborted(result,feedback.error_msg);
+  //    LOG_ERROR << "Initialization Failed, Failed to execute action!";
+  //    return;
+  //  }
 
   SetGoal(msg->goal);
 
