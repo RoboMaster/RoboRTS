@@ -1,9 +1,9 @@
 syntax = "proto2";
 
 message Rotation {
-  optional float pitch = 1;
-  optional float yaw = 2;
-  optional float roll = 3;
+  optional float roll = 1;
+  optional float pitch = 2;
+  optional float yaw = 3;
 }
 
 message Translation {

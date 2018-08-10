@@ -43,15 +43,15 @@ class BehaviorTree {
       root_node_->Run();
 
       std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
-      std::chrono::microseconds execution_duration =
-          std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-      std::chrono::microseconds sleep_time = cycle_duration_ - execution_duration;
+      std::chrono::milliseconds execution_duration =
+          std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+      std::chrono::milliseconds sleep_time = cycle_duration_ - execution_duration;
 
       if (sleep_time > std::chrono::microseconds(0)) {
         std::this_thread::sleep_for(sleep_time);
-        LOG_INFO << "sleep: " << sleep_time.count() << "us";
+        LOG_INFO << "sleep: " << sleep_time.count() << "ms";
       } else {
-        LOG_WARNING << "The time planning once is " << execution_duration.count() << " beyond the expected time "
+        LOG_WARNING << "The time tick once is " << execution_duration.count() << " beyond the expected time "
                   << cycle_duration_.count();
       }
 

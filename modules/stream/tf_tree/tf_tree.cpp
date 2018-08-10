@@ -42,9 +42,9 @@ void TFTree::Execute() {
 template<typename T>
 void TFTree::AddLeaf(const T *coordinate_trans) {
   for (unsigned int i = 0; i < tf_num_; i++) {
-    tf::Quaternion rotation(coordinate_trans->transformation(i).rotation().yaw(),
+    tf::Quaternion rotation(coordinate_trans->transformation(i).rotation().roll(),
                             coordinate_trans->transformation(i).rotation().pitch(),
-                            coordinate_trans->transformation(i).rotation().roll());
+                            coordinate_trans->transformation(i).rotation().yaw());
 
     tf::Vector3 transformation(coordinate_trans->transformation(i).translation().x(),
                                coordinate_trans->transformation(i).translation().y(),

@@ -358,8 +358,8 @@ void SerialComNode::DataHandle() {
       break;
     case ROBOT_POS_DATA_ID: memcpy(&robot_position_, data_addr, data_length);
       uwb_position_msg_.header.stamp = current_time;
-      uwb_position_msg_.pose.position.x = ((double)robot_position_.y)/100.0;
-      uwb_position_msg_.pose.position.y = ((double)robot_position_.x)/100.0;
+      uwb_position_msg_.pose.position.x = ((double)robot_position_.x)/100.0;
+      uwb_position_msg_.pose.position.y = ((double)robot_position_.y)/100.0;
       uwb_position_msg_.pose.position.z = 0;
       uwb_position_msg_.pose.orientation = tf::createQuaternionMsgFromYaw(robot_position_.yaw);
       uwb_pose_pub_.publish(uwb_position_msg_);

@@ -208,7 +208,7 @@ sudo apt-get install htop
    ```bash
    KERNEL=="ttyUSB*", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", MODE:="0777", SYMLINK+="rplidar"
    ```
-   同理rmserial.rules文件， 注意`SYMLINK+="rm/serial"`。然后重新加载并启动udev服务。可能需要重新插拔设备后生效。
+   同理配置串口， 注意`SYMLINK+="rm/serial"`。然后重新加载并启动udev服务。可能需要重新插拔设备后生效。
    ```bash
    $ sudo service udev reload
    $ sudo service udev restart
@@ -228,21 +228,26 @@ sudo apt-get install htop
    SUBSYSTEM=="usb", KERNEL=="2-4", ATTR{idVendor}=="1871", ATTR{idProduct}=="0101", SYMLINK+="camera1"
    ```
 
-2. 调试期间，需要配置多机器ROS通信，参考上面ROS其他环境变量的配置
+   相关脚本详见 /tools/scripts/udev, 其中 create_udev_rules.sh 可以快速建立udev规则, 而delete_udev_rules.sh会删除udev规则, 对应的udev规则文件见roborts.rules
 
-3. **Notice**:
+2. 调试期间，需要配置多机器ROS通信，参考上面ROS其他环境变量的配置。
 
-    - 仿真中雷达的frame和实车中可能不相同，注意修改对应参数
+3. **常见说明与提醒**:
+
     - 各个模块参数都在对应模块文件夹的config文件夹中的prototxt文件内，各个参数的定义可以参考各模块API文档
-    - `modules/decision/config/decision.prototxt`文件会配置一开始的巡逻点，为了方便测试最开始还是都注释掉比较好
+    - 仿真中雷达和相机的frame和实车中可能不相同，注意修改对应参数，具体详见`modules/stream/tf_tree`，模块内统一雷达坐标系名称为base_laser_link
+    - `modules/decision/ICRA_decision/config/decision.prototxt`文件会配置一开始的巡逻点，为了方便测试最开始还是都注释掉比较好
     - `modules/perception/localization/amcl/config/amcl.prototxt`文件会配置一开始的默认初始位置
 
 4. 运行实际测试脚本    
   ```bash
   roslaunch roborts 2v2game.launch
+  
   ```
-
 
 ### 自动启动脚本
 
-[FYI](https://magiccvs.byu.edu/wiki/#!computers/systemd.md)
+相关脚本详见`/tools/scripts/upstart`，其中create_upstart_service.sh 可以快速建立启动服务， `delete_upstart_service.sh` 可以删除启动服务; 主要服务包括两个：
+
+- max-performance.service，调用max_performance.sh脚本执行以得到最大化tx2性能，包括开满6核心，单核心性能全开，以及关闭wifi节能模式
+- roborts.service，调用roborts-start.sh脚本启动ros和2v2game的launch文件

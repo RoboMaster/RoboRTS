@@ -3,9 +3,9 @@ transformation {
   sensor: "base_laser_link"
   base: "base_link"
   rotation{
+    roll: 0.0
     pitch: 0.0
-    yaw  : 0.0 
-    roll : 3.1415926
+    yaw: 3.1415926
   }
   translation{
     x: 0.0
@@ -18,9 +18,9 @@ transformation {
   sensor: "camera1"
   base: "base_link"
   rotation{
+    roll: 0.0
     pitch: 0.0
-    yaw  : 0.0
-    roll : 0.0
+    yaw: 0.0
   }
   translation{
     x: 0.0
