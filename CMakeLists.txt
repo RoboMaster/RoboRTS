@@ -25,6 +25,48 @@ find_package(catkin REQUIRED COMPONENTS
   interactive_markers
 )
 
+
+add_action_files(
+  DIRECTORY modules/stream/messages/action
+  FILES
+  EnemyDirection.action
+  example.action
+  LocalPlanner.action
+  GlobalPlanner.action
+  ArmorDetection.action
+  InfantryInfo.action
+  Localization.action
+  BotGoal.action
+)
+
+
+add_message_files(
+  DIRECTORY modules/stream/messages/msg
+  FILES
+  EnemyPos.msg
+  ShootState.msg
+  Odometry.msg
+  GimbalAngle.msg
+  GameInfo.msg
+  RfidInfo.msg
+  ShootInfo.msg
+  RobotHurtData.msg
+  GoalTask.msg
+)
+
+add_service_files(
+  DIRECTORY modules/stream/messages/srv
+  FILES
+  GameBuffStatus.srv
+  ChassisMode.srv
+  GimbalMode.srv
+  SelfCheck.srv
+  CheckStatus.srv
+  ShootModeControl.srv
+)
+
+
+
 find_package(Boost REQUIRED COMPONENTS
   system
   thread
