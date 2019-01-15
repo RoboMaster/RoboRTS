@@ -1,0 +1,40 @@
+para_basic {
+  is_raw_rosmessage: true
+  is_debug: true
+}
+para_costmap_interface {
+  global_frame: "map"
+  robot_base_frame: "base_link"
+  footprint_padding: 0.1
+  transform_tolerance: 3.0
+  distance_threshold: 1.0
+  map_width: 10.0
+  map_height: 10.0
+  map_resolution: 0.05
+  map_origin_x: 0.0
+  map_origin_y: 0.0
+  is_tracking_unknown: false
+  is_rolling_window: false
+  has_obstacle_layer: true
+  has_static_layer: true
+  inflation_file_path: "/config/inflation_layer_config.prototxt"
+  map_update_frequency: 5
+}
+footprint {
+  point {
+    x: -0.3
+    y: -0.225
+  }
+  point {
+    x: -0.3
+    y: 0.225
+  }
+  point {
+    x: 0.3
+    y: 0.225
+  }
+  point {
+    x: 0.3
+    y: -0.225
+  }
+}

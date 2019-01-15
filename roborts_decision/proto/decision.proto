@@ -1,0 +1,55 @@
+syntax = "proto2";
+package roborts_decision;
+
+message Point {
+    optional float x = 1;
+    optional float y = 2;
+    optional float z = 3;
+
+    optional float roll  = 4;
+    optional float pitch = 5;
+    optional float yaw   = 6;
+}
+
+message EscapeConstraint {
+    optional float left_x_limit = 1;
+    optional float right_x_limit = 2;
+    optional float robot_x_limit = 3;
+    optional float left_random_min_x = 4;
+    optional float left_random_max_x = 5;
+    optional float right_random_min_x = 6;
+    optional float right_random_max_x = 7;
+}
+
+message SearchConstraint {
+  optional float x_limit = 1;
+  optional float y_limit = 2;
+}
+
+message WhirlVel {
+  optional float angle_x_vel = 1;
+  optional float angle_y_vel = 2;
+  optional float angle_z_vel = 3;
+}
+
+message MultiRobot {
+  optional Point start_position = 7;
+}
+
+message DecisionConfig {
+    repeated Point point = 1;
+    optional bool simulate = 2 [default = false];
+    optional bool master = 3 [default = false];
+    optional EscapeConstraint escape = 4;
+    repeated Point buff_point = 5;
+    optional SearchConstraint search_limit = 6;
+    optional WhirlVel whirl_vel = 7;
+    optional MultiRobot wing_bot = 8;
+    optional MultiRobot master_bot = 9;
+    optional Point wing_bot_task_point = 10;
+    repeated Point search_region_1 = 11;
+    repeated Point search_region_2 = 12;
+    repeated Point search_region_3 = 13;
+    repeated Point search_region_4 = 14;
+}
+

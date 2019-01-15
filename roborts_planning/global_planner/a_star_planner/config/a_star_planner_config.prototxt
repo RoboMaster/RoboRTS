@@ -1,0 +1,3 @@
+inaccessible_cost: 253
+heuristic_factor: 1.0
+goal_search_tolerance: 0.45

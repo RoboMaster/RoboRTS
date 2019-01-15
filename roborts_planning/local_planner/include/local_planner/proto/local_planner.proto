@@ -1,0 +1,8 @@
+syntax = "proto2";
+package roborts_local_planner;
+
+message LocalAlgorithms {
+    repeated string name = 1;
+    optional string selected_algorithm = 2;
+    optional double frequency = 3;
+}

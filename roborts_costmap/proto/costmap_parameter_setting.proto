@@ -1,0 +1,38 @@
+syntax = "proto2";
+package roborts_costmap;
+
+message ParaBasic {
+    required bool is_raw_rosmessage = 1;
+    optional bool is_debug = 2;
+}
+message ParaCostmapInterface {
+    required string global_frame = 1;
+    required string robot_base_frame = 2;
+    required double footprint_padding = 3;
+    required double transform_tolerance = 4;
+    required double distance_threshold = 5;
+    required double map_width = 6;
+    required double map_height = 7;
+    required double map_origin_x = 8;
+    required double map_origin_y = 9;
+    required double map_resolution = 10;
+    required bool   is_tracking_unknown = 11;
+    required bool   is_rolling_window = 12;
+    required bool   has_obstacle_layer = 13;
+    required bool   has_static_layer = 14;
+    required string inflation_file_path = 15;
+    required double map_update_frequency = 16;
+}
+message Point {
+    required double x = 1;
+    required double y = 2;
+}
+message Footprint {
+    repeated Point point = 1;
+}
+
+message ParaCollection {
+    required ParaCostmapInterface para_costmap_interface = 1;
+    required Footprint footprint = 2;
+    required ParaBasic para_basic = 3;
+}

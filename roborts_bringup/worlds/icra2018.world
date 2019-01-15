@@ -1,0 +1,86 @@
+define block model
+(	
+  size [0.4 0.4 1.2]
+  ranger_return 1
+)
+
+define frontcamera camera
+(
+  size [ 0.050 0.050 0.0500 ]
+  range [ 0.301 8.0 ]
+  resolution [ 640 480 ]
+  fov [ 120 40 ]
+  pantilt [ 0 0 ]
+  alwayson 1
+)
+
+define rplidar ranger
+(
+  sensor(
+    range_max 8.0
+    fov 360
+    samples 360
+  )
+  # generic model properties
+  color "black"
+  size [ 0.050 0.050 0.100 ]
+)
+
+define rmcar position
+(
+  size [0.6 0.45 0.460]
+  origin [0 0 0 0]
+  gui_nose 1
+  drive "omni"
+  # frontcamera(pose [ 0 0 0 0 ])
+  rplidar(pose [ 0 0 0 0 ])
+  odom_error [0.03 0.03 0.00 0.05]
+  # [ xmin xmax ymin ymax zmin zmax amin amax ]				
+  velocity_bounds [-2 2 -2 2 -2 2 -90 90 ]					
+  acceleration_bounds [-2 2 -2 2 -2 2 -90 90]
+  ranger_return 1
+)
+
+define floorplan model
+(
+  # sombre, sensible, artistic
+  color "gray30"
+
+  # most maps will need a bounding box
+  boundary 0
+
+  gui_nose 0
+  gui_grid 0
+  
+  gui_outline 0
+  gripper_return 0
+  fiducial_return 0
+  ranger_return 1
+)
+
+# set the resolution of the underlying raytrace model in meters
+resolution 0.01
+
+interval_sim 50#83  # simulation timestep in milliseconds
+interval_real 50#83
+
+window
+( 
+  size [ 745.000 448.000 ] 
+  rotate [ 0 0 ]
+  scale 29 
+)
+
+# load an environment bitmap
+floorplan
+( 
+  name "RoboMaster Map"
+  bitmap "../maps/icra2018.pgm"
+  size [8.35 5.5 1.000]
+  pose [4.175  2.775  0 0 ]
+)
+
+# throw in a robot
+ rmcar(pose [ 1 1 0 0 ] name "rmcar0" color "blue" )
+# throw in a block for test
+ block(pose [ 7.79 3.45 0 0.3 ] color "red"  )

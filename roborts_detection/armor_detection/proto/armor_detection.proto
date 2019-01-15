@@ -1,0 +1,24 @@
+syntax = "proto2";
+package roborts_detection;
+
+message CameraGimbalTransform{
+    required float offset_x = 1;
+    required float offset_y = 2;
+    required float offset_z = 3;
+    required float offset_pitch = 4;
+    required float offset_yaw = 5;
+}
+
+message ProjectileModelInfo {
+    optional float init_v = 1;
+    optional float init_k = 2;
+}
+
+message ArmorDetectionAlgorithms {
+    repeated string name = 1;
+    optional string selected_algorithm = 2;
+    optional uint32 undetected_armor_delay = 3;
+    optional string camera_name = 4;
+    required CameraGimbalTransform camera_gimbal_transform= 5;
+    optional ProjectileModelInfo projectile_model_info = 6;
+}

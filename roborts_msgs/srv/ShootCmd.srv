@@ -1,0 +1,4 @@
+uint8 mode
+uint8 number
+---
+bool received

@@ -1,0 +1,18 @@
+syntax = "proto2";
+package roborts_costmap;
+message ParaObstacleLayer {
+    required double observation_keep_time = 1;
+    required double expected_update_rate = 2;
+    required double min_obstacle_height = 3;
+    required double max_obstacle_height = 4;
+    required double obstacle_range = 5;
+    required double raytrace_range = 6;
+    required double transform_tolerance = 7;
+    required string topic_string = 8;
+    required string sensor_frame = 9;
+    required bool inf_is_valid = 10;
+    required bool clearing = 11;
+    required bool marking = 12;
+    required bool footprint_clearing_enabled = 13;
+    required bool is_debug = 14;
+}

@@ -1,0 +1,10 @@
+<launch>
+
+    <!--static_transform_publisher x y z yaw pitch roll frame_id child_frame_id-->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_base_laser_link_broadcaster"
+          args="0.15 0.0 0.05 1.57 0.0 0.0 base_link base_laser_link" />
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_camera_link_broadcaster"
+          args="0.0  0.0 0.0  0.0  0.0 0.0 base_link camera" />
+
+</launch>

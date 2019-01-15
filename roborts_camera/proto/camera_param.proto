@@ -1,0 +1,43 @@
+syntax = "proto2";
+package roborts_camera;
+
+message CameraMatrix {
+  repeated double data = 1;
+}
+
+message CameraDistortion {
+  repeated double data = 1;
+}
+
+message Resolution {
+  required uint32 width = 1;
+  required uint32 height = 2;
+
+  required uint32 width_offset = 3;
+  required uint32 height_offset = 4;
+}
+
+message Camera {
+  required string camera_name = 1;
+  required string camera_type = 2;
+  required string camera_path = 3;
+  required CameraMatrix camera_matrix = 4;
+  required CameraDistortion camera_distortion = 5;
+
+  optional uint32 fps = 6;
+  optional Resolution resolution = 7;
+
+  optional bool auto_exposure = 8; //1 open, 0 close
+  optional uint32 exposure_value = 9;
+  optional uint32 exposure_time = 10;//us
+
+  optional bool auto_white_balance = 11; //1 open, 0 close
+
+  optional bool auto_gain = 12;////1 open, 0 close
+
+  optional uint32 contrast = 13;
+}
+
+message Cameras {
+  repeated Camera camera = 1;
+}

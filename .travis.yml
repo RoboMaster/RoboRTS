@@ -1,0 +1,14 @@
+sudo: required
+
+language:   
+  - generic
+
+service:
+  - docker
+
+before_install:
+  - docker pull kevinlad/ros-nav-ubuntu-64
+
+install:
+  - docker run -dit --name rrts_test kevinlad/ros-nav-ubuntu-64
+  - docker exec rrts_test bash rrts_build_test.sh

@@ -1,0 +1,16 @@
+name: "constraint_set"
+selected_algorithm: "constraint_set"
+undetected_armor_delay: 10
+camera_name: "back_camera"
+camera_gimbal_transform {
+    offset_x :0
+    offset_y :10
+    offset_z :9
+    offset_pitch :-2.5
+    offset_yaw : 4.5
+}
+
+projectile_model_info {
+    init_v: 15 # Launching projectile velocity
+    init_k: 0.026
+}

@@ -1,0 +1,158 @@
+syntax = "proto2";
+
+package roborts_local_planner;
+message FrameID {
+    optional string odom_frame = 1;
+    optional string map_frame = 2;
+}
+
+message Point2D {
+    optional float x = 1;
+    optional float y = 2;
+}
+   
+message Trajectory {
+    optional bool teb_autosize = 1;
+    optional float dt_ref = 2;
+    optional float dt_hysteresis = 3;
+    optional bool global_plan_overwrite_orientation = 4;
+    optional bool allow_init_with_backwards_motion = 5;
+    optional float global_plan_viapoint_sep = 6;
+    optional bool via_points_ordered = 7;
+    optional float max_global_plan_lookahead_dist = 8;
+    optional bool exact_arc_length = 9;
+    optional float force_reinit_new_goal_dist = 10;
+    optional int64 feasibility_check_no_poses = 11;
+    optional bool publish_feedback = 12;
+    optional int64 min_samples = 13;
+    optional int64 max_samples = 14;
+}
+
+message FootprintModel {
+
+    enum FootprintType {
+        POINT = 0;
+        CIRCULAR = 1;
+        TWOCIRCLES = 2;
+        LINE = 3;
+        POLYGON = 4;
+    }
+
+    optional FootprintType type = 1;
+    optional double radius = 2;
+    optional double front_offset = 3;
+    optional double front_radius = 4;
+    optional double rear_offset = 5;
+    optional double rear_radius = 6;
+    repeated Point2D robot_vertices = 7;
+  }
+
+message Robot {
+    optional float max_vel_x = 1;
+    optional float max_vel_x_backwards = 2;
+    optional float max_vel_y = 3;
+    optional float max_vel_theta = 4;
+    optional float acc_lim_x = 5;
+    optional float acc_lim_y = 6;
+    optional float acc_lim_theta = 7;
+    optional float min_turning_radius = 8;
+    optional float wheelbase = 9;
+    optional bool cmd_angle_instead_rotvel = 10;
+}
+  
+ 
+
+message GoalTolerance {
+    optional float xy_goal_tolerance = 1;
+    optional float yaw_goal_tolerance = 2;
+    optional bool free_goal_vel = 3;
+}
+    
+
+    
+message Obstacles {
+    optional float min_obstacle_dist = 1;
+    optional float inflation_dist = 2;
+    optional bool include_costmap_obstacles = 3;
+    optional float costmap_obstacles_behind_robot_dist = 4;
+    optional float obstacle_poses_affected = 5;
+    optional bool legacy_obstacle_association = 6;
+    optional float obstacle_association_cutoff_factor = 7;
+    optional float obstacle_association_force_inclusion_factor = 8;
+    optional string costmap_converter_plugin = 9;
+    optional bool costmap_converter_spin_thread = 10;
+    optional float costmap_converter_rate = 11;
+}
+    
+
+
+message Optimization {
+    optional int32 no_inner_iterations = 1;
+    optional int32 no_outer_iterations = 2;
+    optional bool optimization_activate = 3;
+    optional bool optimization_verbose = 4;
+    optional float penalty_epsilon = 5;
+    optional float weight_max_vel_x = 6;
+    optional float weight_max_vel_y = 7;
+    optional float weight_max_vel_theta = 8;
+    optional float weight_acc_lim_x = 9;
+    optional float weight_acc_lim_y = 10;
+    optional float weight_acc_lim_thet = 11;
+    optional float weight_kinematics_nh = 12;
+    optional float weight_kinematics_forward_drive = 13;
+    optional float weight_kinematics_turning_radius = 14;
+    optional float weight_optimaltime = 15;
+    optional float weight_obstacle = 16;
+    optional float weight_inflation = 17;
+    optional float weight_dynamic_obstacle = 18;
+    optional float weight_viapoint = 19;
+    optional float weight_adapt_factor = 20;
+    optional float weight_prefer_rotdir = 21;
+    optional float weight_acc_lim_theta = 22;
+}
+    
+
+
+message HomotopyClassPlanner {
+    optional bool enable_homotopy_class_planning = 1;
+    optional bool enable_multithreading = 2;
+    optional bool simple_exploration = 3;
+    optional int32 max_number_classes = 4;
+    optional float selection_obst_cost_scale = 5;
+    optional float selection_prefer_initial_plan = 6;
+    optional float selection_viapoint_cost_scale = 7;
+    optional float selection_cost_hysteresis = 8;
+    optional bool selection_alternative_time_cost = 9;
+    optional int32 roadmap_graph_no_samples = 10;
+    optional int32 roadmap_graph_area_width = 11;
+    optional float roadmap_graph_area_length_scale = 12;
+    optional float h_signature_prescaler = 13;
+    optional float h_signature_threshold = 14;
+    optional float obstacle_keypoint_offset = 15;
+    optional float obstacle_heading_threshold = 16;
+    optional bool viapoints_all_candidates = 17;
+    optional bool visualize_hc_graph = 18;
+}
+
+message Recovery {
+    optional bool shrink_horizon_min_duration = 1;
+    optional bool oscillation_recovery = 2;
+    optional bool shrink_horizon_backup = 3;
+    optional double oscillation_v_eps = 4;
+    optional double oscillation_omega_eps = 5;
+    optional double oscillation_recovery_min_duration = 6;
+    optional double oscillation_filter_duration = 7;
+}
+
+message Config {
+    optional FrameID opt_frame = 1;
+    optional Trajectory trajectory_opt = 2;
+    optional Robot kinematics_opt = 3;
+    optional GoalTolerance tolerance_opt = 4;
+    optional Obstacles obstacles_opt = 5;
+    optional Optimization optimize_info = 6;
+    optional HomotopyClassPlanner hcp_opt = 7;
+    repeated FootprintModel robot_type = 8;
+    optional Recovery recovery_info = 9;
+}
+

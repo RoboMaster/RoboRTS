@@ -1,0 +1,11 @@
+syntax = "proto2";
+package roborts_global_planner;
+
+message GlobalPlannerConfig {
+    repeated string name = 1;
+    optional string selected_algorithm = 2;
+    required int32 frequency = 3;
+    required int32 max_retries = 4;
+    required double goal_distance_tolerance = 5;
+    required double goal_angle_tolerance = 6;
+}

@@ -1,0 +1,96 @@
+opt_frame {
+    odom_frame: "odom"
+    map_frame: "map"
+}
+
+trajectory_opt {
+    teb_autosize: True
+    dt_ref: 0.15
+    dt_hysteresis: 0.01
+    global_plan_overwrite_orientation: true 
+    allow_init_with_backwards_motion: false 
+    global_plan_viapoint_sep: 1.5
+    via_points_ordered: False
+    max_global_plan_lookahead_dist: 2.0
+    exact_arc_length: False
+    force_reinit_new_goal_dist: 0.8
+    feasibility_check_no_poses: 5
+    publish_feedback: False
+    min_samples: 3
+    max_samples: 200
+}
+
+kinematics_opt {
+    max_vel_x: 2.5
+    max_vel_x_backwards: 0.2
+    max_vel_y: 2.5
+    max_vel_theta: 2.5
+    acc_lim_x: 2.6
+    acc_lim_y: 2.6
+    acc_lim_theta: 2.6
+    min_turning_radius: 0
+    wheelbase: 0
+    cmd_angle_instead_rotvel: false
+}
+
+tolerance_opt {
+    xy_goal_tolerance: 0.1
+    yaw_goal_tolerance: 0.1
+    free_goal_vel: False
+}
+
+obstacles_opt {
+    min_obstacle_dist: 0.32 #0.8
+    inflation_dist: 0
+    include_costmap_obstacles: True
+    costmap_obstacles_behind_robot_dist: 0.1
+    obstacle_poses_affected: 30
+    legacy_obstacle_association: False
+    obstacle_association_cutoff_factor: 5.0
+    obstacle_association_force_inclusion_factor: 1.5
+}
+
+robot_type {
+    type: POINT
+    robot_vertices {
+        x: 0.3
+        y: 0.225
+    }
+    robot_vertices {
+        x: -0.3
+        y: 0.225
+    }
+    robot_vertices {
+        x: -0.3
+        y: -0.225
+    }
+    robot_vertices {
+        x: 0.3
+        y: -0.225
+    }
+}
+
+optimize_info {
+    no_inner_iterations: 5
+    no_outer_iterations: 4
+    optimization_activate: True
+    optimization_verbose: False
+    penalty_epsilon: 0.1
+    weight_max_vel_x: 1
+    weight_max_vel_y: 1
+    weight_max_vel_theta: 3
+    weight_acc_lim_x: 1
+    weight_acc_lim_y: 1
+    weight_acc_lim_theta: 3
+    weight_kinematics_nh: 1
+    weight_kinematics_forward_drive: 1
+    weight_kinematics_turning_radius: 0.0
+    weight_optimaltime: 1
+    weight_obstacle: 50
+    weight_inflation: 0.1
+    weight_dynamic_obstacle: 10
+    weight_viapoint: 10
+    weight_adapt_factor: 2.0
+    weight_prefer_rotdir: 0
+}
+

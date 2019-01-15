@@ -1,0 +1,32 @@
+<package>
+    <name>roborts_msgs</name>
+    <version>1.0.0</version>
+    <description>
+        The roborts msgs package provides all the messages for RoboMaster AI Robot
+    </description>
+    <author>RoboMaster</author>
+    <maintainer email="robomaster@dji.com">RoboMaster</maintainer>
+    <license>GPL 3.0 </license>
+    <url>https://github.com/RoboMaster/RoboRTS</url>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <build_depend>actionlib</build_depend>
+    <build_depend>std_msgs</build_depend>
+    <build_depend>geometry_msgs</build_depend>
+    <build_depend>nav_msgs</build_depend>
+    <build_depend>sensor_msgs</build_depend>
+    <build_depend>message_generation</build_depend>
+
+
+    <run_depend>actionlib</run_depend>
+    <run_depend>std_msgs</run_depend>
+    <run_depend>geometry_msgs</run_depend>
+    <run_depend>nav_msgs</run_depend>
+    <run_depend>sensor_msgs</run_depend>
+    <run_depend>message_runtime</run_depend>
+
+    <export>
+    </export>
+
+</package>

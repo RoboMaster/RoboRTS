@@ -1,0 +1,16 @@
+observation_keep_time: 0
+expected_update_rate: 10
+min_obstacle_height: 0.0
+max_obstacle_height: 2.0
+obstacle_range: 5
+raytrace_range: 5
+transform_tolerance: 0.3
+topic_string: "scan"
+sensor_frame: "base_laser_link"
+inf_is_valid: false
+clearing: true
+footprint_clearing_enabled: false
+marking: true
+is_debug: true
+
+

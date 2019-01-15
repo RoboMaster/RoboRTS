@@ -1,0 +1,47 @@
+syntax = "proto2";
+package roborts_detection;
+
+message Threshold {
+  //for light
+  required float light_max_aspect_ratio = 1;
+  required float light_min_area = 2;
+  required float light_max_angle = 3;
+  required float light_max_angle_diff = 4;
+  //for armor
+  required float armor_max_angle = 5;
+  required float armor_min_area = 6;
+  required float armor_max_aspect_ratio = 7;
+  required float armor_max_pixel_val = 8;
+  required float armor_max_stddev = 9;
+  required float armor_max_mean = 10;
+
+  required float color_thread = 11;
+  required float blue_thread = 12;
+  required float red_thread = 13;
+}
+
+message ArmorSize {
+  required float width = 1;
+  required float height = 2;
+}
+
+enum EnemyColor {
+  BLUE = 0;
+  RED  = 1;
+}
+
+message SignalRecognization {
+  required uint32 max_wait_fps = 1;
+  required float min_pulse_angle = 2;
+  required uint32 min_num = 3;
+}
+
+message ConstraintSetConfig {
+  required bool enable_debug = 1;
+  required bool enable_neon  = 2;
+  required bool using_hsv = 3;
+  required Threshold threshold = 4;
+  required ArmorSize armor_size = 5;
+  required EnemyColor enemy_color = 6;
+  required SignalRecognization signal_recognization = 7;
+}

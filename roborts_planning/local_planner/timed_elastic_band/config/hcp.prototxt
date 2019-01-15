@@ -1,0 +1,21 @@
+hcp_opt {
+    enable_homotopy_class_planning: True
+    enable_multithreading: True
+    simple_exploration: False
+    max_number_classes: 4
+    selection_obst_cost_scale: 1.0
+    selection_prefer_initial_plan: 0.5
+    selection_viapoint_cost_scale: 1.0
+    selection_cost_hysteresis: 0.9
+    selection_alternative_time_cost: False
+    roadmap_graph_no_samples: 15
+    roadmap_graph_area_width: 5
+    roadmap_graph_area_length_scale: 1.2
+    h_signature_prescaler: 0.5
+    h_signature_threshold: 0.1
+    obstacle_keypoint_offset: 0.1
+    obstacle_heading_threshold: 0.45
+    viapoints_all_candidates: True
+    visualize_hc_graph: False
+}
+

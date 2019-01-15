@@ -1,0 +1,33 @@
+threshold {
+  light_max_aspect_ratio: 20.0
+  light_min_area: 1
+  light_max_angle: 20.0
+  light_max_angle_diff: 10.0
+
+  armor_max_angle: 15.0
+  armor_min_area: 100
+  armor_max_aspect_ratio: 4
+  armor_max_pixel_val: 150.0
+  armor_max_stddev: 90
+  armor_max_mean: 90
+
+  color_thread: 100
+  blue_thread: 90
+  red_thread: 50
+}
+
+signal_recognization {
+  max_wait_fps: 100
+  min_pulse_angle: 0.4
+  min_num: 5
+}
+
+armor_size {
+  width: 120 # mm
+  height: 60 # mm
+}
+
+using_hsv: false
+enable_debug: true
+enable_neon: false
+enemy_color: BLUE
