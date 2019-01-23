@@ -22,8 +22,6 @@
 #include <chrono>
 #include <ros/ros.h>
 #include "roborts_msgs/GimbalAngle.h"
-#include "roborts_msgs/GimbalRate.h"
-
 
 #include "tracking_utility.h"
 
@@ -46,7 +44,7 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "roborts_tracking_node");
   ros::NodeHandle nh;
-  auto  pub= nh.advertise<roborts_msgs::GimbalRate>("cmd_gimbal_rate", 30);
+  auto  pub= nh.advertise<roborts_msgs::GimbalAngle>("cmd_gimbal_angle", 30);
   const char winName[]="My Camera";
   char message1[100];
   char message2[100];
@@ -95,7 +93,7 @@ int main(int argc, char** argv)
       int pitchRate = 0;
       timer trackerStartTime, trackerFinishTime;
       duration trackerTimeDiff;
-      roborts_msgs::GimbalRate gimbal_rate;
+
       roborts_msgs::GimbalAngle gimbal_angle;
       int k = 1920/img_width;
       switch(tu.getState())
@@ -145,11 +143,12 @@ int main(int argc, char** argv)
             pitchRate = ((pitchRate>0)?1:-1)*500/k;
           }
 
+          gimbal_angle.pitch_mode = true;
+          gimbal_angle.pitch_angle = pitchRate/180.*M_PI/110.*k;
 
-          gimbal_rate.header.stamp = ros::Time::now();
-          gimbal_rate.pitch_rate = pitchRate/180.*M_PI/110.*k;
-          gimbal_rate.yaw_rate = yawRate/180.*M_PI/160.*k;
-          pub.publish(gimbal_rate);
+          gimbal_angle.yaw_mode = true;
+          gimbal_angle.yaw_angle = yawRate/180.*M_PI/160.*k;
+          pub.publish(gimbal_angle);
 
           break;
 

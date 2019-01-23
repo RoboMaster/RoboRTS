@@ -52,22 +52,14 @@ class Chassis {
    * @brief Chassis information callback in sdk
    * @param chassis_info Chassis information
    */
-  void ChassisInfoCallback(const std::shared_ptr<roborts_sdk::p_chassis_info_t> chassis_info);
+  void ChassisInfoCallback(const std::shared_ptr<roborts_sdk::cmd_chassis_info> chassis_info);
 
   /**
    * @brief UWB information callback in sdk
    * @param uwb_info UWB information
    */
-  void UWBInfoCallback(const std::shared_ptr<roborts_sdk::p_uwb_data_t> uwb_info);
+  void UWBInfoCallback(const std::shared_ptr<roborts_sdk::cmd_uwb_info> uwb_info);
 
-  /**
-   * @brief Chassis mode set service callback in ROS
-   * @param req Chassis mode set as request
-   * @param res Mode set result as response
-   * @return True if success
-   */
-  bool SetChassisModeService(roborts_msgs::ChassisMode::Request &req,
-                             roborts_msgs::ChassisMode::Response &res);
   /**
    * @brief Chassis speed control callback in ROS
    * @param vel Chassis speed control data
@@ -83,11 +75,9 @@ class Chassis {
   //! sdk handler
   std::shared_ptr<roborts_sdk::Handle> handle_;
   //! sdk publisher for chassis speed control
-  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::p_chassis_speed_t>> chassis_speed_pub_;
-  //! sdk publisher for chassis mode control
-  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::chassis_mode_e>> chassis_mode_pub_;
+  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::cmd_chassis_speed>> chassis_speed_pub_;
   //! sdk publisher for chassis speed and acceleration control
-  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::p_chassis_spd_acc_t>> chassis_spd_acc_pub_;
+  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::cmd_chassis_spd_acc>> chassis_spd_acc_pub_;
 
   //! ros node handler
   ros::NodeHandle ros_nh_;
@@ -99,8 +89,7 @@ class Chassis {
   ros::Publisher ros_odom_pub_;
   //! ros publisher for uwb information
   ros::Publisher ros_uwb_pub_;
-  //! ros service server for chassis mode set
-  ros::ServiceServer ros_chassis_mode_srv_;
+
 
   //! ros chassis odometry tf
   geometry_msgs::TransformStamped odom_tf_;

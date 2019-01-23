@@ -49,18 +49,13 @@ class Gimbal {
    * @brief Gimbal information callback in sdk
    * @param gimbal_info Gimbal information
    */
-  void GimbalInfoCallback(const std::shared_ptr<roborts_sdk::p_gimbal_info_t> gimbal_info);
+  void GimbalInfoCallback(const std::shared_ptr<roborts_sdk::cmd_gimbal_info> gimbal_info);
   /**
    * @brief Gimbal angle control callback in ROS
    * @param msg Gimbal angle control data
    */
   void GimbalAngleCtrlCallback(const roborts_msgs::GimbalAngle::ConstPtr &msg);
 
-  /**
-   * @brief Gimbal rate control callback in ROS
-   * @param msg Gimbal rate control data
-   */
-  void GimbalRateCtrlCallback(const roborts_msgs::GimbalRate::ConstPtr &msg);
   /**
    * @brief Gimbal mode set service callback in ROS
    * @param req Gimbal mode set as request
@@ -89,22 +84,18 @@ class Gimbal {
   //! sdk handler
   std::shared_ptr<roborts_sdk::Handle> handle_;
   //! sdk publisher for gimbal angle control
-  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::p_gimbal_angle_t>>     gimbal_angle_pub_;
-  //! sdk publisher for gimbal rate control
-  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::p_gimbal_speed_t>>      gimbal_rate_pub_;
+  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::cmd_gimbal_angle>>     gimbal_angle_pub_;
   //! sdk publisher for gimbal mode set
   std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::gimbal_mode_e>>        gimbal_mode_pub_;
   //! sdk publisher for frcition wheel control
-  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::p_fric_wheel_speed_t>> fric_wheel_pub_;
+  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::cmd_fric_wheel_speed>> fric_wheel_pub_;
   //! sdk publisher for gimbal shoot control
-  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::p_gimbal_shoot_t>>     gimbal_shoot_pub_;
+  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::cmd_shoot_info>>       gimbal_shoot_pub_;
 
   //! ros node handler
   ros::NodeHandle    ros_nh_;
   //! ros subscriber for gimbal angle control
   ros::Subscriber    ros_sub_cmd_gimbal_angle_;
-  //! ros subscriber for gimbal rate control
-  ros::Subscriber     ros_sub_cmd_gimbal_rate_;
   //! ros service server for gimbal mode set
   ros::ServiceServer ros_gimbal_mode_srv_;
   //! ros service server for friction wheel control

@@ -165,7 +165,7 @@ int SerialDevice::Read(uint8_t *buf, int len) {
     while (ret == 0) {
       LOG_ERROR << "Connection closed, try to reconnect.";
       while (!Init()) {
-        usleep(1000);
+        usleep(500000);
       }
       LOG_INFO << "Reconnect Success.";
       ret = read(serial_fd_, buf, len);

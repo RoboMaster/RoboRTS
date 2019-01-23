@@ -156,8 +156,23 @@ bool Protocol::Take(const CommandInfo *command_info,
     }
 
     if (memcmp(command_info, &(container.command_info), sizeof(command_info)) != 0) {
-      DLOG_ERROR << "Take command does not match the command received";
-      DLOG_INFO << int(container.command_info.receiver) << " " << int(command_info->receiver);
+      DLOG_ERROR << "Take command of "<<command_info->cmd_set<<command_info->cmd_id<<" does not match the command received";
+      if (int(container.command_info.receiver) !=int(command_info->receiver)){
+        DLOG_ERROR << "Requested receiver: "<<container.command_info.receiver<<", Get receiver: "<<command_info->receiver;
+      }
+
+      if (int(container.command_info.sender) !=int(command_info->sender)){
+        DLOG_ERROR << "Requested sender: "<<container.command_info.sender<<", Get sender: "<<command_info->sender;
+      }
+
+      if (int(container.command_info.need_ack) !=int(command_info->need_ack)){
+        DLOG_ERROR << "Requested need_ack: "<<container.command_info.need_ack<<", Get need_ack: "<<command_info->need_ack;
+      }
+
+      if (int(container.command_info.length) !=int(command_info->length)){
+        DLOG_ERROR << "Requested length: "<<container.command_info.length<<", Get length: "<<command_info->length;
+      }
+
       return false;
     }
     //1 time copy

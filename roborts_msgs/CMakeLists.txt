@@ -32,7 +32,6 @@ add_message_files(
 add_service_files(
   DIRECTORY srv
   FILES
-  ChassisMode.srv
   GimbalMode.srv
   FricWhl.srv
   ShootCmd.srv

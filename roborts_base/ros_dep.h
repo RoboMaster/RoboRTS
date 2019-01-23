@@ -27,7 +27,6 @@
 #include "roborts_msgs/GimbalAngle.h"
 #include "roborts_msgs/GimbalRate.h"
 
-#include "roborts_msgs/ChassisMode.h"
 #include "roborts_msgs/TwistAccel.h"
 #include "roborts_msgs/GimbalMode.h"
 #include "roborts_msgs/ShootCmd.h"

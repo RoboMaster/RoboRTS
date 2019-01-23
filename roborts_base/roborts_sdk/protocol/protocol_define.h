@@ -18,146 +18,111 @@
 #define ROBORTS_SDK_PROTOCOL_DEFINE_H
 
 namespace roborts_sdk {
+
+#pragma pack(push, 1)
 //DEVICE_ADDRESS
-#define MANIFOLD2_ADDRESS       (0x00u)
-#define CHASSIS_ADDRESS         (0X01u)
-#define GIMBAL_ADDRESS          (0X02u)
-#define BROADCAST_ADDRESS       (0Xffu)
+#define MANIFOLD2_ADDRESS              (0x00u)
+#define CHASSIS_ADDRESS                (0X01u)
+#define GIMBAL_ADDRESS                 (0X02u)
+#define BROADCAST_ADDRESS              (0Xffu)
+                                     
+//CMD_SET                            
+#define UNIVERSAL_CMD_SET              (0x00u)
+#define REFEREE_CMD_SET                (0x01u)
+#define CHASSIS_CMD_SET                (0x02u)
+#define GIMBAL_CMD_SET                 (0x03u)
+#define COMPATIBLE_CMD_SET             (0x04u)
+#define TEST_CMD_SET                   (0xFFu)
 
-//CMD_SET
-#define UNIVERSAL_CMD_SET       (0x00u)
-#define REFEREE_CMD_SET         (0x01u)
-#define CHASSIS_CMD_SET         (0x02u)
-#define GIMBAL_CMD_SET          (0x03u)
-#define TEST_CMD_SET            (0xFFu)
-
-/*----------------------------UNIVERSAL_CMD------------------------------*/
-#define OPEN_SDK_MODE           (0X00u)
-#define GET_MODULE_STATUS       (0X01u)
-#define PUSH_STATUS_INFO        (0X02u)
-#define GET_CAN_BANDWIDTH       (0X03u)
-
-/*-----------------------------REFEREE_CMD-------------------------------*/
-#define GET_REFEREE_VERSION     (0X00u)
-#define GET_GAME_CONFIG         (0X01u)
-#define SUBSCRIBE_REFEREE_INFO  (0X02u)
-#define PUSH_REFEREE_INFO       (0X03u)
+/*----------------------------UNIVERSAL_CMD--- 0x00 ---------------------*/
 
 
-/*-----------------------------CHASSIS_CMD-------------------------------*/
+/*-----------------------------REFEREE_CMD---- 0x01 ---------------------*/
 
-#define GET_CHASSIS_VERSION     (0x00u)
-#define SET_CHASSIS_PARAM       (0x01u)
-#define GET_CHASSIS_PARAM       (0X02u)
+
+/*-----------------------------CHASSIS_CMD---- 0x02 ---------------------*/
+
+#define CMD_PUSH_CHASSIS_INFO          (0X04u)
+typedef struct {
+  int16_t gyro_angle;
+  int16_t gyro_rate;
+  int32_t position_x_mm;
+  int32_t position_y_mm;
+  int16_t angle_deg;
+  int16_t v_x_mm;
+  int16_t v_y_mm;
+} cmd_chassis_info;
+
+#define CMD_SET_CHASSIS_SPEED          (0X06u)
+typedef struct {
+  int16_t vx;
+  int16_t vy;
+  int16_t vw;
+  int16_t rotate_x_offset;
+  int16_t rotate_y_offset;
+} cmd_chassis_speed;
+
+#define CMD_GET_CHASSIS_PARAM          (0X07u)
 typedef struct {
   uint16_t wheel_perimeter;
   uint16_t wheel_track;
   uint16_t wheel_base;
   int16_t gimbal_x_offset;
   int16_t gimbal_y_offset;
-} p_chassis_param_t;
-#define SUBSCRIBE_CHASSIS_INFO  (0X03u)
-#define PUSH_CHASSIS_INFO       (0X04u)
+} cmd_chassis_param;
+
+#define CMD_SET_CHASSIS_SPD_ACC        (0X08u)
 typedef struct {
-  uint8_t mode;
-  float yaw_motor_angle;
-  float gyro_angle;
-  float gyro_palstance;
-
-  int32_t position_x_mm;
-  int32_t position_y_mm;
-  int32_t angle_deg;
-  int16_t v_x_mm;
-  int16_t v_y_mm;
-  int16_t palstance_deg;
-} p_chassis_info_t;
-
-#define SET_CHASSIS_MODE        (0X05u)
-typedef enum {
-  FOLLOW_GIMBAL,
-  SEPARATE_GIMBAL,
-  SEARCH_MODE,
-  C_MODE_MAX_NUM,
-} chassis_mode_e;
-
-#define CTRL_CHASSIS_SPEED      (0X06u)
-typedef struct {
-  float vx;
-  float vy;
-  float vw;
+  int16_t vx;
+  int16_t vy;
+  int16_t vw;
+  int16_t ax;
+  int16_t ay;
+  int16_t wz;
   int16_t rotate_x_offset;
   int16_t rotate_y_offset;
-  uint16_t res;
-} p_chassis_speed_t;
+} cmd_chassis_spd_acc;
 
-#define PUSH_UWB_INFO           (0X07u)
-typedef struct {
-  int16_t x;
-  int16_t y;
-  uint16_t yaw;
-  int16_t distance[6];
-  uint16_t error;
-  uint16_t res;
-} p_uwb_data_t;
+/*-----------------------------GIMBAL_CMD---- 0x03 ---------------------*/
 
-#define CTRL_CHASSIS_SPEED_ACC   (0X08u)
-typedef struct {
-  float vx;
-  float vy;
-  float vw;
-
-  float ax;
-  float ay;
-  float wz;
-} p_chassis_spd_acc_t;
-
-/*-----------------------------GIMBAL_CMD-------------------------------*/
-
-#define GET_GIMBAL_VERSION      (0x00u)
-#define SET_GIMBAL_PARAM        (0x01u)
-#define GET_GIMBAL_PARAM        (0X02u)
-#define SUBSCRIBE_GIMBAL_INFO   (0X03u)
-#define PUSH_GIMBAL_INFO        (0X04u)
+#define CMD_PUSH_GIMBAL_INFO           (0X04u)
 typedef struct {
   uint8_t mode;
-  uint16_t fric_spd;
-  uint32_t shoot_num;
+  int16_t pitch_ecd_angle;
+  int16_t yaw_ecd_angle;
+  int16_t pitch_gyro_angle;
+  int16_t yaw_gyro_angle;
+  int16_t yaw_rate;
+  int16_t pitch_rate;
+} cmd_gimbal_info;
 
-  float pit_relative_angle;
-  float yaw_relative_angle;
-  float pit_gyro_angle;
-  float yaw_gyro_angle;
-
-  float yaw_palstance;
-  float pit_palstance;
-} p_gimbal_info_t;
-
-#define ADJUST_GIMBAL_CENTER    (0X05u)
-#define SET_GIMBAL_MODE         (0X06u)
+#define CMD_SET_GIMBAL_MODE            (0X06u)
 typedef enum {
   GYRO_CONTROL,
   CODE_CONTROL,
   G_MODE_MAX_NUM,
 } gimbal_mode_e;
 
-#define CTRL_GIMBAL_RATE       (0X07u)
-typedef struct {
-  float pit_rate;
-  uint16_t pit_time;
-  float yaw_rate;
-  uint16_t yaw_time;
-} p_gimbal_speed_t;
+#define CMD_SET_GIMBAL_ANGLE           (0x08u)
+typedef struct{
+  union{
+    uint8_t flag;
+    struct {
+      uint8_t yaw_mode:   1;//0 means absolute, 1 means relative;
+      uint8_t pitch_mode: 1;
+    } bit;
+  } ctrl;
+  int16_t pitch;
+  int16_t yaw;
+}cmd_gimbal_angle;
 
-//#define CTRL_GIMBAL_ANGLE      (0X08u)
-//typedef struct {
-//  float pit;
-//  float yaw;
-//} p_gimbal_angle_t;
+#define CMD_SET_FRIC_WHEEL_SPEED       (0X09u)
+typedef struct{
+  uint16_t left;
+  uint16_t right;
+} cmd_fric_wheel_speed;
 
-#define CTRL_FRIC_WHEEL_SPEED   (0X09u)
-typedef uint16_t p_fric_wheel_speed_t;
-
-#define CTRL_GIMBAL_SHOOT       (0x0Au)
+#define CMD_SET_SHOOT_INFO             (0x0Au)
 typedef enum {
   SHOOT_STOP = 0,
   SHOOT_ONCE,
@@ -168,25 +133,23 @@ typedef struct {
   uint8_t shoot_cmd;
   uint32_t shoot_add_num;
   uint16_t shoot_freq;
-} p_gimbal_shoot_t;
+} cmd_shoot_info;
 
-#define CTRL_GIMBAL_ANGLE       (0x0Bu)
-typedef struct{
-  union{
-    uint8_t flag;
-    struct {
-      uint8_t yaw_mode:   1;//0 means absolute, 1 means relative;
-      uint8_t pitch_mode: 1;
-    } bit;
-  } ctrl;
-  float pit_absolute;
-  float pit_relative;
-  float yaw_absolute;
-  float yaw_relative;
-}p_gimbal_angle_t;
+/*------------------------COMPATIBLE_CMD---- 0x04 -------------------*/
+#define CMD_RC_DATA_FORWARD            (0X01u)
 
-//TEST_CMD
-#define TEXT_ECHO_TRANSMIT      (0x00u)
+#define CMD_PUSH_UWB_INFO              (0X02u)
+typedef struct {
+  int16_t x;
+  int16_t y;
+  uint16_t yaw;
+  int16_t distance[6];
+  uint16_t error;
+  uint16_t res;
+} cmd_uwb_info;
 
+/*-----------------------------TEST_CMD---- 0xFF ---------------------*/
+#define TEXT_ECHO_TRANSMIT             (0x00u)
+#pragma pack(pop)
 }
 #endif //ROBORTS_SDK_PROTOCOL_DEFINE_H
