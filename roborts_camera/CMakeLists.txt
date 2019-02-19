@@ -76,13 +76,6 @@ add_executable(image_capture_test
   test/image_capture.cpp
 )
 
-if (CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64" )
-target_link_libraries(image_capture_test
-  PRIVATE
-  driver::mercure
-)
-endif()
-
 target_link_libraries(image_capture_test
   PRIVATE
   driver::uvc_driver
@@ -95,9 +88,3 @@ target_include_directories(image_capture_test
   PRIVATE
   ${OpenCV_INCLUDE_DIRECTORIES}
 )
-
-#install(DIRECTORY include/
-#  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#  FILES_MATCHING PATTERN "*.h"
-#  PATTERN ".svn" EXCLUDE
-#  )
