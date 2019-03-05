@@ -30,5 +30,6 @@ target_link_libraries(roborts_tracking_test
 target_include_directories(roborts_tracking_test
   PUBLIC
   ${catkin_INCLUDE_DIRS})
-
+add_dependencies(roborts_tracking_test
+  roborts_msgs_generate_messages)
 
