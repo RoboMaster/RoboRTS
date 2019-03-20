@@ -34,7 +34,7 @@ class Gimbal {
     /**
    * @brief Destructor of gimbal
    */
-  ~Gimbal() = default;
+  ~Gimbal();
  private:
   /**
    * @brief Initialization of sdk
@@ -83,6 +83,16 @@ class Gimbal {
 
   //! sdk handler
   std::shared_ptr<roborts_sdk::Handle> handle_;
+  //! sdk version client
+  std::shared_ptr<roborts_sdk::Client<roborts_sdk::cmd_version_id,
+                                      roborts_sdk::cmd_version_id>> verison_client_;
+
+  //! sdk heartbeat thread
+  std::thread heartbeat_thread_;
+  //! sdk publisher for heartbeat
+  std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::cmd_heartbeat>> heartbeat_pub_;
+
+
   //! sdk publisher for gimbal angle control
   std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::cmd_gimbal_angle>>     gimbal_angle_pub_;
   //! sdk publisher for gimbal mode set

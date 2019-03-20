@@ -232,10 +232,17 @@ class Client : public ClientBase {
 
     std::unique_lock<std::mutex> lock(pending_requests_mutex_);
     auto typed_response = std::static_pointer_cast<Ack>(response);
+    //TODO: Determine key: seq_num or session_id
+    uint8_t session_id = request_header->session_id;
 
-    auto call_promise = std::get<0>(pending_requests_);
-    auto callback = std::get<1>(pending_requests_);
-    auto future = std::get<2>(pending_requests_);
+    if(pending_requests_.count(session_id) == 0){
+      LOG_ERROR<<"Received invalid session_id. Ignoring...";
+      return;
+    }
+    auto call_promise = std::get<0>(pending_requests_[session_id]);
+    auto callback = std::get<1>(pending_requests_[session_id]);
+    auto future = std::get<2>(pending_requests_[session_id]);
+    pending_requests_.erase(session_id);
     // Unlock here to allow the service to be called recursively from one of its callbacks.
     lock.unlock();
 
@@ -251,19 +258,24 @@ class Client : public ClientBase {
   template<typename CallbackType>
   SharedFuture AsyncSendRequest(SharedRequest request, CallbackType &&cb) {
     std::lock_guard<std::mutex> lock(pending_requests_mutex_);
-    bool ret = GetHandle()->GetProtocol()->SendRequest(GetCommandInfo().get(), request.get());
+    auto request_header = std::make_shared<MessageHeader>();
+    bool ret = GetHandle()->GetProtocol()->SendRequest(GetCommandInfo().get(), request_header.get(), request.get());
+
     if (!ret) {
-      DLOG_ERROR << "async_send_request failed!";
+      LOG_ERROR << "Async_send_request failed!";
     }
 
     SharedPromise call_promise = std::make_shared<Promise>();
     SharedFuture f(call_promise->get_future());
-    pending_requests_ = std::make_tuple(call_promise, std::forward<CallbackType>(cb), f);
+    //TODO: Determine key: seq_num or session_id
+    pending_requests_[request_header->session_id] = std::make_tuple(call_promise, std::forward<CallbackType>(cb), f);
+
     return f;
   }
 
  private:
-  std::tuple<SharedPromise, CallbackType, SharedFuture> pending_requests_;
+  //TODO: Determine key: seq_num or session_id
+  std::map<uint8_t, std::tuple<SharedPromise, CallbackType, SharedFuture>> pending_requests_;
   std::mutex pending_requests_mutex_;
 };
 
@@ -337,7 +349,7 @@ class Service : public ServiceBase {
     bool ret = GetHandle()->GetProtocol()->SendResponse(GetCommandInfo().get(), request_header.get(), response.get());
 
     if (!ret) {
-      DLOG_ERROR << "send response failed!";
+      DLOG_ERROR << "Send response failed!";
     }
   }
 

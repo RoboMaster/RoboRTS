@@ -25,24 +25,59 @@ namespace roborts_sdk {
 #define CHASSIS_ADDRESS                (0X01u)
 #define GIMBAL_ADDRESS                 (0X02u)
 #define BROADCAST_ADDRESS              (0Xffu)
-                                     
+
 //CMD_SET                            
 #define UNIVERSAL_CMD_SET              (0x00u)
-#define REFEREE_CMD_SET                (0x01u)
+#define REFEREE_SEND_CMD_SET           (0x01u)
 #define CHASSIS_CMD_SET                (0x02u)
 #define GIMBAL_CMD_SET                 (0x03u)
 #define COMPATIBLE_CMD_SET             (0x04u)
+
+
+#define REFEREE_GAME_CMD_SET           (0x40u)
+#define REFEREE_BATTLEFIELD_CMD_SET    (0x41u)
+#define REFEREE_ROBOT_CMD_SET          (0x42u)
+#define REFEREE_RECEIVE_CMD_SET        (0x43u)
+
 #define TEST_CMD_SET                   (0xFFu)
 
 /*----------------------------UNIVERSAL_CMD--- 0x00 ---------------------*/
+#define CMD_HEARTBEAT                  (0x01u)
+typedef struct{
+  uint32_t heartbeat;
+} cmd_heartbeat;
 
+#define CMD_REPORT_VERSION             (0X02u)
+typedef struct
+{
+  uint32_t version_id;
+} cmd_version_id;
 
-/*-----------------------------REFEREE_CMD---- 0x01 ---------------------*/
+/*-----------------------------REFEREE_SEND_CMD--- 0x01 ---------------------*/
+#define CMD_REFEREE_SEND_DATA               (0X01u)
 
+typedef struct
+{
+  uint16_t cmd = 0x0103u;
+  uint8_t supply_projectile_id;
+  uint8_t supply_robot_id;
+  uint8_t supply_num;
+} cmd_supply_projectile_booking;
+
+/*-------------------REFEREE_CMD--- 0x01 SEND 0x43 RECEIVE------------------*/
+/*  Define your own protocol for comm between different robots here*/
+/*    typedef __packed struct
+/*    {
+/*        uint16_t cmd;
+/*        uint16_t sender_robot_id;
+/*        uint16_t receiver_robot_id;
+/*        CertainType data;
+/*    } ext_robot_comm_t;
+ */
 
 /*-----------------------------CHASSIS_CMD---- 0x02 ---------------------*/
 
-#define CMD_PUSH_CHASSIS_INFO          (0X04u)
+#define CMD_PUSH_CHASSIS_INFO          (0X01u)
 typedef struct {
   int16_t gyro_angle;
   int16_t gyro_rate;
@@ -53,7 +88,7 @@ typedef struct {
   int16_t v_y_mm;
 } cmd_chassis_info;
 
-#define CMD_SET_CHASSIS_SPEED          (0X06u)
+#define CMD_SET_CHASSIS_SPEED          (0X03u)
 typedef struct {
   int16_t vx;
   int16_t vy;
@@ -62,7 +97,7 @@ typedef struct {
   int16_t rotate_y_offset;
 } cmd_chassis_speed;
 
-#define CMD_GET_CHASSIS_PARAM          (0X07u)
+#define CMD_GET_CHASSIS_PARAM          (0X04u)
 typedef struct {
   uint16_t wheel_perimeter;
   uint16_t wheel_track;
@@ -71,7 +106,7 @@ typedef struct {
   int16_t gimbal_y_offset;
 } cmd_chassis_param;
 
-#define CMD_SET_CHASSIS_SPD_ACC        (0X08u)
+#define CMD_SET_CHASSIS_SPD_ACC        (0X05u)
 typedef struct {
   int16_t vx;
   int16_t vy;
@@ -85,7 +120,7 @@ typedef struct {
 
 /*-----------------------------GIMBAL_CMD---- 0x03 ---------------------*/
 
-#define CMD_PUSH_GIMBAL_INFO           (0X04u)
+#define CMD_PUSH_GIMBAL_INFO           (0X01u)
 typedef struct {
   uint8_t mode;
   int16_t pitch_ecd_angle;
@@ -96,14 +131,14 @@ typedef struct {
   int16_t pitch_rate;
 } cmd_gimbal_info;
 
-#define CMD_SET_GIMBAL_MODE            (0X06u)
+#define CMD_SET_GIMBAL_MODE            (0X02u)
 typedef enum {
   GYRO_CONTROL,
   CODE_CONTROL,
   G_MODE_MAX_NUM,
 } gimbal_mode_e;
 
-#define CMD_SET_GIMBAL_ANGLE           (0x08u)
+#define CMD_SET_GIMBAL_ANGLE           (0x03u)
 typedef struct{
   union{
     uint8_t flag;
@@ -116,13 +151,13 @@ typedef struct{
   int16_t yaw;
 }cmd_gimbal_angle;
 
-#define CMD_SET_FRIC_WHEEL_SPEED       (0X09u)
+#define CMD_SET_FRIC_WHEEL_SPEED       (0X04u)
 typedef struct{
   uint16_t left;
   uint16_t right;
 } cmd_fric_wheel_speed;
 
-#define CMD_SET_SHOOT_INFO             (0x0Au)
+#define CMD_SET_SHOOT_INFO             (0x05u)
 typedef enum {
   SHOOT_STOP = 0,
   SHOOT_ONCE,
@@ -147,6 +182,110 @@ typedef struct {
   uint16_t error;
   uint16_t res;
 } cmd_uwb_info;
+
+/*------------------------REFEREE_GAME_CMD---- 0x40 -------------------*/
+#define CMD_GAME_STATUS            (0X01u)
+typedef struct
+{
+  uint8_t game_type : 4;
+  uint8_t game_progress : 4;
+  uint16_t stage_remain_time;
+} cmd_game_state;
+
+#define CMD_GAME_RESULT            (0X02u)
+typedef struct
+{
+  uint8_t winner;
+} cmd_game_result;
+
+#define CMD_GAME_SURVIVAL          (0X03u)
+typedef struct
+{
+  uint16_t robot_legion;
+} cmd_game_robot_survivors;
+
+
+/*-------------------REFEREE_BATTLEFIELD_CMD_SET---- 0x41 -------------*/
+#define CMD_BATTLEFIELD_EVENT      (0X01u)
+typedef struct
+{
+  uint32_t event_type;
+} cmd_event_data;
+
+#define CMD_SUPPLIER_ACTION        (0X02u)
+typedef struct
+{
+  uint8_t supply_projectile_id;
+  uint8_t supply_robot_id;
+  uint8_t supply_projectile_step;
+  uint8_t supply_projectile_num;
+} cmd_supply_projectile_action;
+
+
+/*------------------------REFEREE_ROBOT_CMD---- 0x42 -------------------*/
+#define CMD_ROBOT_STATUS           (0X01u)
+typedef struct
+{
+  uint8_t robot_id;
+  uint8_t robot_level;
+  uint16_t remain_HP;
+  uint16_t max_HP;
+  uint16_t shooter_heat0_cooling_rate;
+  uint16_t shooter_heat0_cooling_limit;
+  uint16_t shooter_heat1_cooling_rate;
+  uint16_t shooter_heat1_cooling_limit;
+  uint8_t mains_power_gimbal_output : 1;
+  uint8_t mains_power_chassis_output : 1;
+  uint8_t mains_power_shooter_output : 1;
+} cmd_game_robot_state;
+
+#define CMD_ROBOT_POWER_HEAT         (0X02u)
+typedef struct
+{
+  uint16_t chassis_volt;
+  uint16_t chassis_current;
+  float chassis_power;
+  uint16_t chassis_power_buffer;
+  uint16_t shooter_heat0;
+  uint16_t shooter_heat1;
+} cmd_power_heat_data;
+
+#define CMD_ROBOT_POSITION            (0X03u)
+typedef struct
+{
+  float x;
+  float y;
+  float z;
+  float yaw;
+} cmd_game_robot_pos;
+
+#define CMD_ROBOT_BUFF                (0X04u)
+typedef struct
+{
+  uint8_t power_rune_buff;
+} cmd_buff_musk;
+
+#define CMD_AERIAL_ENERGY             (0X05u)
+typedef struct
+{
+  uint8_t energy_point;
+  uint8_t attack_time;
+} cmd_aerial_robot_energy;
+
+#define CMD_ROBOT_HURT                (0X06u)
+typedef struct
+{
+  uint8_t armor_id : 4;
+  uint8_t hurt_type : 4;
+} cmd_robot_hurt;
+
+#define CMD_ROBOT_SHOOT               (0X07u)
+typedef struct
+{
+  uint8_t bullet_type;
+  uint8_t bullet_freq;
+  float bullet_speed;
+} cmd_shoot_data;
 
 /*-----------------------------TEST_CMD---- 0xFF ---------------------*/
 #define TEXT_ECHO_TRANSMIT             (0x00u)

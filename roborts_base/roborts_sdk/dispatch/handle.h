@@ -174,6 +174,9 @@ class Handle : public std::enable_shared_from_this<Handle> {
   std::shared_ptr<SerialDevice> device_;
   //! pointer of protocol layer
   std::shared_ptr<Protocol> protocol_;
+
+  //! serial_port name
+  std::string serial_port_;
 };
 }
 #endif //ROBORTS_SDK_HANDLE_H

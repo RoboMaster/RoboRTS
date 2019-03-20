@@ -1,0 +1,2 @@
+#robot bonus
+bool bonus

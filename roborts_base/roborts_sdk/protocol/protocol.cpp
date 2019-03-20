@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "protocol.h"
+#include <iomanip>
 
 namespace roborts_sdk {
 
@@ -94,11 +95,11 @@ void Protocol::AutoRepeatSendCheck() {
           if (cmd_session_table_[i].retry_time > 0) {
 
             if (cmd_session_table_[i].sent >= cmd_session_table_[i].retry_time) {
-              DLOG_ERROR << "Sending timeout, Free session "
+              LOG_ERROR << "Sending timeout, Free session "
                          << static_cast<int>(cmd_session_table_[i].session_id);
               FreeCMDSession(&cmd_session_table_[i]);
             } else {
-              DLOG_ERROR << "Retry session "
+              LOG_ERROR << "Retry session "
                          << static_cast<int>(cmd_session_table_[i].session_id);
               DeviceSend(cmd_session_table_[i].memory_block_ptr->memory_ptr);
               cmd_session_table_[i].pre_time_stamp = current_time_stamp;
@@ -130,6 +131,12 @@ void Protocol::ReceivePool() {
                                         container_ptr->command_info.cmd_id)]
             = std::make_shared<CircularBuffer<RecvContainer>>(100);
 
+        DLOG_INFO<<"Capture command: "
+                <<"cmd set: 0x"<< std::setw(2) << std::hex << std::setfill('0') << int(container_ptr->command_info.cmd_set)
+                <<", cmd id: 0x"<< std::setw(2) << std::hex << std::setfill('0') << int(container_ptr->command_info.cmd_id)
+                <<", sender: 0x"<< std::setw(2) << std::hex << std::setfill('0') << int(container_ptr->command_info.sender)
+                <<", receiver: 0x" <<std::setw(2) << std::hex << std::setfill('0') << int(container_ptr->command_info.receiver);
+
       }
       //1 time copy
       buffer_pool_map_[std::make_pair(container_ptr->command_info.cmd_set,
@@ -155,26 +162,51 @@ bool Protocol::Take(const CommandInfo *command_info,
       return false;
     }
 
-    if (memcmp(command_info, &(container.command_info), sizeof(command_info)) != 0) {
-      DLOG_ERROR << "Take command of "<<command_info->cmd_set<<command_info->cmd_id<<" does not match the command received";
-      if (int(container.command_info.receiver) !=int(command_info->receiver)){
-        DLOG_ERROR << "Requested receiver: "<<container.command_info.receiver<<", Get receiver: "<<command_info->receiver;
+    bool mismatch = false;
+
+    if (int(container.command_info.need_ack) != int(command_info->need_ack)){
+      DLOG_ERROR << "Requested need_ack: "<< int(command_info->need_ack)
+                << ", Get need_ack: "<< int(container.command_info.need_ack);
+      mismatch = true;
+    }
+
+    if (container.message_header.is_ack){
+      if (int(container.command_info.receiver) != int(command_info->sender)){
+        DLOG_ERROR << "Requested ACK receiver: "<< std::setw(2) << std::hex << std::setfill('0') << int(command_info->sender)
+                  << ", Get ACK receiver: "<< std::setw(2) << std::hex << std::setfill('0') << int(container.command_info.receiver);
+        mismatch = true;
+      }
+      if (int(container.command_info.sender) != int(command_info->receiver)){
+        DLOG_ERROR << "Requested ACK sender: "<< std::setw(2) << std::hex << std::setfill('0') << int(command_info->receiver)
+                  << ", Get ACK sender: "<< std::setw(2) << std::hex << std::setfill('0') << int(container.command_info.sender);
+        mismatch = true;
+      }
+    }
+    else{
+      if (int(container.command_info.receiver) != int(command_info->receiver)){
+        DLOG_ERROR << "Requested receiver: "<< std::setw(2) << std::hex << std::setfill('0') << int(container.command_info.receiver)
+                  << ", Get receiver: "<< std::setw(2) << std::hex << std::setfill('0') << int(container.command_info.receiver);
+        mismatch = true;
       }
 
-      if (int(container.command_info.sender) !=int(command_info->sender)){
-        DLOG_ERROR << "Requested sender: "<<container.command_info.sender<<", Get sender: "<<command_info->sender;
+      if (int(container.command_info.sender) != int(command_info->sender)){
+        DLOG_ERROR << "Requested sender: "<< std::setw(2) << std::hex << std::setfill('0') << int(command_info->sender)
+                  << ", Get sender: "<< std::setw(2) << std::hex << std::setfill('0') << int(container.command_info.sender);
+        mismatch = true;
       }
+    }
 
-      if (int(container.command_info.need_ack) !=int(command_info->need_ack)){
-        DLOG_ERROR << "Requested need_ack: "<<container.command_info.need_ack<<", Get need_ack: "<<command_info->need_ack;
-      }
-
-      if (int(container.command_info.length) !=int(command_info->length)){
-        DLOG_ERROR << "Requested length: "<<container.command_info.length<<", Get length: "<<command_info->length;
-      }
-
+    if (int(container.command_info.length) !=int(command_info->length)){
+      DLOG_ERROR << "Requested length: "<< int(command_info->length)
+                <<", Get length: "<< int(container.command_info.length);
+      mismatch = true;
+    }
+    if(mismatch){
+      buffer_pool_map_[std::make_pair(command_info->cmd_set,
+                                      command_info->cmd_id)]->Push(container);
       return false;
     }
+
     //1 time copy
     memcpy(message_header, &(container.message_header), sizeof(message_header));
     memcpy(message_data, &(container.message_data), command_info->length);
@@ -191,10 +223,11 @@ bool Protocol::SendResponse(const CommandInfo *command_info,
                  message_data, command_info->length);
 }
 bool Protocol::SendRequest(const CommandInfo *command_info,
+                           MessageHeader *message_header,
                            void *message_data) {
   return SendCMD(command_info->cmd_set, command_info->cmd_id,
                  command_info->receiver, message_data, command_info->length,
-                 CMDSessionMode::CMD_SESSION_AUTO);
+                 CMDSessionMode::CMD_SESSION_AUTO, message_header);
 }
 bool Protocol::SendMessage(const CommandInfo *command_info,
                            void *message_data) {
@@ -292,7 +325,7 @@ void Protocol::FreeACKSession(ACKSession *session_ptr) {
 /****************************** Send Pipline *****************************/
 bool Protocol::SendCMD(uint8_t cmd_set, uint8_t cmd_id, uint8_t receiver,
                        void *data_ptr, uint16_t data_length,
-                       CMDSessionMode session_mode,
+                       CMDSessionMode session_mode, MessageHeader* message_header,
                        std::chrono::milliseconds ack_timeout, int retry_time) {
 
   CMDSession *cmd_session_ptr = nullptr;
@@ -341,6 +374,12 @@ bool Protocol::SendCMD(uint8_t cmd_set, uint8_t cmd_id, uint8_t receiver,
       header_ptr->seq_num = seq_num_;
       header_ptr->crc = CRC16Calc(cmd_session_ptr->memory_block_ptr->memory_ptr, HEADER_LEN - CRC_HEAD_LEN);
 
+      if(message_header){
+        message_header->is_ack = false;
+        message_header->seq_num = seq_num_;
+        message_header->session_id = cmd_session_ptr->session_id;
+      }
+
       // pack the cmd prefix ,data and data crc into memory block one by one
       memcpy(cmd_session_ptr->memory_block_ptr->memory_ptr + HEADER_LEN, cmd_set_prefix, CMD_SET_PREFIX_LEN);
       memcpy(cmd_session_ptr->memory_block_ptr->memory_ptr + HEADER_LEN + CMD_SET_PREFIX_LEN, data_ptr, data_length);
@@ -350,6 +389,7 @@ bool Protocol::SendCMD(uint8_t cmd_set, uint8_t cmd_id, uint8_t receiver,
 
       // send it using device
       DeviceSend(cmd_session_ptr->memory_block_ptr->memory_ptr);
+
       seq_num_++;
       FreeCMDSession(cmd_session_ptr);
       //unlock
@@ -372,6 +412,7 @@ bool Protocol::SendCMD(uint8_t cmd_set, uint8_t cmd_id, uint8_t receiver,
       if (seq_num_ == cmd_session_ptr->pre_seq_num) {
         seq_num_++;
       }
+
       //pack into cmd_session memory_block
       header_ptr = (Header *) cmd_session_ptr->memory_block_ptr->memory_ptr;
       header_ptr->sof = SOF;
@@ -385,6 +426,12 @@ bool Protocol::SendCMD(uint8_t cmd_set, uint8_t cmd_id, uint8_t receiver,
       header_ptr->reserved1 = 0;
       header_ptr->seq_num = seq_num_;
       header_ptr->crc = CRC16Calc(cmd_session_ptr->memory_block_ptr->memory_ptr, HEADER_LEN - CRC_HEAD_LEN);
+
+      if(message_header){
+        message_header->is_ack = false;
+        message_header->seq_num = seq_num_;
+        message_header->session_id = cmd_session_ptr->session_id;
+      }
 
       // pack the cmd prefix ,data and data crc into memory block one by one
       memcpy(cmd_session_ptr->memory_block_ptr->memory_ptr + HEADER_LEN, cmd_set_prefix, CMD_SET_PREFIX_LEN);
@@ -424,6 +471,7 @@ bool Protocol::SendCMD(uint8_t cmd_set, uint8_t cmd_id, uint8_t receiver,
       if (seq_num_ == cmd_session_ptr->pre_seq_num) {
         seq_num_++;
       }
+
       //pack into cmd_session memory_block
       header_ptr = (Header *) cmd_session_ptr->memory_block_ptr->memory_ptr;
       header_ptr->sof = SOF;
@@ -437,6 +485,13 @@ bool Protocol::SendCMD(uint8_t cmd_set, uint8_t cmd_id, uint8_t receiver,
       header_ptr->reserved1 = 0;
       header_ptr->seq_num = seq_num_;
       header_ptr->crc = CRC16Calc(cmd_session_ptr->memory_block_ptr->memory_ptr, HEADER_LEN - CRC_HEAD_LEN);
+
+
+      if(message_header){
+        message_header->is_ack = false;
+        message_header->seq_num = seq_num_;
+        message_header->session_id = cmd_session_ptr->session_id;
+      }
 
       // pack the cmd prefix ,data and data crc into memory block one by one
       memcpy(cmd_session_ptr->memory_block_ptr->memory_ptr + HEADER_LEN, cmd_set_prefix, CMD_SET_PREFIX_LEN);
@@ -696,13 +751,18 @@ bool Protocol::ContainerHandler() {
 
     if (header_ptr->session_id > 0 && header_ptr->session_id < 32) {
       if (cmd_session_table_[header_ptr->session_id].usage_flag == 1) {
+
         memory_pool_ptr_->LockMemory();
         session_header_ptr = (Header *) cmd_session_table_[header_ptr->session_id].memory_block_ptr->memory_ptr;
-        if (session_header_ptr->session_id == header_ptr->session_id &&
-            session_header_ptr->seq_num == header_ptr->seq_num) {
+
+        if (session_header_ptr->session_id == header_ptr->session_id
+          // HotFix: Commented here. Redefine that ack and cmd can have different seq num during communication
+          // && session_header_ptr->seq_num == header_ptr->seq_num
+            ) {
 
           recv_container_ptr_->message_header.is_ack = true;
-          recv_container_ptr_->message_header.seq_num = header_ptr->seq_num;
+          recv_container_ptr_->message_header.seq_num = header_ptr->seq_num;//HotFix as above: session_header_ptr->seq_num originally
+
           recv_container_ptr_->message_header.session_id = header_ptr->session_id;
           recv_container_ptr_->command_info.length = header_ptr->length - HEADER_LEN - CRC_DATA_LEN;
           recv_container_ptr_->command_info.sender = header_ptr->sender;

@@ -162,6 +162,7 @@ int SerialDevice::Read(uint8_t *buf, int len) {
     return -1;
   } else {
     ret = read(serial_fd_, buf, len);
+    //LOG_INFO<<"Read once length:"<<ret;
     while (ret == 0) {
       LOG_ERROR << "Connection closed, try to reconnect.";
       while (!Init()) {
