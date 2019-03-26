@@ -39,7 +39,7 @@ bool Handle::Init(){
   LOG_INFO<<"Initialization of protocol layer and dispatch layer succeeded. ";
   return true;
 }
-std::shared_ptr<Protocol> Handle::GetProtocol() {
+std::shared_ptr<Protocol>& Handle::GetProtocol() {
   return protocol_;
 }
 

@@ -68,7 +68,7 @@ class Handle : public std::enable_shared_from_this<Handle> {
    * @brief Get the pointer of protocol layer
    * @return The pointer of protocol layer
    */
-  std::shared_ptr<Protocol> GetProtocol();
+  std::shared_ptr<Protocol>& GetProtocol();
   /**
    * @brief Create the subscriber for the protocol command without need of ack (Receive command)
    * @tparam Cmd Command DataType

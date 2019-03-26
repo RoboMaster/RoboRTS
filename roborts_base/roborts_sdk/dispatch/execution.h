@@ -46,17 +46,17 @@ class Executor {
    * @brief Given the subscription, invoke its callback function
    * @param subscription Subscription base pointer of certain command
    */
-  void ExecuteSubscription(std::shared_ptr<SubscriptionBase> subscription);
+  void ExecuteSubscription(const std::shared_ptr<SubscriptionBase>& subscription);
   /**
    * @brief Given the service, invoke its callback function and call the protocol layer to send response/ack
    * @param service Service base pointer of certain command
    */
-  void ExecuteService(std::shared_ptr<ServiceBase> service);
+  void ExecuteService(const std::shared_ptr<ServiceBase>& service);
   /**
    * @brief Given the client, call the protocol layer to send command and wait for the response/ack
    * @param client Client base pointer of certain command
    */
-  void ExecuteClient(std::shared_ptr<ClientBase> client);
+  void ExecuteClient(const std::shared_ptr<ClientBase>& client);
 
  private:
   //! pointer of handle

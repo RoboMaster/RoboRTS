@@ -23,7 +23,7 @@ std::shared_ptr<Handle> Executor::GetHandle() {
   return handle_;
 }
 
-void Executor::ExecuteSubscription(std::shared_ptr<SubscriptionBase> subscription) {
+void Executor::ExecuteSubscription(const std::shared_ptr<SubscriptionBase>& subscription) {
   auto message_header = subscription->CreateMessageHeader();
   std::shared_ptr<void> message = subscription->CreateMessage();
 
@@ -39,7 +39,7 @@ void Executor::ExecuteSubscription(std::shared_ptr<SubscriptionBase> subscriptio
   //TODO: add return message;
   //subscription->return_message(message);
 }
-void Executor::ExecuteService(std::shared_ptr<ServiceBase> service) {
+void Executor::ExecuteService(const std::shared_ptr<ServiceBase>& service) {
   auto request_header = service->CreateRequestHeader();
   std::shared_ptr<void> request = service->CreateRequest();
 
@@ -53,7 +53,7 @@ void Executor::ExecuteService(std::shared_ptr<ServiceBase> service) {
     DLOG_ERROR << "take request failed!";
   }
 }
-void Executor::ExecuteClient(std::shared_ptr<ClientBase> client) {
+void Executor::ExecuteClient(const std::shared_ptr<ClientBase>& client) {
   auto request_header = client->CreateRequestHeader();
   std::shared_ptr<void> response = client->CreateResponse();
 

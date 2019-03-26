@@ -40,10 +40,11 @@ void Chassis::SDK_Init(){
   verison_client_->AsyncSendRequest(version,
                                     [](roborts_sdk::Client<roborts_sdk::cmd_version_id,
                                                            roborts_sdk::cmd_version_id>::SharedFuture future) {
-                                      LOG_INFO << "Chassis Firmware Version: " << int(future.get()->version_id>>24&0xFF) <<"."
-                                               <<int(future.get()->version_id>>16&0xFF)<<"."
-                                               <<int(future.get()->version_id>>8&0xFF)<<"."
-                                               <<int(future.get()->version_id&0xFF);
+                                      ROS_INFO("Chassis Firmware Version: %d.%d.%d.%d",
+                                               int(future.get()->version_id>>24&0xFF),
+                                               int(future.get()->version_id>>16&0xFF),
+                                               int(future.get()->version_id>>8&0xFF),
+                                               int(future.get()->version_id&0xFF));
                                     });
 
   handle_->CreateSubscriber<roborts_sdk::cmd_chassis_info>(CHASSIS_CMD_SET, CMD_PUSH_CHASSIS_INFO,
@@ -59,15 +60,15 @@ void Chassis::SDK_Init(){
                                                                                     MANIFOLD2_ADDRESS, CHASSIS_ADDRESS);
 
   heartbeat_pub_ = handle_->CreatePublisher<roborts_sdk::cmd_heartbeat>(UNIVERSAL_CMD_SET, CMD_HEARTBEAT,
-                                                                           MANIFOLD2_ADDRESS, CHASSIS_ADDRESS);
+                                                                        MANIFOLD2_ADDRESS, CHASSIS_ADDRESS);
   heartbeat_thread_ = std::thread([this]{
-                                        roborts_sdk::cmd_heartbeat heartbeat;
-                                        heartbeat.heartbeat=0;
-                                        while(ros::ok()){
-                                          heartbeat_pub_->Publish(heartbeat);
-                                          std::this_thread::sleep_for(std::chrono::milliseconds(300));
-                                        }
-                                      }
+                                    roborts_sdk::cmd_heartbeat heartbeat;
+                                    heartbeat.heartbeat=0;
+                                    while(ros::ok()){
+                                      heartbeat_pub_->Publish(heartbeat);
+                                      std::this_thread::sleep_for(std::chrono::milliseconds(300));
+                                    }
+                                  }
   );
 
 
