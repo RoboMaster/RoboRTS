@@ -120,7 +120,7 @@ void Chassis::UWBInfoCallback(const std::shared_ptr<roborts_sdk::cmd_uwb_info> u
   uwb_data_.pose.position.x = ((double)uwb_info->x)/100.0;
   uwb_data_.pose.position.y = ((double)uwb_info->y)/100.0;
   uwb_data_.pose.position.z = 0;
-  uwb_data_.pose.orientation = tf::createQuaternionMsgFromYaw(uwb_info->yaw/ 180.0 * M_PI;);
+  uwb_data_.pose.orientation = tf::createQuaternionMsgFromYaw(uwb_info->yaw/ 180.0 * M_PI);
   ros_uwb_pub_.publish(uwb_data_);
 
 }
