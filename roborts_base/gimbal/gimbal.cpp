@@ -128,8 +128,8 @@ bool Gimbal::CtrlFricWheelService(roborts_msgs::FricWhl::Request &req,
                                   roborts_msgs::FricWhl::Response &res){
   roborts_sdk::cmd_fric_wheel_speed fric_speed;
   if(req.open){
-    fric_speed.left = 1220;
-    fric_speed.right = 1220;
+    fric_speed.left = 1240;
+    fric_speed.right = 1240;
   } else{
     fric_speed.left = 1000;
     fric_speed.right = 1000;
