@@ -162,6 +162,7 @@ void RefereeSystem::RobotHeatCallback(const std::shared_ptr<roborts_sdk::cmd_pow
   robot_heat.chassis_current = raw_robot_heat->chassis_current;
   robot_heat.chassis_power = raw_robot_heat->chassis_power;
   robot_heat.chassis_power_buffer = raw_robot_heat->chassis_power_buffer;
+  robot_heat.shooter_heat = raw_robot_heat->shooter_heat0;
   ros_robot_heat_pub_.publish(robot_heat);
 }
 
