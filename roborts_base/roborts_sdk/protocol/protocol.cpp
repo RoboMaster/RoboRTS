@@ -128,6 +128,7 @@ void Protocol::ReceivePool() {
     start_time = std::chrono::steady_clock::now();
     RecvContainer *container_ptr = Receive();
     if (container_ptr) {
+      std::lock_guard<std::mutex> lock(mutex_);
       if (buffer_pool_map_.count(std::make_pair(container_ptr->command_info.cmd_set,
                                                 container_ptr->command_info.cmd_id)) == 0) {
         buffer_pool_map_[std::make_pair(container_ptr->command_info.cmd_set,
@@ -158,6 +159,8 @@ void Protocol::ReceivePool() {
 bool Protocol::Take(const CommandInfo *command_info,
                     MessageHeader *message_header,
                     void *message_data) {
+
+  std::lock_guard<std::mutex> lock(mutex_);
   if (buffer_pool_map_.count(std::make_pair(command_info->cmd_set,
                                             command_info->cmd_id)) == 0) {
 //    DLOG_ERROR<<"take failed";
@@ -165,11 +168,13 @@ bool Protocol::Take(const CommandInfo *command_info,
   } else {
     //1 time copy
     RecvContainer container;
+
     if (!buffer_pool_map_[std::make_pair(command_info->cmd_set,
                                          command_info->cmd_id)]->Pop(container)) {
 //      DLOG_EVERY_N(ERROR, 100)<<"nothing to take";
       return false;
     }
+
 
     bool mismatch = false;
 
@@ -210,6 +215,7 @@ bool Protocol::Take(const CommandInfo *command_info,
                  <<", Get length: "<< int(container.command_info.length);
       mismatch = true;
     }
+
     if(mismatch){
       buffer_pool_map_[std::make_pair(command_info->cmd_set,
                                       command_info->cmd_id)]->Push(container);

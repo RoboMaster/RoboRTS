@@ -1,2 +1,2 @@
 #projectile supply
-bool supply
+uint8 number

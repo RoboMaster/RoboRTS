@@ -514,6 +514,8 @@ class Protocol {
   std::thread send_poll_thread_;
   //! receive pool thread
   std::thread receive_pool_thread_;
+  //! mutex for map
+  std::mutex mutex_;
 };
 }
 #endif //ROBORTS_SDK_PROTOCOL_H
