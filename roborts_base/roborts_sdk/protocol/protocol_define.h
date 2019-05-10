@@ -132,9 +132,9 @@ typedef struct {
 } cmd_gimbal_info;
 
 #define CMD_SET_GIMBAL_MODE            (0X02u)
-typedef enum {
-  GYRO_CONTROL,
+typedef enum: uint8_t {
   CODE_CONTROL,
+  GYRO_CONTROL,
   G_MODE_MAX_NUM,
 } gimbal_mode_e;
 
@@ -158,7 +158,7 @@ typedef struct{
 } cmd_fric_wheel_speed;
 
 #define CMD_SET_SHOOT_INFO             (0x05u)
-typedef enum {
+typedef enum: uint8_t {
   SHOOT_STOP = 0,
   SHOOT_ONCE,
   SHOOT_CONTINUOUS,
