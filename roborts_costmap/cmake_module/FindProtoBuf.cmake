@@ -30,7 +30,7 @@ set(PROTOBUF_GENERATE_CPP_APPEND_PATH TRUE)
 ################################################################################################
 # Modification of standard 'protobuf_generate_cpp()' with output dir parameter
 # Usage:
-#   caffe_protobuf_generate_cpp_py(<output_dir> <proto_srcs> <proto_hdrs> <proto_files>)
+#   rrts_protobuf_generate_cpp(<output_dir> <proto_srcs> <proto_hdrs> <proto_files>)
 function(rrts_protobuf_generate_cpp output_dir proto_srcs proto_hdrs)
   if(NOT ARGN)
     message(SEND_ERROR "Error: rrts_protobuf_generate_cpp() called without any proto files")
