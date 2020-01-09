@@ -60,6 +60,7 @@
 
 #ifndef ROBORTS_PLANNING_LOCAL_PLANNER_TEB_OBSTACLE_EDGE_H
 #define ROBORTS_PLANNING_LOCAL_PLANNER_TEB_OBSTACLE_EDGE_H
+#include <bits/stdc++.h>
 #include "local_planner/obstacle.h"
 #include "local_planner/robot_footprint_model.h"
 #include "timed_elastic_band/teb_vertex_pose.h"

@@ -55,7 +55,7 @@
 
 #ifndef ROBORTS_PLANNING_LOCAL_PLANNER_TEB_PENALTIES_H
 #define ROBORTS_PLANNING_LOCAL_PLANNER_TEB_PENALTIES_H
-
+#include <bits/stdc++.h>
 #include <cmath>
 #include <Eigen/Core>
 #include <g2o/stuff/misc.h>

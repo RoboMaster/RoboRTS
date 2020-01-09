@@ -135,8 +135,8 @@ boost::shared_ptr<g2o::SparseOptimizer> TebOptimal::InitOptimizer() {
   boost::shared_ptr<g2o::SparseOptimizer> optimizer = boost::make_shared<g2o::SparseOptimizer>();
   TebLinearSolver* linearSolver = new TebLinearSolver();
   linearSolver->setBlockOrdering(true);
-  TebBlockSolver* blockSolver = new TebBlockSolver(linearSolver);
-  g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg(blockSolver);
+  TebBlockSolver* blockSolver = new TebBlockSolver((std::unique_ptr<g2o::LinearSolver<Eigen::Matrix<double, -1, -1> >, std::default_delete<g2o::LinearSolver<Eigen::Matrix<double, -1, -1> > > >)linearSolver);
+  g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg((std::unique_ptr<g2o::Solver>)blockSolver);
 
   optimizer->setAlgorithm(solver);
 
@@ -936,7 +936,7 @@ bool TebOptimal::IsHorizonReductionAppropriate(const std::vector<DataBase> &init
     return false;
   }
 
-  if ( std::abs(g2o::normalize_theta( vertex_console_.Pose(0).GetTheta() - vertex_console_.BackPose().GetTheta() ) ) > M_PI/2) {
+  if ( std::abs(double(g2o::normalize_theta( vertex_console_.Pose(0).GetTheta() - vertex_console_.BackPose().GetTheta() ) )) > M_PI/2) {
     return true;
   }
 

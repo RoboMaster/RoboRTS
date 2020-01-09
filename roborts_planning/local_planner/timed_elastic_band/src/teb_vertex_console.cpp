@@ -232,7 +232,7 @@ bool TebVertexConsole::InitTEBtoGoal(const DataBase &start,
       }
 
       double dist_to_goal = point_to_goal.norm();
-      double no_steps_d = dist_to_goal / std::abs(diststep);
+      double no_steps_d = dist_to_goal / std::abs(double(diststep));
       unsigned int no_steps = (unsigned int) std::floor(no_steps_d);
 
       if (max_vel_x > 0) {

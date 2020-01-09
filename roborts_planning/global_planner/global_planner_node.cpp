@@ -85,6 +85,8 @@ ErrorInfo GlobalPlannerNode::Init() {
   path_.header.frame_id = costmap_ptr_->GetGlobalFrameID();
   return ErrorInfo(ErrorCode::OK);
 }
+ 
+// Handle Goal input
 
 void GlobalPlannerNode::GoalCallback(const roborts_msgs::GlobalPlannerGoal::ConstPtr &msg) {
 
@@ -165,6 +167,8 @@ void GlobalPlannerNode::GoalCallback(const roborts_msgs::GlobalPlannerGoal::Cons
 
 }
 
+// Interface function of this class.
+
 NodeState GlobalPlannerNode::GetNodeState() {
   std::lock_guard<std::mutex> node_state_lock(node_state_mtx_);
   return node_state_;
@@ -194,6 +198,8 @@ void GlobalPlannerNode::SetGoal(geometry_msgs::PoseStamped goal) {
   std::lock_guard<std::mutex> goal_lock(goal_mtx_);
   goal_ = goal;
 }
+
+// Receive command and determine running condition of robot
 
 void GlobalPlannerNode::StartPlanning() {
   SetNodeState(NodeState::IDLE);
@@ -230,7 +236,7 @@ void GlobalPlannerNode::PlanThread() {
       std::unique_lock<roborts_costmap::Costmap2D::mutex_t> lock(*(costmap_ptr_->GetCostMap()->GetMutex()));
       bool error_set = false;
       //Get the robot current pose
-      while (!costmap_ptr_->GetRobotPose(current_start)) {
+      while (!costmap_ptr_->GetRobotPose(current_start)) { // The cost map service has shutdown
         if (!error_set) {
           ROS_ERROR("Get Robot Pose Error.");
           SetErrorInfo(ErrorInfo(ErrorCode::GP_GET_POSE_ERROR, "Get Robot Pose Error."));
@@ -242,13 +248,13 @@ void GlobalPlannerNode::PlanThread() {
       //Get the robot current goal and transform to the global frame
       current_goal = GetGoal();
 
-      if (current_goal.header.frame_id != costmap_ptr_->GetGlobalFrameID()) {
-        current_goal = costmap_ptr_->Pose2GlobalFrame(current_goal);
+      if (current_goal.header.frame_id != costmap_ptr_->GetGlobalFrameID()) { // If Goal is different than run the code. However, since decouple structure
+        current_goal = costmap_ptr_->Pose2GlobalFrame(current_goal);          // Two Goal may be same.
         SetGoal(current_goal);
       }
 
       //Plan
-      error_info = global_planner_ptr_->Plan(current_start, current_goal, current_path);
+      error_info = global_planner_ptr_->Plan(current_start, current_goal, current_path); // What 
 
     }
 
@@ -273,7 +279,7 @@ void GlobalPlannerNode::PlanThread() {
       error_info = ErrorInfo(ErrorCode::GP_MAX_RETRIES_FAILURE, "Over max retries.");
       SetNodeState(NodeState::FAILURE);
       retries=0;
-    } else if (error_info == ErrorInfo(ErrorCode::GP_GOAL_INVALID_ERROR)){
+    } else if (error_info == ErrorInfo(ErrorCode::GP_GOAL_INVALID_ERROR)){   // Error Checking mechanism for decision making
       //When goal is not reachable, return failure immediately
       ROS_ERROR("Current goal is not valid!");
       SetNodeState(NodeState::FAILURE);

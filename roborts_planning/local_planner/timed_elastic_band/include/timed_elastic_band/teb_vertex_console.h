@@ -55,7 +55,7 @@
 
 #ifndef ROBORTS_PLANNING_LOCAL_PLANNER_TEB_VERTEX_CONSOLE_H
 #define ROBORTS_PLANNING_LOCAL_PLANNER_TEB_VERTEX_CONSOLE_H
-
+#include <bits/stdc++.h>
 #include <complex>
 #include <iterator>
 

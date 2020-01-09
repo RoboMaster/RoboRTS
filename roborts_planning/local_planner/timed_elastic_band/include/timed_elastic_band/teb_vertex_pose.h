@@ -60,7 +60,7 @@
 
 #ifndef ROBORTS_PLANNING_LOCAL_PLANNER_TEB_VERTEX_POSE_H
 #define ROBORTS_PLANNING_LOCAL_PLANNER_TEB_VERTEX_POSE_H
-
+#include <bits/stdc++.h>
 #include <g2o/config.h>
 #include <g2o/core/base_vertex.h>
 #include <g2o/core/hyper_graph_action.h>

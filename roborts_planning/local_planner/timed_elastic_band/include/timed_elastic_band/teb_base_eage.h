@@ -60,7 +60,7 @@
 
 #ifndef ROBORTS_PLANNING_LOCAL_PLANNER_TEB_BASE_EAGE_H
 #define ROBORTS_PLANNING_LOCAL_PLANNER_TEB_BASE_EAGE_H
-
+#include <bits/stdc++.h>
 #include <cmath>
 
 #include <g2o/core/base_binary_edge.h>

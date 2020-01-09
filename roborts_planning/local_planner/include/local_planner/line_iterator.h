@@ -43,8 +43,8 @@ class FastLineIterator {
       , y1_( y1 )
       , x_( x0 )
       , y_( y0 )
-      , deltax_(abs(x1 - x0))
-      , deltay_(abs(y1 - y0))
+      , deltax_(abs(int(x1 - x0)))
+      , deltay_(abs(int(y1 - y0)))
       , curpixel_( 0 ) {
 
     xinc1_ = (x1 - x0) >0 ?1:-1;

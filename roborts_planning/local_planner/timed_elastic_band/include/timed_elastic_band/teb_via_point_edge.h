@@ -60,7 +60,7 @@
 
 #ifndef ROBORTS_PLANNING_LOCAL_PLANNER_TEB_VIA_POINT_EDGE_H
 #define ROBORTS_PLANNING_LOCAL_PLANNER_TEB_VIA_POINT_EDGE_H
-
+#include <bits/stdc++.h>
 #include <g2o/core/base_unary_edge.h>
 
 #include "timed_elastic_band/teb_vertex_pose.h"

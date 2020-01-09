@@ -56,6 +56,7 @@
 #ifndef ROBORTS_PLANNING_LOCAL_PLANNER_TEB_OPTIMAL_H
 #define ROBORTS_PLANNING_LOCAL_PLANNER_TEB_OPTIMAL_H
 #include <cmath>
+#include <bits/stdc++.h>
 #include <chrono>
 
 #include <limits>

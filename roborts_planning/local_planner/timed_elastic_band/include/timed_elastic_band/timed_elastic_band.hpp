@@ -124,8 +124,8 @@ bool TebVertexConsole::InitTEBtoGoal(BidirIter path_start,
 
       Eigen::Vector2d diff_next = fun_position(*boost::next(path_start))
           - curr_point;
-      double ang_diff = std::abs(g2o::normalize_theta(atan2(diff_next[1], diff_next[0])
-                                                          - atan2(diff_last[1], diff_last[0])));
+      double ang_diff = std::abs(double(g2o::normalize_theta(atan2(diff_next[1], diff_next[0])
+                                                          - atan2(diff_last[1], diff_last[0]))));
 
       timestep_vel = ang_diff / max_vel_theta;
       if (max_acc_theta) {

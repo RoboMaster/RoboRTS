@@ -60,7 +60,7 @@
 
 #ifndef ROBORTS_PLANNING_LOCAL_PLANNER_TEB_TIME_OPTIMAL_EDGE_H
 #define ROBORTS_PLANNING_LOCAL_PLANNER_TEB_TIME_OPTIMAL_EDGE_H
-
+#include <bits/stdc++.h>
 #include <float.h>
 
 #include <Eigen/Core>

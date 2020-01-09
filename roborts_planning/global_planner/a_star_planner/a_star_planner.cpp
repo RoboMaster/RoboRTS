@@ -71,7 +71,7 @@ ErrorInfo AStarPlanner::Plan(const geometry_msgs::PoseStamped &start,
     return ErrorInfo(ErrorCode::GP_POSE_TRANSFORM_ERROR,
                      "Goal pose can't be transformed to costmap frame.");
   }
-  if (costmap_ptr_->GetCostMap()->GetCost(goal_x,goal_y)<inaccessible_cost_){
+  if (costmap_ptr_->GetCostMap()->GetCost(goal_x,goal_y)<inaccessible_cost_){ // The goal is feasible
     valid_goal[0] = goal_x;
     valid_goal[1] = goal_y;
     goal_valid = true;
@@ -83,7 +83,7 @@ ErrorInfo AStarPlanner::Plan(const geometry_msgs::PoseStamped &start,
       tmp_goal_x = goal_x - goal_search_tolerance_;
       while(tmp_goal_x <= goal_x + goal_search_tolerance_){
         unsigned char cost = costmap_ptr_->GetCostMap()->GetCost(tmp_goal_x, tmp_goal_y);
-        unsigned int dist = abs(goal_x - tmp_goal_x) + abs(goal_y - tmp_goal_y);
+        unsigned int dist = abs(int(goal_x - tmp_goal_x)) + abs(int(goal_y - tmp_goal_y));
         if (cost < inaccessible_cost_ && dist < shortest_dist ) {
           shortest_dist = dist;
           valid_goal[0] = tmp_goal_x;
@@ -161,7 +161,7 @@ ErrorInfo AStarPlanner::SearchPath(const int &start_index,
       break;
     }
 
-    GetNineNeighbors(current_index, neighbors_index);
+    GetNineNeighbors(current_index, neighbors_index); // May be modified because of shape changed in robot
 
     for (auto neighbor_index : neighbors_index) {
 
@@ -227,11 +227,11 @@ ErrorInfo AStarPlanner::SearchPath(const int &start_index,
 ErrorInfo AStarPlanner::GetMoveCost(const int &current_index,
                                     const int &neighbor_index,
                                     int &move_cost) const {
-  if (abs(neighbor_index - current_index) == 1 ||
-      abs(neighbor_index - current_index) == gridmap_width_) {
+  if (abs(int(neighbor_index - current_index)) == 1 ||
+      abs(int(neighbor_index - current_index)) == gridmap_width_) {
     move_cost = 10;
-  } else if (abs(neighbor_index - current_index) == (gridmap_width_ + 1) ||
-      abs(neighbor_index - current_index) == (gridmap_width_ - 1)) {
+  } else if (abs(int(neighbor_index - current_index)) == (gridmap_width_ + 1) ||
+      abs(int(neighbor_index - current_index)) == (gridmap_width_ - 1)) {
     move_cost = 14;
   } else {
     return ErrorInfo(ErrorCode::GP_MOVE_COST_ERROR,
@@ -241,8 +241,8 @@ ErrorInfo AStarPlanner::GetMoveCost(const int &current_index,
 }
 
 void AStarPlanner::GetManhattanDistance(const int &index1, const int &index2, int &manhattan_distance) const {
-  manhattan_distance = heuristic_factor_* 10 * (abs(index1 / gridmap_width_ - index2 / gridmap_width_) +
-      abs(index1 % gridmap_width_ - index2 % gridmap_width_));
+  manhattan_distance = heuristic_factor_* 10 * (abs(int(index1 / gridmap_width_ - index2 / gridmap_width_)) +
+      abs(int(index1 % gridmap_width_ - index2 % gridmap_width_)));
 }
 
 void AStarPlanner::GetNineNeighbors(const int &current_index, std::vector<int> &neighbors_index) const {

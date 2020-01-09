@@ -60,7 +60,7 @@
 
 #ifndef ROBORTS_PLANNING_LOCAL_PLANNER_TEB_VERTEX_TIMEDIFF_H
 #define ROBORTS_PLANNING_LOCAL_PLANNER_TEB_VERTEX_TIMEDIFF_H
-
+#include <bits/stdc++.h>
 
 #include "g2o/config.h"
 #include "g2o/core/base_vertex.h"

@@ -60,7 +60,7 @@
 
 #ifndef ROBORTS_PLANNING_LOCAL_PLANNER_TEB_ACCELERATION_EAGE_H
 #define ROBORTS_PLANNING_LOCAL_PLANNER_TEB_ACCELERATION_EAGE_H
-
+#include <bits/stdc++.h>
 #include <geometry_msgs/Twist.h>
 
 #include "local_planner/utility_tool.h"
