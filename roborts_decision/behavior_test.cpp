@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
 
   auto command_thread= std::thread(Command);
   ros::Rate rate(10);
+  // This structure itself can be consider as a decision tree styled Behavior Tree structure.
   while(ros::ok()){
     ros::spinOnce();
     switch (command) {

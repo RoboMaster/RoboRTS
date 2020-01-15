@@ -29,7 +29,7 @@ class PatrolBehavior {
 
   void Run() {
 
-    auto executor_state = Update();
+    auto executor_state = Update(); // Hook the leave node's status
 
     std::cout << "state: " << (int)(executor_state) << std::endl;
 

@@ -54,6 +54,7 @@ class EscapeBehavior {
 
         auto robot_map_pose = blackboard_->GetRobotMapPose();
         float x_min, x_max;
+        // If enemy occur on left then system choose a right random position to Go that's simple... Useless
         if (enemy.pose.position.x < left_x_limit_) {
           x_min = right_random_min_x_;
           x_max = right_random_max_x_;

@@ -22,5 +22,6 @@
  * Add your own algorithm harders here.
  */
 #include "constraint_set/constraint_set.h"
+#include "lightBlob_test/lightBlob_test.h"
 
 #endif // ROBORTS_DETECTION_ARMOR_DETECTION_ALGORITHMS_H

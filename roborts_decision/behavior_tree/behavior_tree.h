@@ -47,7 +47,7 @@ class BehaviorTree {
     while (ros::ok() ) {
 
       std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
-      // Update the blackboard data
+      // Update the blackboard data how to linked to blackboard mechanism. 
       ros::spinOnce();
       ROS_INFO("Frame : %d", frame);
       root_node_->Run();

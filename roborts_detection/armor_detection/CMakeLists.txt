@@ -2,6 +2,8 @@ project(armor_detection)
 
 add_subdirectory(constraint_set)
 
+add_subdirectory(lightBlob_test)
+
 
 file(GLOB ProtoFiles "${CMAKE_CURRENT_SOURCE_DIR}/proto/*.proto")
 rrts_protobuf_generate_cpp(${CMAKE_CURRENT_SOURCE_DIR}/proto
@@ -22,6 +24,7 @@ target_link_libraries(armor_detection_node
   PRIVATE
   detection::tool
   detection::constraint_set
+  detection::lightBlob_test
   ${PROTOBUF_LIBRARIES}
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}

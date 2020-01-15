@@ -109,7 +109,7 @@ void ArmorDetectionNode::ActionCB(const roborts_msgs::ArmorDetectionGoal::ConstP
     }
 
     {
-      std::lock_guard<std::mutex> guard(mutex_);
+      std::lock_guard<std::mutex> guard(mutex_); // Since detection thread will write xyz, this mutex can prevent problems
       if (undetected_count_ != 0) {
         feedback.detected = true;
         feedback.error_code = error_info_.error_code();
@@ -150,8 +150,8 @@ void ArmorDetectionNode::ExecuteLoop() {
   while(running_) {
     usleep(1);
     if (node_state_ == NodeState::RUNNING) {
-      cv::Point3f target_3d;
-      ErrorInfo error_info = armor_detector_->DetectArmor(detected_enemy_, target_3d);
+      cv::Point3f target_3d;//hat ever it runs out put will be
+      ErrorInfo error_info = armor_detector_->DetectArmor(detected_enemy_, target_3d); // Whatever algo is the result will be enemy pos as well as flag  
       {
         std::lock_guard<std::mutex> guard(mutex_);
         x_ = target_3d.x;

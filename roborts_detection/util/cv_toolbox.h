@@ -115,6 +115,7 @@ class CVToolbox {
   }
 
   void ImageCallback(const sensor_msgs::ImageConstPtr &img_msg, const sensor_msgs::CameraInfoConstPtr &camera_info_msg) {
+    //ROS_INFO("Callback Invoked!");
     if(!get_img_info_){
       camera_info_ = *camera_info_msg;
       capture_begin_ = std::chrono::high_resolution_clock::now();
@@ -153,7 +154,7 @@ class CVToolbox {
     if (buffer_state_[latest_index_] == BufferState::WRITE) {
       buffer_state_[latest_index_] = BufferState::READ;
     } else {
-      ROS_INFO("No image is available");
+      //ROS_INFO("No image is available");
       lock_.unlock();
       return temp_index;
     }
@@ -226,12 +227,16 @@ class CVToolbox {
       std::vector<cv::Mat> bgr;
       cv::split(src_img, bgr);
       if (color == 1) {
-        cv::Mat result_img;
-        cv::subtract(bgr[2], bgr[1], result_img);
+        cv::Mat buffer_img1,buffer_img2,result_img;
+        cv::subtract(bgr[2], bgr[1], buffer_img1);
+        cv::subtract(bgr[2], bgr[0], buffer_img2);
+        cv::add(buffer_img1,buffer_img2,result_img);
         return result_img;
       } else if (color == 0) {
-        cv::Mat result_img;
-        cv::subtract(bgr[0], bgr[2], result_img);
+        cv::Mat buffer_img1,buffer_img2,result_img;
+        cv::subtract(bgr[0], bgr[1], buffer_img1);
+        cv::subtract(bgr[0], bgr[2], buffer_img2);
+        cv::add(buffer_img1,buffer_img2,result_img);
         return result_img;
       }
     }

@@ -153,7 +153,7 @@ ErrorInfo ConstraintSet::DetectArmor(bool &detected, cv::Point3f &target_3d) {
     } else
       detected = false;
     if(enable_debug_) {
-      cv::imshow("relust_img_", src_img_);
+      cv::imshow("result_img_", src_img_);
     }
 
   lights.clear();
@@ -445,7 +445,7 @@ void ConstraintSet::CalcArmorInfo(std::vector<cv::Point2f> &armor_points,
   armor_points.push_back(lift_rd);
 
 }
-
+// Template for solve PnP
 void ConstraintSet::SolveArmorCoordinate(const float width,
                                          const float height) {
   armor_points_.emplace_back(cv::Point3f(-width/2, height/2,  0.0));

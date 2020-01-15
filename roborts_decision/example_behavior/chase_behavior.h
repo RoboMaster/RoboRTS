@@ -49,7 +49,7 @@ class ChaseBehavior {
       auto dx = chase_buffer_[(chase_count_ + 2 - 1) % 2].pose.position.x - robot_map_pose.pose.position.x;
       auto dy = chase_buffer_[(chase_count_ + 2 - 1) % 2].pose.position.y - robot_map_pose.pose.position.y;
       auto yaw = std::atan2(dy, dx);
-
+      // Robot has been chased
       if (std::sqrt(std::pow(dx, 2) + std::pow(dy, 2)) >= 1.0 && std::sqrt(std::pow(dx, 2) + std::pow(dy, 2)) <= 2.0) {
         if (cancel_goal_) {
           chassis_executor_->Cancel();

@@ -150,6 +150,7 @@ class Blackboard {
     }
   }
   /*---------------------------------- Tools ------------------------------------------*/
+  // Get distance between to pose
 
   double GetDistance(const geometry_msgs::PoseStamped &pose1,
                      const geometry_msgs::PoseStamped &pose2) {
@@ -159,7 +160,7 @@ class Blackboard {
     const double dy = point1.y - point2.y;
     return std::sqrt(dx * dx + dy * dy);
   }
-
+  // Get angle difference between two pose
   double GetAngle(const geometry_msgs::PoseStamped &pose1,
                   const geometry_msgs::PoseStamped &pose2) {
     const geometry_msgs::Quaternion quaternion1 = pose1.pose.orientation;
@@ -170,6 +171,7 @@ class Blackboard {
     return rot1.angleShortestPath(rot2);
   }
 
+  // Get Robot's map position based on on going publishing ROS map server.
   const geometry_msgs::PoseStamped GetRobotMapPose() {
     UpdateRobotPose();
     return robot_map_pose_;
@@ -179,10 +181,12 @@ class Blackboard {
     return costmap_ptr_;
   }
 
+  // How to use cost map and char map
   const CostMap2D* GetCostMap2D() {
     return costmap_2d_;
   }
 
+  // 
   const unsigned char* GetCharMap() {
     return charmap_;
   }
