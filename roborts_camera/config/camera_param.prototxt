@@ -1,7 +1,7 @@
 camera: {
   camera_name: "back_camera"
   camera_type: "uvc"
-  camera_path: "/dev/video1"
+  camera_path: "/dev/video2"
 
   camera_matrix {
     data: 737.13167516

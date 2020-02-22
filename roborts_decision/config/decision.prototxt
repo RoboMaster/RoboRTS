@@ -27,8 +27,8 @@ master_bot {
 
 # icra2019 map
 point {
-  x: 6.14
-  y: 4.45
+  x: 5.54
+  y: 3.9
   z: 0
 
   roll:  0
@@ -49,7 +49,7 @@ point {
 
 point {
   x: 2.49
-  y: 4.64
+  y: 4.00
   z: 0
 
   roll:  0

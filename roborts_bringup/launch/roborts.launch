@@ -1,6 +1,6 @@
 <launch>
   <master auto="start"/>
-  <arg name="map" value="icra2019"/>
+  <arg name="map" value="icra2020"/>
 
   <!--Load parameters for localization node  -->
   <rosparam command="load" file="$(find roborts_localization)/config/localization.yaml" />
