@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include "armor_detection_node.h"
 
+
 namespace roborts_detection {
 
 ArmorDetectionNode::ArmorDetectionNode():
@@ -41,7 +42,10 @@ ArmorDetectionNode::ArmorDetectionNode():
 
 ErrorInfo ArmorDetectionNode::Init() {
   enemy_info_pub_ = enemy_nh_.advertise<roborts_msgs::GimbalAngle>("cmd_gimbal_angle", 100);
+  enemy_flag_pub_ = enemy_nh_.advertise<std_msgs::String>("Detection/flag", 100);
   ArmorDetectionAlgorithms armor_detection_param;
+  yes<<"DETECTED";
+  no<<"NOT_DETECTED";
 
   std::string file_name = ros::package::getPath("roborts_detection") + "/armor_detection/config/armor_detection.prototxt";
   bool read_state = roborts_common::ReadProtoFromTextFile(file_name, &armor_detection_param);
@@ -89,6 +93,7 @@ void ArmorDetectionNode::ActionCB(const roborts_msgs::ArmorDetectionGoal::ConstP
 
   switch (data->command) {
     case 1:
+      enable_track = true;
       StartThread();
       break;
     case 2:
@@ -97,12 +102,16 @@ void ArmorDetectionNode::ActionCB(const roborts_msgs::ArmorDetectionGoal::ConstP
     case 3:
       StopThread();
       break;
+    case 4:
+      enable_track = false;
+      StartThread();
+      break;
     default:
       break;
   }
   ros::Rate rate(25);
   while(ros::ok()) {
-
+    // Check whether Preempted every time
     if(as_.isPreemptRequested()) {
       as_.setPreempted();
       return;
@@ -190,14 +199,26 @@ void ArmorDetectionNode::ExecuteLoop() {
 }
 
 void ArmorDetectionNode::PublishMsgs() {
-  enemy_info_pub_.publish(gimbal_angle_);
+  if (enable_track)
+    enemy_info_pub_.publish(gimbal_angle_);
+  if (detected_enemy_)
+  {
+    detectionFlag.data = yes.str();
+    enemy_flag_pub_.publish(detectionFlag);
+  }
+  else
+  {
+    detectionFlag.data = no.str();
+    enemy_flag_pub_.publish(detectionFlag);
+  }
+  
 }
 
 void ArmorDetectionNode::StartThread() {
   ROS_INFO("Armor detection node started!");
   running_ = true;
   armor_detector_->SetThreadState(true);
-  if(node_state_ == NodeState::IDLE) {
+  if(node_state_ == NodeState::IDLE) { // Prevent re-run
     armor_detection_thread_ = std::thread(&ArmorDetectionNode::ExecuteLoop, this);
   }
   node_state_ = NodeState::RUNNING;

@@ -2,6 +2,7 @@
 #command == 1 start
 #command == 2 pause
 #command == 3 stop
+#command == 4 Detect Only
 int32 command
 ---
 float32 result

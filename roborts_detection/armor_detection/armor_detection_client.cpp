@@ -33,18 +33,19 @@ int main(int argc, char **argv) {
 
   char command = '0';
 
-  while (command != '4') {
+  while (command != '5') {
     std::cout << "**************************************************************************************" << std::endl;
     std::cout << "*********************************please send a command********************************" << std::endl;
-    std::cout << "1: start the action" << std::endl
+    std::cout << "1: detect and track" << std::endl
               << "2: pause the action" << std::endl
               << "3: stop  the action" << std::endl
-              << "4: exit the program" << std::endl;
+              << "4: detect but not track"<<std::endl
+              << "5: exit the program" << std::endl;
     std::cout << "**************************************************************************************" << std::endl;
     std::cout << "> ";
     std::cin >> command;
     if (command != '1' && command != '2' && command != '3' && command != '4') {
-      std::cout << "please inpugain!" << std::endl;
+      std::cout << "please input again!" << std::endl;
       std::cout << "> ";
       std::cin >> command;
     }
@@ -66,6 +67,11 @@ int main(int argc, char **argv) {
         goal.command = 3;
         ROS_INFO("I am cancelling the request");
         ac.cancelGoal();
+        break;
+      case '4':
+        goal.command = 4;
+        ROS_INFO("Detect not track");
+        ac.sendGoal(goal);
         break;
       default:
         break;

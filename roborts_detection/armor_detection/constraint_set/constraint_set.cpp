@@ -211,7 +211,7 @@ void ConstraintSet::DetectLights(const cv::Mat &src, std::vector<cv::RotatedRect
 
           if (enable_debug_)
             cv_toolbox_->DrawRotatedRect(show_lights_before_filter_, single_light, cv::Scalar(0, 255, 0), 2, light_info.angle_);
-          single_light.angle = light_info.angle_;
+          single_light.angle = light_info.angle_; // In degree
           lights.push_back(single_light);
           break;
         }

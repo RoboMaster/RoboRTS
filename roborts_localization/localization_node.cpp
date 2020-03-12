@@ -191,6 +191,8 @@ void LocalizationNode::LaserScanCallback(const sensor_msgs::LaserScan::ConstPtr 
   }
 
 }
+// TODO: Implement UWB update logic
+
 
 void LocalizationNode::PublishVisualize(){
 
@@ -235,7 +237,7 @@ bool LocalizationNode::PublishTf() {
       LOG_ERROR << "Failed to subtract base to odom transform" << e.what();
       return false;
     }
-
+  // General transform applicable to all kinds of datas
     latest_tf_ = tf::Transform(tf::Quaternion(odom_to_map.getRotation()),
                                tf::Point(odom_to_map.getOrigin()));
     latest_tf_valid_ = true;

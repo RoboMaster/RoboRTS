@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #ifndef ROBORTS_LOCALIZATION_LOCALIZATION_NODE_H
-#define ROBORTS_LOCALIZATION_LOCALIZATION_NODE_H
+#define ROBORTS_LOCALIZATION_LOCALIZATION_NODE_Hen
 
 #include <memory>
 #include <thread>
@@ -71,6 +71,12 @@ class LocalizationNode {
    */
   void InitialPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &init_pose_msg);
 
+/**
+ * @brief Uwb Data Callback function as in main loop
+ * @param uwb_msg
+ */
+//void UwbCallback(const geometry_msgs::PoseStamped::ConstPtr $uwb_msg);
+
   /**
    * @brief Publish visualize messages
    */
@@ -113,7 +119,7 @@ class LocalizationNode {
   //ROS Subscriber
   ros::Subscriber initial_pose_sub_;
   ros::Subscriber map_sub_;
-  ros::Subscriber uwb_pose_sub_;
+  ros::Subscriber uwb_pose_sub_; // To be initialized
   ros::Subscriber ground_truth_sub_;
   std::shared_ptr<message_filters::Subscriber<sensor_msgs::LaserScan>> laser_scan_sub_;
   std::unique_ptr<tf::MessageFilter<sensor_msgs::LaserScan>> laser_scan_filter_;
@@ -135,7 +141,7 @@ class LocalizationNode {
   std::string laser_topic_;
   Vec3d init_pose_;
   Vec3d init_cov_;
-//  bool enable_uwb_;
+  bool enable_uwb_;
   ros::Duration transform_tolerance_;
   bool publish_visualize_;
 
@@ -152,6 +158,7 @@ class LocalizationNode {
   HypPose hyp_pose_;
   geometry_msgs::PoseArray particlecloud_msg_;
   geometry_msgs::PoseStamped pose_msg_;
+  geometry_msgs::PoseStamped uwb_pose_;
   ros::Time last_laser_msg_timestamp_;
   tf::Transform latest_tf_;
   tf::Stamped<tf::Pose> latest_odom_pose_;

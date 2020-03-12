@@ -1,0 +1,5 @@
+thresholds {
+  item1: 100
+  item2: 99
+  item3: 190
+}

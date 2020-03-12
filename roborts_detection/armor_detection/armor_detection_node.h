@@ -22,11 +22,14 @@
 #include <mutex>
 #include <condition_variable>
 #include <boost/thread.hpp>
+#include <string>
+#include <sstream>
 
 #include <ros/ros.h>
 #include "actionlib/server/simple_action_server.h"
 #include "roborts_msgs/GimbalAngle.h" // Useful info
 #include "roborts_msgs/GimbalRate.h"  // Abandoned
+#include "std_msgs/String.h"
 #include "roborts_msgs/ArmorDetectionAction.h"
 
 #include "alg_factory/algorithm_factory.h"
@@ -39,6 +42,7 @@
 #include "proto/armor_detection.pb.h"
 #include "armor_detection_algorithms.h"
 #include "gimbal_control.h"
+
 
 
 namespace roborts_detection {
@@ -108,12 +112,16 @@ class ArmorDetectionNode {
   ros::NodeHandle nh_;
   ros::NodeHandle enemy_nh_;
   ros::Publisher enemy_info_pub_;
+  ros::Publisher enemy_flag_pub_;
   std::shared_ptr<CVToolbox> cv_toolbox_;
   actionlib::SimpleActionServer<roborts_msgs::ArmorDetectionAction> as_;
   roborts_msgs::GimbalAngle gimbal_angle_;
-
+  std_msgs::String detectionFlag;
+  std::stringstream yes;
+  std::stringstream no;
   //! control model
   GimbalContrl gimbal_control_;
+  bool enable_track = false;
 };
 } //namespace roborts_detection
 
