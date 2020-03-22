@@ -120,6 +120,7 @@ bool ObservationBuffer::SetGlobalFrame(const std::string new_global_frame)
   return true;
 }
 
+// Format convertion
 void ObservationBuffer::BufferCloud(const sensor_msgs::PointCloud2& cloud)
 {
   try
@@ -147,7 +148,6 @@ void ObservationBuffer::BufferCloud(const pcl::PointCloud<pcl::PointXYZ>& cloud)
 
   // check whether the origin frame has been set explicitly or whether we should get it from the cloud
   string origin_frame = sensor_frame_ == "" ? cloud.header.frame_id : sensor_frame_;
-
   try
   {
     // given these observations come from sensors... we'll need to store the origin pt of the sensor
@@ -202,7 +202,7 @@ void ObservationBuffer::BufferCloud(const pcl::PointCloud<pcl::PointXYZ>& cloud)
   // if the update was successful, we want to update the last updated time
   last_updated_ = ros::Time::now();
 
-  // we'll also remove any stale observations from the list
+  // we'll also remove any old observations from the list
   PurgeStaleObservations();
 }
 

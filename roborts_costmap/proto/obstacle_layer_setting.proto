@@ -15,4 +15,12 @@ message ParaObstacleLayer {
     required bool marking = 12;
     required bool footprint_clearing_enabled = 13;
     required bool is_debug = 14;
+    repeated bufzone zone = 15;
+}
+
+message bufzone {
+    required float start_x = 1;
+    required float start_y = 2;
+    required float end_x = 3;
+    required float end_y = 4;
 }

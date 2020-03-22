@@ -11,9 +11,14 @@
 #include <errno.h>
 #include <cmath>
 #include <chrono>
+#include <iostream>
+
+# define BARE_RUN
+# ifndef BARE_RUN
 #include <ros/ros.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Pose2D.h>
+# endif
 #define PI 3.14159265
 
 static int ret;
@@ -242,14 +247,14 @@ int recv_data(int fd, char* recv_buffer,int length)
 	length=read(fd,recv_buffer,length);
 	return length;
 }
-
+# ifndef BARE_RUN
 void pose_recv_callback(const geometry_msgs::Pose2D::ConstPtr& msg)
 {
     // How to unpack data
     currentpose.x = msg->x;
     currentpose.y = msg->y;
 }
-
+#endif
 float angle_from_h(float h[3])
 {
     return atan2(h[1],h[0]);
@@ -307,7 +312,7 @@ void ParseData(char chr)
 		chrCnt=0;
 		
 }
-
+#ifndef BARE_RUN
 void TaskLoop(float theta,ros::Publisher pose_pub)
 {
     static bool oninit = true;
@@ -343,13 +348,48 @@ void TaskLoop(float theta,ros::Publisher pose_pub)
         }
     }
 }
+#else
+void TaskLoop(float theta)
+{
+    static bool oninit = true;
+    static float yaw_offset = 0;
+    static int init_counter = 0;
+    static std::chrono::high_resolution_clock::time_point last_time = std::chrono::high_resolution_clock::now();
+    if(oninit)
+    {
+        init_counter ++;
+        if(init_counter>1)
+            yaw_offset += theta/init_counter + yaw_offset/(init_counter-1);
+        else if(init_counter==1)
+            yaw_offset = theta;
+        if(init_counter>2000) // Supposingly 2s
+        {
+            oninit = false;
+            init = true;
+        }
+    }
+    else
+    {
+        theta  = ring(theta - yaw_offset);
+        currentpose.theta = theta;
+         if(std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - last_time).count() > 0.1) // May be 40fps
+        {
+            last_time = std::chrono::high_resolution_clock::now();
+            std::cout<<"Theta Angle is: "<<theta<<std::endl;
+        }
+    }
+}
 
+
+#endif
 int main(int argc,char **argv)
 {
+    #ifndef BARE_RUN
     ros::init(argc, argv, "external_localization_node");
     ros::NodeHandle   n;
     ros::Publisher    pose_pub = n.advertise<geometry_msgs::Pose>("uwb",1000);
     ros::Subscriber  pose_sub = n.subscribe<geometry_msgs::Pose2D> ("robot_pose",1000,pose_recv_callback);
+    #endif
     char r_buf[1024];
     bzero(r_buf,1024);
 
@@ -379,8 +419,12 @@ int main(int argc,char **argv)
 		for (int i=0;i<ret;i++) {fprintf(fp,"%2X ",r_buf[i]);ParseData(r_buf[i]);}
         // Add Combined Publish methods
         usleep(1000); // Each us
+        #ifndef BARE_RUN
         TaskLoop(theta,pose_pub);
         ros::spinOnce();
+        #else
+        TaskLoop(theta);
+        #endif
 
     }
 

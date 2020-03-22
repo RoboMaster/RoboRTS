@@ -97,7 +97,7 @@ void CostmapLayer::UpdateOverwriteByMax(Costmap2D &master_grid, int min_i, int m
   unsigned int span = master_grid.GetSizeXCell();
 
   for (int j = min_j; j < max_j; j++) {
-    unsigned int it = j * span + min_i;
+    unsigned int it = j * span + min_i; // 2d to 1d transform
     for (int i = min_i; i < max_i; i++) {
       if (costmap_[it] == NO_INFORMATION) {
         it++;

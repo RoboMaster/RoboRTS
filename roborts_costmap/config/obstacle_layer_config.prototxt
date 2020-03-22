@@ -13,4 +13,44 @@ footprint_clearing_enabled: false
 marking: true
 is_debug: true
 
+zone {
+    start_x: 0.23
+    start_y: 2.55
+    end_x:  0.77
+    end_y: 3.03
+}
 
+zone {
+    start_x: 1.63
+    start_y: 1.41
+    end_x: 2.17
+    end_y: 1.89
+}
+
+zone {
+    start_x: 3.77
+    start_y: 3.795
+    end_x: 4.31
+    end_y: 4.275
+}
+
+zone {
+    start_x: 0.23
+    start_y: 2.55
+    end_x:  0.77
+    end_y: 3.03
+}
+
+zone {
+    start_x: 1.63
+    start_y: 1.41
+    end_x: 2.17
+    end_y: 1.89
+}
+
+zone {
+    start_x: 3.77
+    start_y: 3.795
+    end_x: 4.31
+    end_y: 4.275
+}

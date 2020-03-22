@@ -51,6 +51,7 @@
  *********************************************************************/
 #include "obstacle_layer_setting.pb.h"
 #include "obstacle_layer.h"
+#include <vector>
 
 namespace roborts_costmap {
 
@@ -75,6 +76,15 @@ void ObstacleLayer::OnInitialize() {
   std::string topic_string = "LaserScan", sensor_frame = "laser_frame";
   topic_string = para_obstacle.topic_string();
   sensor_frame = para_obstacle.sensor_frame();
+  for(int i=0;i<6;i++)
+  {
+    bufferzones[i].start_x = para_obstacle.zone(i).start_x();
+    bufferzones[i].start_y = para_obstacle.zone(i).start_y();
+    bufferzones[i].end_x   = para_obstacle.zone(i).end_x();
+    bufferzones[i].end_y   = para_obstacle.zone(i).end_y();
+  } 
+
+
 
   bool inf_is_valid = false, clearing = false, marking = true;
   inf_is_valid = para_obstacle.inf_is_valid();
@@ -169,6 +179,16 @@ void ObstacleLayer::LaserScanValidInfoCallback(const sensor_msgs::LaserScanConst
   buffer->Unlock();
 }
 
+void ObstacleLayer::RefereeCallback(const std_msgs::Int32MultiArray::ConstPtr &array)
+{
+  int i =0;
+  for(std::vector<int>::const_iterator it = array->data.begin(); it != array->data.end(); ++it)
+	{
+		active_barrier[i] = *it;
+    i++;
+	}
+}
+
 void ObstacleLayer::UpdateBounds(double robot_x,
                                  double robot_y,
                                  double robot_yaw,
@@ -230,6 +250,17 @@ void ObstacleLayer::UpdateBounds(double robot_x,
       Touch(px, py, min_x, min_y, max_x, max_y);
     }
   }
+  for(int i =0;i<6;i++)
+  {
+    if(active_barrier[i]==1)
+    {
+      SetOccupied(i);
+    }
+    else if(active_barrier==0)
+    {
+      SetFree(i);
+    }
+  }
   UpdateFootprint(robot_x, robot_y, robot_yaw, min_x, min_y, max_x, max_y);
 }
 
@@ -252,6 +283,17 @@ void ObstacleLayer::UpdateCosts(Costmap2D &master_grid, int min_i, int min_j, in
       break;
     default:  // Nothing
       break;
+  }
+  unsigned int min_x,min_y,max_x,max_y;
+  bool checker = false;
+  for (int i = 0;i<6;i++)
+  {
+    checker = checker || World2Map(bufferzones[i].start_x,bufferzones[i].start_y,min_x,min_y);
+    checker = checker && World2Map(bufferzones[i].end_x,bufferzones[i].end_y,max_x,max_y);
+    if(checker)
+    {
+      UpdateOverwriteByValid(master_grid,min_x,min_y,max_x,max_y);
+    }
   }
 }
 
@@ -412,6 +454,52 @@ void ObstacleLayer::UpdateFootprint(double robot_x,
   for (size_t i = 0; i < transformed_footprint_.size(); i++) {
     Touch(transformed_footprint_[i].x, transformed_footprint_[i].y, min_x, min_y, max_x, max_y);
   }
+}
+
+bool ObstacleLayer::SetOccupied(int zone_index)
+{
+    unsigned int min_x, min_y, max_x, max_y;
+    if(!World2Map(bufferzones[zone_index].start_x,bufferzones[zone_index].start_y,min_x,min_y))
+    {
+      return false;
+    }
+    if(!World2Map(bufferzones[zone_index].end_x,bufferzones[zone_index].end_y,max_x,max_y))
+    {
+      return false;
+    }
+    unsigned int index = 0;
+    for (int x = min_x;x<=max_x;x++)
+    {
+      for (int y = min_y;y<=max_y;y++)
+      {
+        index = GetIndex(x,y);
+        costmap_[index] = LETHAL_OBSTACLE;
+      }
+    }
+  return true;
+}
+
+bool ObstacleLayer::SetFree(int zone_index)
+{
+    unsigned int min_x, min_y, max_x, max_y;
+    if(!World2Map(bufferzones[zone_index].start_x,bufferzones[zone_index].start_y,min_x,min_y))
+    {
+      return false;
+    }
+    if(!World2Map(bufferzones[zone_index].end_x,bufferzones[zone_index].end_y,max_x,max_y))
+    {
+      return false;
+    }
+    unsigned int index = 0;
+    for (int x = min_x;x<=max_x;x++)
+    {
+      for (int y = min_y;y<=max_y;y++)
+      {
+        index = GetIndex(x,y);
+        costmap_[index] = FREE_SPACE;
+      }
+    }
+  return true;
 }
 
 } //namespace roborts_costmap
