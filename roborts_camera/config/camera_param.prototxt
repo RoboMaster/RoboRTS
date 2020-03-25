@@ -1,6 +1,6 @@
 camera: {
   camera_name: "back_camera"
-  camera_type: "uvc"
+  camera_type: "mvc"
   camera_path: "/dev/video3"
 
   camera_matrix {
@@ -31,11 +31,14 @@ camera: {
     height_offset: 0
   }
 
-  fps: 60
+  fps: 110
   auto_exposure: 0
   exposure_value: 70
-  exposure_time: 100
+  exposure_time: 900
   auto_white_balance: 0
+  gamma: 65
+  contrast: 44
   auto_gain: 0
+  gain: 48
 }
 

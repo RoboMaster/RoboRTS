@@ -10,6 +10,7 @@
 #include "../camera_param.h"
 #include "../camera_base.h"
 #include "alg_factory/algorithm_factory.h"
+#include "CameraApi.h"
 
 #include "io/io.h"
 
@@ -22,17 +23,17 @@ namespace roborts_camera {
             ~MVCDriver() override;
         private:
             bool                                  read_camera_initialized_;
-            unsigned char              *g_pRgbBuffer;
-            int                                       iCameraCounts = 1;
-            int                                       iStatus = -1;
-            tSdkCameraDevInfo   tCameraEnumList;
-            int                                       hCamera;
-            tSdkCameraCapbility tCapability;
-            tSdkFrameHead            sFrameInfo;
+            unsigned char                         *g_pRgbBuffer;
+            int                                   iCameraCounts = 1;
+            int                                   iStatus = -1;
+            tSdkCameraDevInfo                     tCameraEnumList;
+            int                                   hCamera;
+            tSdkCameraCapbility                   tCapability;
+            tSdkFrameHead                         sFrameInfo;
             BYTE*                                 pbyBuffer;
-            int                                        iDisplayFrames = 10000;
-            IplImage                           *iplImage   = NULL;
-            int                                        channel = 3;
+            int                                   iDisplayFrames = 10000;
+            IplImage                              *iplImage   = NULL;
+            int                                   channel = 3;
     };
     roborts_common::REGISTER_ALGORITHM(CameraBase,"mvc",MVCDriver,CameraInfo);
 }

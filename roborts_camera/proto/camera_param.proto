@@ -29,13 +29,14 @@ message Camera {
 
   optional bool auto_exposure = 8; //1 open, 0 close
   optional uint32 exposure_value = 9;
-  optional uint32 exposure_time = 10;//us
+  optional double exposure_time = 10;//us
 
   optional bool auto_white_balance = 11; //1 open, 0 close
 
   optional bool auto_gain = 12;////1 open, 0 close
-
-  optional uint32 contrast = 13;
+  optional uint32 gamma = 13;
+  optional uint32 contrast = 14;
+  optional uint32 gain = 15;
 }
 
 message Cameras {

@@ -22,6 +22,7 @@ catkin_package(
 )
 
 add_subdirectory(uvc)
+add_subdirectory(mvc)
 
 #camera parameter
 file(GLOB CameraParamProtoFiles "${CMAKE_CURRENT_SOURCE_DIR}/proto/camera_param.proto")
@@ -59,9 +60,11 @@ add_executable(${PROJECT_NAME}_node
 target_link_libraries(${PROJECT_NAME}_node
   PRIVATE
   driver::uvc_driver
+  driver::mvc_driver
   roborts_camera_param
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
+  libMVSDK.so
 )
 
 target_include_directories(${PROJECT_NAME}_node
@@ -78,10 +81,13 @@ add_executable(image_capture_test
 
 target_link_libraries(image_capture_test
   PRIVATE
+  PUBLIC
   driver::uvc_driver
+  driver::mvc_driver
   roborts_camera_param
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
+  libMVSDK.so
 )
 
 target_include_directories(image_capture_test

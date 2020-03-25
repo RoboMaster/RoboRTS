@@ -2,13 +2,13 @@
 #include <iostream>
 #include <image_transport/image_transport.h>
 
-#include <opencv2/core/hpp>
+#include <opencv2/core.hpp>
 #include "mvc_driver.h"
-#include "CameraApi.h"
+
 
 namespace roborts_camera{
     MVCDriver::MVCDriver(CameraInfo camera_info): // The purpose of using Camera Info is just format work
-        CameraBase(CameraInfo){ // Invoke Father class's constructor
+        CameraBase(camera_info){ // Invoke Father class's constructor
             CameraSdkInit(1);
             iStatus =  CameraEnumerateDevice(&tCameraEnumList, &iCameraCounts);
             std::cout<<"state = "<<iStatus<<std::endl;
@@ -32,15 +32,20 @@ namespace roborts_camera{
             g_pRgbBuffer = (unsigned char*)malloc(tCapability.sResolutionRange.iHeightMax*tCapability.sResolutionRange.iWidthMax*3);
 
             CameraPlay(hCamera);
-            CameraSetIspOutFormat(hCamera.CAMERA_MEDIA_TYPE_BGR8);
+            CameraSetIspOutFormat(hCamera,CAMERA_MEDIA_TYPE_BGR8);
+            CameraSetAeState(hCamera,false);
+            CameraSetExposureTime(hCamera,camera_info.exposure_time);
+            CameraSetGamma(hCamera, camera_info.gamma);
+            CameraSetContrast(hCamera,camera_info.contrast);
+            CameraSetAnalogGain(hCamera,camera_info.gain);
         }
     void MVCDriver::StartReadCamera(cv::Mat &img)
     {
         if(CameraGetImageBuffer(hCamera, &sFrameInfo, &pbyBuffer, 1000) == CAMERA_STATUS_SUCCESS)
         {
-            CameraimageProcess(jCameram pbyBuffer, g_pRgbBuffer, $sFrameInfo);
+            CameraImageProcess(hCamera, pbyBuffer, g_pRgbBuffer, &sFrameInfo);
             cv::Mat matImage(
-                cv::cvSize(sFrameInfo.iWidth,sFrameInfo.iHeight),
+                cvSize(sFrameInfo.iWidth,sFrameInfo.iHeight),
                 sFrameInfo.uiMediaType == CAMERA_MEDIA_TYPE_MONO8? CV_8UC1: CV_8UC3,
                 g_pRgbBuffer
             );
@@ -51,7 +56,7 @@ namespace roborts_camera{
 
     void MVCDriver::StopReadCamera() // Not complete
     {
-        CameraUnit(hCamera);
+        CameraUnInit(hCamera);
         free(g_pRgbBuffer);
     }
 

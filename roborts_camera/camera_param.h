@@ -56,13 +56,15 @@ struct CameraInfo {
   //! exposure value
   unsigned int exposure_value;
   //! exposure time
-  unsigned int exposure_time;
+  double exposure_time;
   //! auto white balance
   bool auto_white_balance;
   //! auto gain
   bool auto_gain;
   //! contrast
   unsigned int contrast;
+  unsigned int gamma;
+  unsigned int gain;
 
   //! camera information in form of ROS sensor_msgs
   sensor_msgs::CameraInfoPtr ros_camera_info;

@@ -62,7 +62,10 @@ void CameraParam::LoadCameraParam() {
 
     //constrast
     cameras_param_[index].contrast = camera_info.camera(index).contrast();
-
+    // Gamma value
+    cameras_param_[index].gamma = camera_info.camera(index).gamma();
+    // Gain value
+    cameras_param_[index].gain  = camera_info.camera(index).gain();
     //camera matrix
     int camera_m_size = camera_info.camera(index).camera_matrix().data().size();
     double camera_m[camera_m_size];

@@ -25,7 +25,7 @@
 #include "cv_bridge/cv_bridge.h"
 
 std::string topic_name = "back_camera";
-cv::VideoWriter writer(topic_name+".avi", CV_FOURCC('M', 'J', 'P', 'G'), 25.0, cv::Size(640, 360));
+cv::VideoWriter writer(topic_name+".avi",CV_FOURCC('M', 'J', 'P', 'G'), 25.0, cv::Size(640, 360));
 cv::Mat src_img;
 
 void ReceiveImg(const sensor_msgs::ImageConstPtr &msg) {
