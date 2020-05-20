@@ -11,6 +11,8 @@
 
 #include "line_iterator.h"
 
+#include<bits/stdc++>
+
 namespace roborts_decision{
 class EscapeBehavior {
  public:

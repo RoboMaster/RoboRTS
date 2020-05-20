@@ -83,7 +83,7 @@ ErrorInfo AStarPlanner::Plan(const geometry_msgs::PoseStamped &start,
       tmp_goal_x = goal_x - goal_search_tolerance_;
       while(tmp_goal_x <= goal_x + goal_search_tolerance_){
         unsigned char cost = costmap_ptr_->GetCostMap()->GetCost(tmp_goal_x, tmp_goal_y);
-        unsigned int dist = abs(goal_x - tmp_goal_x) + abs(goal_y - tmp_goal_y);
+        unsigned int dist = abs(long(goal_x - tmp_goal_x)) + abs(long(goal_y - tmp_goal_y));
         if (cost < inaccessible_cost_ && dist < shortest_dist ) {
           shortest_dist = dist;
           valid_goal[0] = tmp_goal_x;
