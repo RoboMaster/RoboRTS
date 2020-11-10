@@ -1,6 +1,6 @@
 #ifndef ROBORTS_DECISION_ESCAPEBEHAVIOR_H
 #define ROBORTS_DECISION_ESCAPEBEHAVIOR_H
-
+#include <random>
 #include "io/io.h"
 #include "roborts_msgs/TwistAccel.h"
 
