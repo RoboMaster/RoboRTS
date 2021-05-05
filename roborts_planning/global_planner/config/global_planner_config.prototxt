@@ -1,5 +1,5 @@
-  name: "a_star_planner"
-  selected_algorithm: "a_star_planner"
+  name: "spfa_planner"
+  selected_algorithm: "spfa_planner"
   frequency: 3
   max_retries: 5 
   goal_distance_tolerance: 0.15

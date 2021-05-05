@@ -127,9 +127,10 @@ void Chassis::UWBInfoCallback(const std::shared_ptr<roborts_sdk::cmd_uwb_info> u
 
 void Chassis::ChassisSpeedCtrlCallback(const geometry_msgs::Twist::ConstPtr &vel){
   roborts_sdk::cmd_chassis_speed chassis_speed;
-  chassis_speed.vx = vel->linear.x*1000;
-  chassis_speed.vy = vel->linear.y*1000;
-  chassis_speed.vw = vel->angular.z * 1800.0 / M_PI;
+  //int chassis_speed_ratio = 1; // Adjust chassis's speed limit
+  chassis_speed.vx = vel->linear.x*1000; //* chassis_speed_ratio;
+  chassis_speed.vy = vel->linear.y*1000; //* chassis_speed_ratio;
+  chassis_speed.vw = vel->angular.z * 1800.0 / M_PI; //* chassis_speed_ratio;
   chassis_speed.rotate_x_offset = 0;
   chassis_speed.rotate_y_offset = 0;
   chassis_speed_pub_->Publish(chassis_speed);
@@ -137,8 +138,8 @@ void Chassis::ChassisSpeedCtrlCallback(const geometry_msgs::Twist::ConstPtr &vel
 
 void Chassis::ChassisSpeedAccCtrlCallback(const roborts_msgs::TwistAccel::ConstPtr &vel_acc){
   roborts_sdk::cmd_chassis_spd_acc chassis_spd_acc;
-  chassis_spd_acc.vx = vel_acc->twist.linear.x*1000;
-  chassis_spd_acc.vy = vel_acc->twist.linear.y*1000;
+  chassis_spd_acc.vx = vel_acc->twist.linear.x*500;
+  chassis_spd_acc.vy = vel_acc->twist.linear.y*500;
   chassis_spd_acc.vw = vel_acc->twist.angular.z * 1800.0 / M_PI;
   chassis_spd_acc.ax = vel_acc->accel.linear.x*1000;
   chassis_spd_acc.ay = vel_acc->accel.linear.y*1000;

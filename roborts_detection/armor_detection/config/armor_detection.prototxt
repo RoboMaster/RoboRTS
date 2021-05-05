@@ -6,8 +6,8 @@ camera_gimbal_transform {
     offset_x :0
     offset_y :15
     offset_z :9
-    offset_pitch :-2.5
-    offset_yaw : 4.5
+    offset_pitch :0
+    offset_yaw : 0
 }
 
 projectile_model_info {

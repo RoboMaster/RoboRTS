@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   roborts_msgs
   roborts_common
+  rospy
   )
 
 find_package(ProtoBuf REQUIRED)

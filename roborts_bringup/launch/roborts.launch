@@ -16,8 +16,7 @@
   <node name="map_server" pkg="map_server" type="map_server" args="$(find roborts_bringup)/maps/$(arg map).yaml" respawn="false" />
 
   <!-- Run the lidar node -->
-  <node name="rplidar_node" pkg="rplidar_ros" type="rplidarNode" output="screen">
-      <param name="serial_port" type="string" value="/dev/rplidar"/>
+  <node name="urg_node" pkg="urg_node" type="urg_node" output="screen">
       <param name="serial_baudrate" type="int" value="115200"/>
       <param name="frame_id" type="string" value="base_laser_link"/>
       <param name="inverted" type="bool" value="false"/>
@@ -32,6 +31,7 @@
 
   <!-- Run the local planner node -->
   <node pkg="roborts_planning" type="local_planner_node" name="local_planner_node" respawn="false" />
-
+  <!-- Run the rviz for realtime debug -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find roborts_bringup)/rviz/roborts.rviz" />
 </launch>
 
