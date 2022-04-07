@@ -63,16 +63,24 @@ IF(UNIX)
     PATHS /usr/local /usr ${CMAKE_PREFIX_PATH}
     PATH_SUFFIXES lib)
 
-  SET(G2O_LIBRARIES ${G2O_CSPARSE_EXTENSION_LIB}
-                    ${G2O_CORE_LIB}           
-                    ${G2O_STUFF_LIB}          
-                    ${G2O_TYPES_SLAM2D_LIB}   
-                    ${G2O_TYPES_SLAM3D_LIB}   
-                    ${G2O_SOLVER_CHOLMOD_LIB} 
-                    ${G2O_SOLVER_PCG_LIB}     
-                    ${G2O_SOLVER_CSPARSE_LIB} 
-                    ${G2O_INCREMENTAL_LIB}                        
-                    )
+  SET(G2O_LIBRARIES ${G2O_STUFF_LIBRARY}
+                    ${G2O_CORE_LIBRARY} 
+                    ${G2O_CLI_LIBRARY}
+                    ${G2O_SOLVER_CHOLMOD}
+                    ${G2O_SOLVER_CSPARSE}
+                    ${G2O_SOLVER_CSPARSE_EXTENSION}
+                    ${G2O_SOLVER_DENSE}
+                    ${G2O_SOLVER_PCG}
+                    ${G2O_SOLVER_SLAM2D_LINEAR}
+                    ${G2O_SOLVER_STRUCTURE_ONLY}
+                    ${G2O_SOLVER_EIGEN}
+                    ${G2O_TYPES_DATA}
+                    ${G2O_TYPES_ICP}
+                    ${G2O_TYPES_SBA}
+                    ${G2O_TYPES_SCLAM2D}
+                    ${G2O_TYPES_SIM3}
+                    ${G2O_TYPES_SLAM2D}
+                    ${G2O_TYPES_SLAM3D})
 
   IF(G2O_LIBRARIES AND G2O_INCLUDE_DIR)
     SET(G2O_FOUND "YES")
