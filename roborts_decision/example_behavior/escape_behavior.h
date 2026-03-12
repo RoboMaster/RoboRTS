@@ -1,6 +1,6 @@
 #ifndef ROBORTS_DECISION_ESCAPEBEHAVIOR_H
 #define ROBORTS_DECISION_ESCAPEBEHAVIOR_H
-#include <random>
+
 #include "io/io.h"
 #include "roborts_msgs/TwistAccel.h"
 
@@ -11,119 +11,129 @@
 
 #include "line_iterator.h"
 
-namespace roborts_decision{
+namespace roborts_decision {
+
+/**
+ * @brief Escape behavior: flee from a detected enemy to a position behind obstacles.
+ *
+ * Selects a random goal on the opposite side of the field from the enemy,
+ * validates that there are sufficient obstacles blocking line-of-sight,
+ * and navigates to that position. Falls back to spinning in place if
+ * no enemy is detected or the enemy position can't be mapped.
+ */
 class EscapeBehavior {
  public:
   EscapeBehavior(ChassisExecutor* &chassis_executor,
                  Blackboard* &blackboard,
-                 const std::string & proto_file_path) : chassis_executor_(chassis_executor),
-                                                        blackboard_(blackboard) {
+                 const std::string & proto_file_path)
+      : chassis_executor_(chassis_executor),
+        blackboard_(blackboard) {
 
-    // init whirl velocity
-    whirl_vel_.accel.linear.x = 0;
+    // Initialize whirl velocity to zero
     whirl_vel_.accel.linear.x = 0;
     whirl_vel_.accel.linear.y = 0;
     whirl_vel_.accel.linear.z = 0;
-
     whirl_vel_.accel.angular.x = 0;
     whirl_vel_.accel.angular.y = 0;
     whirl_vel_.accel.angular.z = 0;
 
     if (!LoadParam(proto_file_path)) {
-      ROS_ERROR("%s can't open file", __FUNCTION__);
+      ROS_ERROR("%s: failed to load config file", __FUNCTION__);
     }
-
   }
 
   void Run() {
-
     auto executor_state = Update();
 
     if (executor_state != BehaviorState::RUNNING) {
-
       if (blackboard_->IsEnemyDetected()) {
-
-        geometry_msgs::PoseStamped enemy;
-        enemy = blackboard_->GetEnemy();
-        float goal_yaw, goal_x, goal_y;
-        unsigned int goal_cell_x, goal_cell_y;
-        unsigned int enemy_cell_x, enemy_cell_y;
-
-        std::random_device rd;
-        std::mt19937 gen(rd());
-
+        geometry_msgs::PoseStamped enemy = blackboard_->GetEnemy();
         auto robot_map_pose = blackboard_->GetRobotMapPose();
+
+        // Determine escape region based on enemy position
         float x_min, x_max;
         if (enemy.pose.position.x < left_x_limit_) {
           x_min = right_random_min_x_;
           x_max = right_random_max_x_;
-
         } else if (enemy.pose.position.x > right_x_limit_) {
           x_min = left_random_min_x_;
           x_max = left_random_max_x_;
-
         } else {
           if ((robot_x_limit_ - robot_map_pose.pose.position.x) >= 0) {
             x_min = left_random_min_x_;
             x_max = left_random_max_x_;
-
           } else {
             x_min = right_random_min_x_;
             x_max = right_random_max_x_;
           }
         }
 
-        std::uniform_real_distribution<float> x_uni_dis(x_min, x_max);
-        std::uniform_real_distribution<float> y_uni_dis(0, 5);
-        //std::uniform_real_distribution<float> yaw_uni_dis(-M_PI, M_PI);
+        // Random goal generation in the escape region
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<float> x_dist(x_min, x_max);
+        std::uniform_real_distribution<float> y_dist(0.0f, kFieldYMax);
 
-        auto get_enemy_cell = blackboard_->GetCostMap2D()->World2Map(enemy.pose.position.x,
-                                               enemy.pose.position.y,
-                                               enemy_cell_x,
-                                               enemy_cell_y);
-
-        if (!get_enemy_cell) {
+        unsigned int enemy_cell_x, enemy_cell_y;
+        if (!blackboard_->GetCostMap2D()->World2Map(
+                enemy.pose.position.x, enemy.pose.position.y,
+                enemy_cell_x, enemy_cell_y)) {
           chassis_executor_->Execute(whirl_vel_);
           return;
         }
 
+        // Find a goal with sufficient obstacle cover
+        float goal_x, goal_y;
+        unsigned int goal_cell_x, goal_cell_y;
+        int attempts = 0;
 
-        while (true) {
-          goal_x = x_uni_dis(gen);
-          goal_y = y_uni_dis(gen);
-          auto get_goal_cell = blackboard_->GetCostMap2D()->World2Map(goal_x,
-                                                                      goal_y,
-                                                                      goal_cell_x,
-                                                                      goal_cell_y);
+        while (attempts < kMaxSearchAttempts) {
+          ++attempts;
+          goal_x = x_dist(gen);
+          goal_y = y_dist(gen);
 
-          if (!get_goal_cell) {
+          if (!blackboard_->GetCostMap2D()->World2Map(
+                  goal_x, goal_y, goal_cell_x, goal_cell_y)) {
             continue;
           }
 
           auto index = blackboard_->GetCostMap2D()->GetIndex(goal_cell_x, goal_cell_y);
-//          costmap_2d_->GetCost(goal_cell_x, goal_cell_y);
-          if (blackboard_->GetCharMap()[index] >= 253) {
+          if (blackboard_->GetCharMap()[index] >= kObstacleCostThreshold) {
             continue;
           }
 
+          // Count obstacles along line of sight to enemy
           unsigned int obstacle_count = 0;
-          for(FastLineIterator line( goal_cell_x, goal_cell_y, enemy_cell_x, enemy_cell_y); line.IsValid(); line.Advance()) {
-            auto point_cost = blackboard_->GetCostMap2D()->GetCost((unsigned int)(line.GetX()), (unsigned int)(line.GetY())); //current point's cost
+          for (FastLineIterator line(goal_cell_x, goal_cell_y, enemy_cell_x, enemy_cell_y);
+               line.IsValid(); line.Advance()) {
+            auto point_cost = blackboard_->GetCostMap2D()->GetCost(
+                static_cast<unsigned int>(line.GetX()),
+                static_cast<unsigned int>(line.GetY()));
 
-            if(point_cost > 253){
+            if (point_cost > kObstacleCostThreshold) {
               obstacle_count++;
             }
-
           }
 
-          if (obstacle_count > 5) { //TODO:  this should write in the proto file
+          if (obstacle_count > kMinObstacleCount) {
             break;
           }
         }
-        Eigen::Vector2d pose_to_enemy(enemy.pose.position.x - robot_map_pose.pose.position.x,
-                                      enemy.pose.position.y - robot_map_pose.pose.position.y);
-        goal_yaw = static_cast<float > (std::atan2(pose_to_enemy.coeffRef(1), pose_to_enemy.coeffRef(0)));
-        auto quaternion = tf::createQuaternionMsgFromRollPitchYaw(0,0,goal_yaw);
+
+        if (attempts >= kMaxSearchAttempts) {
+          ROS_WARN("EscapeBehavior: failed to find covered escape goal after %d attempts",
+                   kMaxSearchAttempts);
+          chassis_executor_->Execute(whirl_vel_);
+          return;
+        }
+
+        // Face toward the enemy while escaping
+        Eigen::Vector2d pose_to_enemy(
+            enemy.pose.position.x - robot_map_pose.pose.position.x,
+            enemy.pose.position.y - robot_map_pose.pose.position.y);
+        float goal_yaw = static_cast<float>(
+            std::atan2(pose_to_enemy.coeffRef(1), pose_to_enemy.coeffRef(0)));
+        auto quaternion = tf::createQuaternionMsgFromRollPitchYaw(0, 0, goal_yaw);
 
         geometry_msgs::PoseStamped escape_goal;
         escape_goal.header.frame_id = "map";
@@ -131,14 +141,12 @@ class EscapeBehavior {
         escape_goal.pose.position.x = goal_x;
         escape_goal.pose.position.y = goal_y;
         escape_goal.pose.orientation = quaternion;
-        //return exploration_goal;
         chassis_executor_->Execute(escape_goal);
       } else {
+        // No enemy detected — spin in place
         chassis_executor_->Execute(whirl_vel_);
-        return;
       }
     }
-
   }
 
   void Cancel() {
@@ -170,27 +178,31 @@ class EscapeBehavior {
     return true;
   }
 
-  ~EscapeBehavior() {
-
-  }
+  ~EscapeBehavior() = default;
 
  private:
+  // Configuration constants
+  static constexpr unsigned char kObstacleCostThreshold = 253;
+  static constexpr unsigned int kMinObstacleCount = 5;
+  static constexpr float kFieldYMax = 5.0f;
+  static constexpr int kMaxSearchAttempts = 1000;  // prevent infinite loop
+
   //! executor
   ChassisExecutor* const chassis_executor_;
 
-  float left_x_limit_, right_x_limit_;
-  float robot_x_limit_;
-  float left_random_min_x_, left_random_max_x_;
-  float right_random_min_x_, right_random_max_x_;
+  //! field limits from config
+  float left_x_limit_ = 0, right_x_limit_ = 0;
+  float robot_x_limit_ = 0;
+  float left_random_min_x_ = 0, left_random_max_x_ = 0;
+  float right_random_min_x_ = 0, right_random_max_x_ = 0;
 
   //! perception information
   Blackboard* const blackboard_;
 
   //! whirl velocity
-//  geometry_msgs::Twist whirl_vel_;
   roborts_msgs::TwistAccel whirl_vel_;
-  
 };
-}
 
-#endif //ROBORTS_DECISION_ESCAPEBEHAVIOR_H
+} // namespace roborts_decision
+
+#endif // ROBORTS_DECISION_ESCAPEBEHAVIOR_H

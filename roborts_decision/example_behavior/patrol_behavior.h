@@ -1,6 +1,10 @@
 #ifndef ROBORTS_DECISION_PATROL_BEHAVIOR_H
 #define ROBORTS_DECISION_PATROL_BEHAVIOR_H
 
+#include <cmath>
+#include <vector>
+#include <string>
+
 #include "io/io.h"
 
 #include "../blackboard/blackboard.h"
@@ -11,39 +15,42 @@
 #include "line_iterator.h"
 
 namespace roborts_decision {
+
+/**
+ * @brief Patrol behavior: cycle through a set of waypoints loaded from config.
+ *
+ * Navigates to patrol goals in round-robin order. When a goal is reached,
+ * the next goal in the sequence is sent to the chassis executor.
+ */
 class PatrolBehavior {
  public:
   PatrolBehavior(ChassisExecutor* &chassis_executor,
                  Blackboard* &blackboard,
-                 const std::string & proto_file_path) : chassis_executor_(chassis_executor),
-                                                        blackboard_(blackboard) {
-
-    patrol_count_ = 0;
-    point_size_ = 0;
+                 const std::string & proto_file_path)
+      : chassis_executor_(chassis_executor),
+        blackboard_(blackboard),
+        patrol_count_(0),
+        point_size_(0) {
 
     if (!LoadParam(proto_file_path)) {
-      ROS_ERROR("%s can't open file", __FUNCTION__);
+      ROS_ERROR("%s: failed to load config file", __FUNCTION__);
     }
-
   }
 
   void Run() {
-
     auto executor_state = Update();
-
-    std::cout << "state: " << (int)(executor_state) << std::endl;
+    ROS_DEBUG("Patrol state: %d", static_cast<int>(executor_state));
 
     if (executor_state != BehaviorState::RUNNING) {
-
       if (patrol_goals_.empty()) {
-        ROS_ERROR("patrol goal is empty");
+        ROS_ERROR("Patrol goals are empty — check config file");
         return;
       }
 
-      std::cout << "send goal" << std::endl;
+      ROS_DEBUG("Patrol: navigating to waypoint %d/%d",
+                patrol_count_ + 1, point_size_);
       chassis_executor_->Execute(patrol_goals_[patrol_count_]);
-      patrol_count_ = ++patrol_count_ % point_size_;
-
+      patrol_count_ = (patrol_count_ + 1) % point_size_;
     }
   }
 
@@ -61,23 +68,26 @@ class PatrolBehavior {
       return false;
     }
 
-    point_size_ = (unsigned int)(decision_config.point().size());
+    point_size_ = static_cast<unsigned int>(decision_config.point().size());
     patrol_goals_.resize(point_size_);
-    for (int i = 0; i != point_size_; i++) {
+
+    for (unsigned int i = 0; i < point_size_; i++) {
       patrol_goals_[i].header.frame_id = "map";
       patrol_goals_[i].pose.position.x = decision_config.point(i).x();
       patrol_goals_[i].pose.position.y = decision_config.point(i).y();
       patrol_goals_[i].pose.position.z = decision_config.point(i).z();
 
-      tf::Quaternion quaternion = tf::createQuaternionFromRPY(decision_config.point(i).roll(),
-                                                              decision_config.point(i).pitch(),
-                                                              decision_config.point(i).yaw());
+      tf::Quaternion quaternion = tf::createQuaternionFromRPY(
+          decision_config.point(i).roll(),
+          decision_config.point(i).pitch(),
+          decision_config.point(i).yaw());
       patrol_goals_[i].pose.orientation.x = quaternion.x();
       patrol_goals_[i].pose.orientation.y = quaternion.y();
       patrol_goals_[i].pose.orientation.z = quaternion.z();
       patrol_goals_[i].pose.orientation.w = quaternion.w();
     }
 
+    ROS_INFO("Loaded %d patrol waypoints", point_size_);
     return true;
   }
 
@@ -94,8 +104,8 @@ class PatrolBehavior {
   std::vector<geometry_msgs::PoseStamped> patrol_goals_;
   unsigned int patrol_count_;
   unsigned int point_size_;
-
 };
-}
 
-#endif //ROBORTS_DECISION_PATROL_BEHAVIOR_H
+} // namespace roborts_decision
+
+#endif // ROBORTS_DECISION_PATROL_BEHAVIOR_H

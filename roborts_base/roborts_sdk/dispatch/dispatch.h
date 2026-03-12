@@ -89,7 +89,7 @@ class SubscriptionBase {
     return cmd_info_;
   }
   std::shared_ptr<MessageHeader> CreateMessageHeader() {
-    return std::shared_ptr<MessageHeader>(new MessageHeader);
+    return std::make_shared<MessageHeader>();
   }
 
   virtual std::shared_ptr<void> CreateMessage() = 0;
@@ -192,7 +192,7 @@ class ClientBase {
     return cmd_info_;
   }
   std::shared_ptr<MessageHeader> CreateRequestHeader() {
-    return std::shared_ptr<MessageHeader>(new MessageHeader);
+    return std::make_shared<MessageHeader>();
   }
 
   virtual std::shared_ptr<void> CreateResponse() = 0;
@@ -301,7 +301,7 @@ class ServiceBase {
     return cmd_info_;
   }
   std::shared_ptr<MessageHeader> CreateRequestHeader() {
-    return std::shared_ptr<MessageHeader>(new MessageHeader);
+    return std::make_shared<MessageHeader>();
   }
 
   virtual std::shared_ptr<void> CreateRequest() = 0;

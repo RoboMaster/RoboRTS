@@ -1,8 +1,10 @@
-<package>
+<?xml version="1.0"?>
+<package format="2">
     <name>roborts_base</name>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <description>
-        The roborts_base package provides protocol sdk for RoboMaster AI Robot
+        The roborts_base package provides protocol sdk for RoboMaster AI Robot.
+        It handles chassis, gimbal, and referee system communication via serial interface.
     </description>
     <author>RoboMaster</author>
     <maintainer email="robomaster@dji.com">RoboMaster</maintainer>
@@ -11,14 +13,8 @@
 
     <buildtool_depend>catkin</buildtool_depend>
 
-    <build_depend>roscpp</build_depend>
-    <build_depend>rospy</build_depend>
-    <build_depend>tf</build_depend>
-    <build_depend>roborts_msgs</build_depend>
-
-    <run_depend>roscpp</run_depend>
-    <run_depend>rospy</run_depend>
-    <run_depend>tf</run_depend>
-    <run_depend>roborts_msgs</run_depend>
+    <depend>roscpp</depend>
+    <depend>tf</depend>
+    <depend>roborts_msgs</depend>
 
 </package>

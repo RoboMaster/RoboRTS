@@ -39,14 +39,14 @@
 
 #define DLOG_INFO DLOG(INFO)
 #define DLOG_WARNING DLOG(WARNING)
-#define DLOG_ERROR DLOG(WARNING)
+#define DLOG_ERROR DLOG(ERROR)
 
 #define LOG_WARNING_FIRST_N(times) LOG_FIRST_N(WARNING, times)
 
 
 class GLogWrapper {
  public:
-  GLogWrapper(char* program) {
+  GLogWrapper(const char* program) {
     google::InitGoogleLogging(program);
     FLAGS_stderrthreshold=google::WARNING;
     FLAGS_colorlogtostderr=true;

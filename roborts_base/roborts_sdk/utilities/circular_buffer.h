@@ -145,7 +145,7 @@ class CircularBuffer {
   //! buffer capacity
   size_t max_size_;
   //! flag of full buffer
-  bool full_ = 0;
+  bool full_ = false;
 };
 
 #endif //ROBORTS_SDK_CIRCULAR_BUFFER_H

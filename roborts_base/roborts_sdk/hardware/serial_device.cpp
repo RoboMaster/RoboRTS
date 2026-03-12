@@ -33,7 +33,7 @@ SerialDevice::~SerialDevice() {
 bool SerialDevice::Init() {
 
   DLOG_INFO << "Attempting to open device " << port_name_ << " with baudrate " << baudrate_;
-  if (port_name_.c_str() == nullptr) {
+  if (port_name_.empty()) {
     port_name_ = "/dev/ttyUSB0";
   }
   if (OpenDevice() && ConfigDevice()) {
@@ -76,7 +76,7 @@ bool SerialDevice::ConfigDevice() {
   int st_baud[] = {B4800, B9600, B19200, B38400,
                    B57600, B115200, B230400, B921600};
   int std_rate[] = {4800, 9600, 19200, 38400, 57600, 115200,
-                    230400, 921600, 1000000, 1152000, 3000000};
+                    230400, 921600};
   int i, j;
   /* save current port parameter */
   if (tcgetattr(serial_fd_, &old_termios_) != 0) {
@@ -118,7 +118,7 @@ bool SerialDevice::ConfigDevice() {
       break; //8N1 default config
   }
   /* config baudrate */
-  j = sizeof(std_rate) / 4;
+  j = sizeof(std_rate) / sizeof(std_rate[0]);
   for (i = 0; i < j; ++i) {
     if (std_rate[i] == baudrate_) {
       /* set standard baudrate */
@@ -158,7 +158,7 @@ bool SerialDevice::ConfigDevice() {
 int SerialDevice::Read(uint8_t *buf, int len) {
   int ret = -1;
 
-  if (NULL == buf) {
+  if (buf == nullptr) {
     return -1;
   } else {
     ret = read(serial_fd_, buf, len);

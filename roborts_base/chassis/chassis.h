@@ -7,8 +7,8 @@
  *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
@@ -17,12 +17,20 @@
 
 #ifndef ROBORTS_BASE_CHASSIS_H
 #define ROBORTS_BASE_CHASSIS_H
+
+#include <thread>
+#include <memory>
+#include <string>
 #include "../roborts_sdk/sdk.h"
 #include "../ros_dep.h"
 
 namespace roborts_base {
+
 /**
- * @brief ROS API for chassis module
+ * @brief ROS API for chassis module.
+ *
+ * Bridges the RoboMaster SDK chassis protocol with ROS topics and tf.
+ * Publishes odometry and UWB data, subscribes to velocity commands.
  */
 class Chassis {
  public:
@@ -30,12 +38,16 @@ class Chassis {
    * @brief Constructor of chassis including initialization of sdk and ROS
    * @param handle handler of sdk
    */
-  Chassis(std::shared_ptr<roborts_sdk::Handle> handle);
+  explicit Chassis(std::shared_ptr<roborts_sdk::Handle> handle);
 
   /**
-   * @brief Destructor of chassis
+   * @brief Destructor of chassis — joins heartbeat thread
    */
   ~Chassis();
+
+  // Non-copyable, non-movable (owns a running thread)
+  Chassis(const Chassis&) = delete;
+  Chassis& operator=(const Chassis&) = delete;
 
  private:
   /**
@@ -74,9 +86,9 @@ class Chassis {
 
   //! sdk handler
   std::shared_ptr<roborts_sdk::Handle> handle_;
-  //! sdk version client
+  //! sdk version client (fixed typo: verison -> version)
   std::shared_ptr<roborts_sdk::Client<roborts_sdk::cmd_version_id,
-                                      roborts_sdk::cmd_version_id>> verison_client_;
+                                      roborts_sdk::cmd_version_id>> version_client_;
 
   //! sdk heartbeat thread
   std::thread heartbeat_thread_;
@@ -99,7 +111,6 @@ class Chassis {
   //! ros publisher for uwb information
   ros::Publisher ros_uwb_pub_;
 
-
   //! ros chassis odometry tf
   geometry_msgs::TransformStamped odom_tf_;
   //! ros chassis odometry tf broadcaster
@@ -109,5 +120,7 @@ class Chassis {
   //! ros uwb message
   geometry_msgs::PoseStamped uwb_data_;
 };
-}
-#endif //ROBORTS_BASE_CHASSIS_H
+
+} // namespace roborts_base
+
+#endif // ROBORTS_BASE_CHASSIS_H

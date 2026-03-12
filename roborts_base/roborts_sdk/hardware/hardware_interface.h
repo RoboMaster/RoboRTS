@@ -18,6 +18,8 @@
 #ifndef ROBORTS_SDK_HARDWARE_INTERFACE_H
 #define ROBORTS_SDK_HARDWARE_INTERFACE_H
 
+#include <cstdint>
+
 namespace roborts_sdk{
 /**
  * @brief Abstract class for hardware as an interface

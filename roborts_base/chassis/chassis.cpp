@@ -7,8 +7,8 @@
  *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
@@ -18,71 +18,104 @@
 #include "chassis.h"
 #include "../roborts_sdk/sdk.h"
 
-namespace roborts_base{
-Chassis::Chassis(std::shared_ptr<roborts_sdk::Handle> handle):
-    handle_(handle){
+#include <cmath>
+#include <chrono>
+#include <functional>
+
+namespace roborts_base {
+
+namespace {
+  // Conversion constants
+  constexpr double kMillimetersPerMeter = 1000.0;
+  constexpr double kDeciDegreesPerRadian = 1800.0 / M_PI;
+  constexpr double kRadiansPerDeciDegree = M_PI / 1800.0;
+  constexpr int kHeartbeatIntervalMs = 300;
+  constexpr int kOdomQueueSize = 30;
+  constexpr int kUwbQueueSize = 30;
+  constexpr int kCmdQueueSize = 1;
+} // anonymous namespace
+
+Chassis::Chassis(std::shared_ptr<roborts_sdk::Handle> handle)
+    : handle_(std::move(handle)) {
   SDK_Init();
   ROS_Init();
 }
-Chassis::~Chassis(){
-  if(heartbeat_thread_.joinable()){
+
+Chassis::~Chassis() {
+  if (heartbeat_thread_.joinable()) {
     heartbeat_thread_.join();
   }
 }
-void Chassis::SDK_Init(){
 
-  verison_client_ = handle_->CreateClient<roborts_sdk::cmd_version_id,roborts_sdk::cmd_version_id>
-      (UNIVERSAL_CMD_SET, CMD_REPORT_VERSION,
-       MANIFOLD2_ADDRESS, CHASSIS_ADDRESS);
+void Chassis::SDK_Init() {
+  // Version query
+  version_client_ = handle_->CreateClient<roborts_sdk::cmd_version_id, roborts_sdk::cmd_version_id>(
+      UNIVERSAL_CMD_SET, CMD_REPORT_VERSION,
+      MANIFOLD2_ADDRESS, CHASSIS_ADDRESS);
+
   roborts_sdk::cmd_version_id version_cmd;
-  version_cmd.version_id=0;
+  version_cmd.version_id = 0;
   auto version = std::make_shared<roborts_sdk::cmd_version_id>(version_cmd);
-  verison_client_->AsyncSendRequest(version,
-                                    [](roborts_sdk::Client<roborts_sdk::cmd_version_id,
-                                                           roborts_sdk::cmd_version_id>::SharedFuture future) {
-                                      ROS_INFO("Chassis Firmware Version: %d.%d.%d.%d",
-                                               int(future.get()->version_id>>24&0xFF),
-                                               int(future.get()->version_id>>16&0xFF),
-                                               int(future.get()->version_id>>8&0xFF),
-                                               int(future.get()->version_id&0xFF));
-                                    });
+  version_client_->AsyncSendRequest(version,
+      [](roborts_sdk::Client<roborts_sdk::cmd_version_id,
+                             roborts_sdk::cmd_version_id>::SharedFuture future) {
+        const auto id = future.get()->version_id;
+        ROS_INFO("Chassis Firmware Version: %d.%d.%d.%d",
+                 static_cast<int>((id >> 24) & 0xFF),
+                 static_cast<int>((id >> 16) & 0xFF),
+                 static_cast<int>((id >> 8) & 0xFF),
+                 static_cast<int>(id & 0xFF));
+      });
 
-  handle_->CreateSubscriber<roborts_sdk::cmd_chassis_info>(CHASSIS_CMD_SET, CMD_PUSH_CHASSIS_INFO,
-                                                           CHASSIS_ADDRESS, MANIFOLD2_ADDRESS,
-                                                           std::bind(&Chassis::ChassisInfoCallback, this, std::placeholders::_1));
-  handle_->CreateSubscriber<roborts_sdk::cmd_uwb_info>(COMPATIBLE_CMD_SET, CMD_PUSH_UWB_INFO,
-                                                       CHASSIS_ADDRESS, MANIFOLD2_ADDRESS,
-                                                       std::bind(&Chassis::UWBInfoCallback, this, std::placeholders::_1));
+  // Chassis info subscriber
+  handle_->CreateSubscriber<roborts_sdk::cmd_chassis_info>(
+      CHASSIS_CMD_SET, CMD_PUSH_CHASSIS_INFO,
+      CHASSIS_ADDRESS, MANIFOLD2_ADDRESS,
+      std::bind(&Chassis::ChassisInfoCallback, this, std::placeholders::_1));
 
-  chassis_speed_pub_ = handle_->CreatePublisher<roborts_sdk::cmd_chassis_speed>(CHASSIS_CMD_SET, CMD_SET_CHASSIS_SPEED,
-                                                                                MANIFOLD2_ADDRESS, CHASSIS_ADDRESS);
-  chassis_spd_acc_pub_ = handle_->CreatePublisher<roborts_sdk::cmd_chassis_spd_acc>(CHASSIS_CMD_SET, CMD_SET_CHASSIS_SPD_ACC,
-                                                                                    MANIFOLD2_ADDRESS, CHASSIS_ADDRESS);
+  // UWB info subscriber
+  handle_->CreateSubscriber<roborts_sdk::cmd_uwb_info>(
+      COMPATIBLE_CMD_SET, CMD_PUSH_UWB_INFO,
+      CHASSIS_ADDRESS, MANIFOLD2_ADDRESS,
+      std::bind(&Chassis::UWBInfoCallback, this, std::placeholders::_1));
 
-  heartbeat_pub_ = handle_->CreatePublisher<roborts_sdk::cmd_heartbeat>(UNIVERSAL_CMD_SET, CMD_HEARTBEAT,
-                                                                        MANIFOLD2_ADDRESS, CHASSIS_ADDRESS);
-  heartbeat_thread_ = std::thread([this]{
-                                    roborts_sdk::cmd_heartbeat heartbeat;
-                                    heartbeat.heartbeat=0;
-                                    while(ros::ok()){
-                                      heartbeat_pub_->Publish(heartbeat);
-                                      std::this_thread::sleep_for(std::chrono::milliseconds(300));
-                                    }
-                                  }
-  );
+  // Chassis speed publisher
+  chassis_speed_pub_ = handle_->CreatePublisher<roborts_sdk::cmd_chassis_speed>(
+      CHASSIS_CMD_SET, CMD_SET_CHASSIS_SPEED,
+      MANIFOLD2_ADDRESS, CHASSIS_ADDRESS);
 
+  // Chassis speed+acceleration publisher
+  chassis_spd_acc_pub_ = handle_->CreatePublisher<roborts_sdk::cmd_chassis_spd_acc>(
+      CHASSIS_CMD_SET, CMD_SET_CHASSIS_SPD_ACC,
+      MANIFOLD2_ADDRESS, CHASSIS_ADDRESS);
 
+  // Heartbeat publisher and thread
+  heartbeat_pub_ = handle_->CreatePublisher<roborts_sdk::cmd_heartbeat>(
+      UNIVERSAL_CMD_SET, CMD_HEARTBEAT,
+      MANIFOLD2_ADDRESS, CHASSIS_ADDRESS);
+
+  heartbeat_thread_ = std::thread([this] {
+    roborts_sdk::cmd_heartbeat heartbeat;
+    heartbeat.heartbeat = 0;
+    while (ros::ok()) {
+      heartbeat_pub_->Publish(heartbeat);
+      std::this_thread::sleep_for(std::chrono::milliseconds(kHeartbeatIntervalMs));
+    }
+  });
 }
-void Chassis::ROS_Init(){
-  //ros publisher
-  ros_odom_pub_ = ros_nh_.advertise<nav_msgs::Odometry>("odom", 30);
-  ros_uwb_pub_ = ros_nh_.advertise<geometry_msgs::PoseStamped>("uwb", 30);
-  //ros subscriber
-  ros_sub_cmd_chassis_vel_ = ros_nh_.subscribe("cmd_vel", 1, &Chassis::ChassisSpeedCtrlCallback, this);
-  ros_sub_cmd_chassis_vel_acc_ = ros_nh_.subscribe("cmd_vel_acc", 1, &Chassis::ChassisSpeedAccCtrlCallback, this);
 
+void Chassis::ROS_Init() {
+  // ROS publishers
+  ros_odom_pub_ = ros_nh_.advertise<nav_msgs::Odometry>("odom", kOdomQueueSize);
+  ros_uwb_pub_ = ros_nh_.advertise<geometry_msgs::PoseStamped>("uwb", kUwbQueueSize);
 
-  //ros_message_init
+  // ROS subscribers
+  ros_sub_cmd_chassis_vel_ = ros_nh_.subscribe(
+      "cmd_vel", kCmdQueueSize, &Chassis::ChassisSpeedCtrlCallback, this);
+  ros_sub_cmd_chassis_vel_acc_ = ros_nh_.subscribe(
+      "cmd_vel_acc", kCmdQueueSize, &Chassis::ChassisSpeedAccCtrlCallback, this);
+
+  // Initialize message headers
   odom_.header.frame_id = "odom";
   odom_.child_frame_id = "base_link";
 
@@ -91,60 +124,70 @@ void Chassis::ROS_Init(){
 
   uwb_data_.header.frame_id = "uwb";
 }
-void Chassis::ChassisInfoCallback(const std::shared_ptr<roborts_sdk::cmd_chassis_info> chassis_info){
 
-  ros::Time current_time = ros::Time::now();
+void Chassis::ChassisInfoCallback(
+    const std::shared_ptr<roborts_sdk::cmd_chassis_info> chassis_info) {
+  const ros::Time current_time = ros::Time::now();
+
+  // Position (convert mm -> m)
   odom_.header.stamp = current_time;
-  odom_.pose.pose.position.x = chassis_info->position_x_mm/1000.;
-  odom_.pose.pose.position.y = chassis_info->position_y_mm/1000.;
+  odom_.pose.pose.position.x = chassis_info->position_x_mm / kMillimetersPerMeter;
+  odom_.pose.pose.position.y = chassis_info->position_y_mm / kMillimetersPerMeter;
   odom_.pose.pose.position.z = 0.0;
-  geometry_msgs::Quaternion q = tf::createQuaternionMsgFromYaw(chassis_info->gyro_angle / 1800.0 * M_PI);
+
+  // Orientation (convert decidegrees -> radians)
+  const geometry_msgs::Quaternion q =
+      tf::createQuaternionMsgFromYaw(chassis_info->gyro_angle * kRadiansPerDeciDegree);
   odom_.pose.pose.orientation = q;
-  odom_.twist.twist.linear.x = chassis_info->v_x_mm / 1000.0;
-  odom_.twist.twist.linear.y = chassis_info->v_y_mm / 1000.0;
-  odom_.twist.twist.angular.z = chassis_info->gyro_rate / 1800.0 * M_PI;
+
+  // Velocity (convert mm/s -> m/s, decideg/s -> rad/s)
+  odom_.twist.twist.linear.x = chassis_info->v_x_mm / kMillimetersPerMeter;
+  odom_.twist.twist.linear.y = chassis_info->v_y_mm / kMillimetersPerMeter;
+  odom_.twist.twist.angular.z = chassis_info->gyro_rate * kRadiansPerDeciDegree;
   ros_odom_pub_.publish(odom_);
 
+  // TF broadcast
   odom_tf_.header.stamp = current_time;
-  odom_tf_.transform.translation.x = chassis_info->position_x_mm/1000.;
-  odom_tf_.transform.translation.y = chassis_info->position_y_mm/1000.;
-
+  odom_tf_.transform.translation.x = chassis_info->position_x_mm / kMillimetersPerMeter;
+  odom_tf_.transform.translation.y = chassis_info->position_y_mm / kMillimetersPerMeter;
   odom_tf_.transform.translation.z = 0.0;
   odom_tf_.transform.rotation = q;
   tf_broadcaster_.sendTransform(odom_tf_);
-
 }
-void Chassis::UWBInfoCallback(const std::shared_ptr<roborts_sdk::cmd_uwb_info> uwb_info){
 
+void Chassis::UWBInfoCallback(
+    const std::shared_ptr<roborts_sdk::cmd_uwb_info> uwb_info) {
   uwb_data_.header.stamp = ros::Time::now();
-  uwb_data_.pose.position.x = ((double)uwb_info->x)/100.0;
-  uwb_data_.pose.position.y = ((double)uwb_info->y)/100.0;
-  uwb_data_.pose.position.z = 0;
-  uwb_data_.pose.orientation = tf::createQuaternionMsgFromYaw(uwb_info->yaw/ 180.0 * M_PI);
+  uwb_data_.pose.position.x = static_cast<double>(uwb_info->x) / 100.0;
+  uwb_data_.pose.position.y = static_cast<double>(uwb_info->y) / 100.0;
+  uwb_data_.pose.position.z = 0.0;
+  uwb_data_.pose.orientation =
+      tf::createQuaternionMsgFromYaw(uwb_info->yaw / 180.0 * M_PI);
   ros_uwb_pub_.publish(uwb_data_);
-
 }
 
-void Chassis::ChassisSpeedCtrlCallback(const geometry_msgs::Twist::ConstPtr &vel){
+void Chassis::ChassisSpeedCtrlCallback(const geometry_msgs::Twist::ConstPtr &vel) {
   roborts_sdk::cmd_chassis_speed chassis_speed;
-  chassis_speed.vx = vel->linear.x*1000;
-  chassis_speed.vy = vel->linear.y*1000;
-  chassis_speed.vw = vel->angular.z * 1800.0 / M_PI;
+  chassis_speed.vx = static_cast<int16_t>(vel->linear.x * kMillimetersPerMeter);
+  chassis_speed.vy = static_cast<int16_t>(vel->linear.y * kMillimetersPerMeter);
+  chassis_speed.vw = static_cast<int16_t>(vel->angular.z * kDeciDegreesPerRadian);
   chassis_speed.rotate_x_offset = 0;
   chassis_speed.rotate_y_offset = 0;
   chassis_speed_pub_->Publish(chassis_speed);
 }
 
-void Chassis::ChassisSpeedAccCtrlCallback(const roborts_msgs::TwistAccel::ConstPtr &vel_acc){
+void Chassis::ChassisSpeedAccCtrlCallback(
+    const roborts_msgs::TwistAccel::ConstPtr &vel_acc) {
   roborts_sdk::cmd_chassis_spd_acc chassis_spd_acc;
-  chassis_spd_acc.vx = vel_acc->twist.linear.x*1000;
-  chassis_spd_acc.vy = vel_acc->twist.linear.y*1000;
-  chassis_spd_acc.vw = vel_acc->twist.angular.z * 1800.0 / M_PI;
-  chassis_spd_acc.ax = vel_acc->accel.linear.x*1000;
-  chassis_spd_acc.ay = vel_acc->accel.linear.y*1000;
-  chassis_spd_acc.wz = vel_acc->accel.angular.z * 1800.0 / M_PI;
+  chassis_spd_acc.vx = static_cast<int16_t>(vel_acc->twist.linear.x * kMillimetersPerMeter);
+  chassis_spd_acc.vy = static_cast<int16_t>(vel_acc->twist.linear.y * kMillimetersPerMeter);
+  chassis_spd_acc.vw = static_cast<int16_t>(vel_acc->twist.angular.z * kDeciDegreesPerRadian);
+  chassis_spd_acc.ax = static_cast<int16_t>(vel_acc->accel.linear.x * kMillimetersPerMeter);
+  chassis_spd_acc.ay = static_cast<int16_t>(vel_acc->accel.linear.y * kMillimetersPerMeter);
+  chassis_spd_acc.wz = static_cast<int16_t>(vel_acc->accel.angular.z * kDeciDegreesPerRadian);
   chassis_spd_acc.rotate_x_offset = 0;
   chassis_spd_acc.rotate_y_offset = 0;
   chassis_spd_acc_pub_->Publish(chassis_spd_acc);
 }
-}
+
+} // namespace roborts_base

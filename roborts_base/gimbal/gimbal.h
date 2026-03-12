@@ -7,8 +7,8 @@
  *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
@@ -17,12 +17,20 @@
 
 #ifndef ROBORTS_BASE_GIMBAL_H
 #define ROBORTS_BASE_GIMBAL_H
+
+#include <thread>
+#include <memory>
 #include "../roborts_sdk/sdk.h"
 #include "../ros_dep.h"
 
 namespace roborts_base {
+
 /**
- * @brief ROS API for gimbal module
+ * @brief ROS API for gimbal module.
+ *
+ * Bridges the RoboMaster SDK gimbal protocol with ROS topics, services, and tf.
+ * Publishes gimbal tf, subscribes to angle commands, provides services for
+ * mode switching, friction wheel control, and shooting.
  */
 class Gimbal {
  public:
@@ -30,16 +38,23 @@ class Gimbal {
    * @brief Constructor of gimbal including initialization of sdk and ROS
    * @param handle handler of sdk
    */
-  Gimbal(std::shared_ptr<roborts_sdk::Handle> handle);
-    /**
-   * @brief Destructor of gimbal
+  explicit Gimbal(std::shared_ptr<roborts_sdk::Handle> handle);
+
+  /**
+   * @brief Destructor of gimbal — joins heartbeat thread
    */
   ~Gimbal();
+
+  // Non-copyable, non-movable (owns a running thread)
+  Gimbal(const Gimbal&) = delete;
+  Gimbal& operator=(const Gimbal&) = delete;
+
  private:
   /**
    * @brief Initialization of sdk
    */
   void SDK_Init();
+
   /**
    * @brief Initialization of ROS
    */
@@ -50,6 +65,7 @@ class Gimbal {
    * @param gimbal_info Gimbal information
    */
   void GimbalInfoCallback(const std::shared_ptr<roborts_sdk::cmd_gimbal_info> gimbal_info);
+
   /**
    * @brief Gimbal angle control callback in ROS
    * @param msg Gimbal angle control data
@@ -64,6 +80,7 @@ class Gimbal {
    */
   bool SetGimbalModeService(roborts_msgs::GimbalMode::Request &req,
                             roborts_msgs::GimbalMode::Response &res);
+
   /**
    * @brief Control friction wheel service callback in ROS
    * @param req Friction wheel control data as request
@@ -72,6 +89,7 @@ class Gimbal {
    */
   bool CtrlFricWheelService(roborts_msgs::FricWhl::Request &req,
                             roborts_msgs::FricWhl::Response &res);
+
   /**
    * @brief Control shoot service callback in ROS
    * @param req Shoot control data as request
@@ -83,21 +101,20 @@ class Gimbal {
 
   //! sdk handler
   std::shared_ptr<roborts_sdk::Handle> handle_;
-  //! sdk version client
+  //! sdk version client (fixed typo: verison -> version)
   std::shared_ptr<roborts_sdk::Client<roborts_sdk::cmd_version_id,
-                                      roborts_sdk::cmd_version_id>> verison_client_;
+                                      roborts_sdk::cmd_version_id>> version_client_;
 
   //! sdk heartbeat thread
   std::thread heartbeat_thread_;
   //! sdk publisher for heartbeat
   std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::cmd_heartbeat>> heartbeat_pub_;
 
-
   //! sdk publisher for gimbal angle control
   std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::cmd_gimbal_angle>>     gimbal_angle_pub_;
   //! sdk publisher for gimbal mode set
   std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::gimbal_mode_e>>        gimbal_mode_pub_;
-  //! sdk publisher for frcition wheel control
+  //! sdk publisher for friction wheel control
   std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::cmd_fric_wheel_speed>> fric_wheel_pub_;
   //! sdk publisher for gimbal shoot control
   std::shared_ptr<roborts_sdk::Publisher<roborts_sdk::cmd_shoot_info>>       gimbal_shoot_pub_;
@@ -116,7 +133,8 @@ class Gimbal {
   geometry_msgs::TransformStamped gimbal_tf_;
   //! ros gimbal tf broadcaster
   tf::TransformBroadcaster        tf_broadcaster_;
-
 };
-}
-#endif //ROBORTS_BASE_GIMBAL_H
+
+} // namespace roborts_base
+
+#endif // ROBORTS_BASE_GIMBAL_H

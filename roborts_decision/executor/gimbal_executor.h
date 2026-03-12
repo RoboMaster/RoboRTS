@@ -1,67 +1,81 @@
 #ifndef ROBORTS_DECISION_GIMBAL_EXECUTOR_H
 #define ROBORTS_DECISION_GIMBAL_EXECUTOR_H
+
 #include "ros/ros.h"
 
 #include "roborts_msgs/GimbalAngle.h"
 #include "roborts_msgs/GimbalRate.h"
 
 #include "../behavior_tree/behavior_state.h"
-namespace roborts_decision{
-/***
- * @brief Gimbal Executor to execute different abstracted task for gimbal module
+
+namespace roborts_decision {
+
+/**
+ * @brief Gimbal Executor to execute different abstracted tasks for the gimbal module.
+ *
+ * Supports two execution modes:
+ * - ANGLE_MODE: Direct angle control
+ * - RATE_MODE: Angular rate control
  */
-class GimbalExecutor{
+class GimbalExecutor {
  public:
   /**
    * @brief Gimbal execution mode for different tasks
    */
-  enum class ExcutionMode{
+  enum class ExcutionMode {
     IDLE_MODE,   ///< Default idle mode with no task
     ANGLE_MODE,  ///< Angle task mode
     RATE_MODE    ///< Rate task mode
   };
+
   /**
    * @brief Constructor of GimbalExecutor
    */
   GimbalExecutor();
   ~GimbalExecutor() = default;
-  /***
-   * @brief Execute the gimbal angle task with publisher
+
+  // Non-copyable
+  GimbalExecutor(const GimbalExecutor&) = delete;
+  GimbalExecutor& operator=(const GimbalExecutor&) = delete;
+
+  /**
+   * @brief Execute gimbal angle control
    * @param gimbal_angle Given gimbal angle
    */
   void Execute(const roborts_msgs::GimbalAngle &gimbal_angle);
-  /***
-   * @brief Execute the gimbal rate task with publisher
+
+  /**
+   * @brief Execute gimbal rate control
    * @param gimbal_rate Given gimbal rate
    */
   void Execute(const roborts_msgs::GimbalRate &gimbal_rate);
+
   /**
    * @brief Update the current gimbal executor state
-   * @return Current gimbal executor state(same with behavior state)
+   * @return Current gimbal executor state
    */
   BehaviorState Update();
+
   /**
-   * @brief Cancel the current task and deal with the mode transition
+   * @brief Cancel the current task and return to idle
    */
   void Cancel();
 
  private:
-  //! execution mode of the executor
+  //! execution mode of the executor (note: maintaining original naming for API compat)
   ExcutionMode excution_mode_;
-  //! execution state of the executor (same with behavior state)
+  //! execution state of the executor
   BehaviorState execution_state_;
 
-  //! gimbal rate control publisher in ROS
+  //! gimbal rate control publisher
   ros::Publisher cmd_gimbal_rate_pub_;
-  //! zero gimbal rate in form of ROS roborts_msgs::GimbalRate
+  //! zero gimbal rate for stopping
   roborts_msgs::GimbalRate zero_gimbal_rate_;
 
-  //! gimbal angle control publisher in ROS
+  //! gimbal angle control publisher
   ros::Publisher cmd_gimbal_angle_pub_;
-
-
 };
-}
 
+} // namespace roborts_decision
 
-#endif //ROBORTS_DECISION_GIMBAL_EXECUTOR_H
+#endif // ROBORTS_DECISION_GIMBAL_EXECUTOR_H

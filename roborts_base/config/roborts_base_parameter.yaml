@@ -1,1 +1,8 @@
+# RoboRTS Base Node Configuration
+# For RoboMaster AI Robot 2019/2020
+
 serial_port : "/dev/serial_sdk"
+loop_rate   : 1000       # Main loop frequency in Hz
+enable_chassis : true     # Enable chassis module
+enable_gimbal  : true     # Enable gimbal module
+enable_referee : true     # Enable referee system module

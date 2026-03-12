@@ -89,7 +89,7 @@ class MemoryPool {
    */
   void FreeMemory(MemoryBlock* memory_block)
   {
-    if (memory_block == (MemoryBlock*)0)
+    if (memory_block == nullptr)
     {
       return;
     }
@@ -121,7 +121,7 @@ class MemoryPool {
     // If size is larger than memory size or max size for PACKAGE, allocate failed
     if (size>max_block_size_||size > memory_size_)
     {
-      return (MemoryBlock *) 0;
+      return nullptr;
     }
 
     // Calculate the used memory size and get the used index array
@@ -137,7 +137,7 @@ class MemoryPool {
     // If left size is smaller than needed, allocate failed
     if (memory_size_ < (used_memory_size + size))
     {
-      return (MemoryBlock *) 0;
+      return nullptr;
     }
 
     // Special case: allocate for the first time
@@ -221,7 +221,7 @@ class MemoryPool {
           return &memory_table_[i];
         }
       }
-      return (MemoryBlock*)0;
+      return nullptr;
     }
 
     //If single block is available to divide for needed size, then divide this block into two
@@ -238,7 +238,7 @@ class MemoryPool {
       }
     }
 
-    return (MemoryBlock*)0;
+    return nullptr;
   }
   /**
    * @brief Lock the memory pool
